@@ -1,0 +1,584 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F043E0DE245A27C80070C193 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F043E0DD245A27C80070C193 /* AppDelegate.swift */; };
+		F043E0E0245A27C80070C193 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F043E0DF245A27C80070C193 /* ViewController.swift */; };
+		F043E0E2245A27CA0070C193 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F043E0E1245A27CA0070C193 /* Assets.xcassets */; };
+		F043E0E5245A27CA0070C193 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F043E0E3245A27CA0070C193 /* Main.storyboard */; };
+		F043E0F1245A27CA0070C193 /* NI_MIDI_InterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F043E0F0245A27CA0070C193 /* NI_MIDI_InterfaceTests.swift */; };
+		F043E0FC245A27CA0070C193 /* NI_MIDI_InterfaceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F043E0FB245A27CA0070C193 /* NI_MIDI_InterfaceUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F043E0ED245A27CA0070C193 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F043E0D2245A27C80070C193 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F043E0D9245A27C80070C193;
+			remoteInfo = "NI MIDI Interface";
+		};
+		F043E0F8245A27CA0070C193 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F043E0D2245A27C80070C193 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F043E0D9245A27C80070C193;
+			remoteInfo = "NI MIDI Interface";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F043E0DA245A27C80070C193 /* NI MIDI Interface.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NI MIDI Interface.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F043E0DD245A27C80070C193 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F043E0DF245A27C80070C193 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F043E0E1245A27CA0070C193 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F043E0E4245A27CA0070C193 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F043E0E6245A27CA0070C193 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F043E0E7245A27CA0070C193 /* NI_MIDI_Interface.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NI_MIDI_Interface.entitlements; sourceTree = "<group>"; };
+		F043E0EC245A27CA0070C193 /* NI MIDI InterfaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NI MIDI InterfaceTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F043E0F0245A27CA0070C193 /* NI_MIDI_InterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NI_MIDI_InterfaceTests.swift; sourceTree = "<group>"; };
+		F043E0F2245A27CA0070C193 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F043E0F7245A27CA0070C193 /* NI MIDI InterfaceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NI MIDI InterfaceUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F043E0FB245A27CA0070C193 /* NI_MIDI_InterfaceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NI_MIDI_InterfaceUITests.swift; sourceTree = "<group>"; };
+		F043E0FD245A27CA0070C193 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F043E0D7245A27C80070C193 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F043E0E9245A27CA0070C193 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F043E0F4245A27CA0070C193 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F043E0D1245A27C80070C193 = {
+			isa = PBXGroup;
+			children = (
+				F043E0DC245A27C80070C193 /* NI MIDI Interface */,
+				F043E0EF245A27CA0070C193 /* NI MIDI InterfaceTests */,
+				F043E0FA245A27CA0070C193 /* NI MIDI InterfaceUITests */,
+				F043E0DB245A27C80070C193 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F043E0DB245A27C80070C193 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F043E0DA245A27C80070C193 /* NI MIDI Interface.app */,
+				F043E0EC245A27CA0070C193 /* NI MIDI InterfaceTests.xctest */,
+				F043E0F7245A27CA0070C193 /* NI MIDI InterfaceUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F043E0DC245A27C80070C193 /* NI MIDI Interface */ = {
+			isa = PBXGroup;
+			children = (
+				F043E0DD245A27C80070C193 /* AppDelegate.swift */,
+				F043E0DF245A27C80070C193 /* ViewController.swift */,
+				F043E0E1245A27CA0070C193 /* Assets.xcassets */,
+				F043E0E3245A27CA0070C193 /* Main.storyboard */,
+				F043E0E6245A27CA0070C193 /* Info.plist */,
+				F043E0E7245A27CA0070C193 /* NI_MIDI_Interface.entitlements */,
+			);
+			path = "NI MIDI Interface";
+			sourceTree = "<group>";
+		};
+		F043E0EF245A27CA0070C193 /* NI MIDI InterfaceTests */ = {
+			isa = PBXGroup;
+			children = (
+				F043E0F0245A27CA0070C193 /* NI_MIDI_InterfaceTests.swift */,
+				F043E0F2245A27CA0070C193 /* Info.plist */,
+			);
+			path = "NI MIDI InterfaceTests";
+			sourceTree = "<group>";
+		};
+		F043E0FA245A27CA0070C193 /* NI MIDI InterfaceUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F043E0FB245A27CA0070C193 /* NI_MIDI_InterfaceUITests.swift */,
+				F043E0FD245A27CA0070C193 /* Info.plist */,
+			);
+			path = "NI MIDI InterfaceUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F043E0D9245A27C80070C193 /* NI MIDI Interface */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F043E100245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI Interface" */;
+			buildPhases = (
+				F043E0D6245A27C80070C193 /* Sources */,
+				F043E0D7245A27C80070C193 /* Frameworks */,
+				F043E0D8245A27C80070C193 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "NI MIDI Interface";
+			productName = "NI MIDI Interface";
+			productReference = F043E0DA245A27C80070C193 /* NI MIDI Interface.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F043E0EB245A27CA0070C193 /* NI MIDI InterfaceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F043E103245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceTests" */;
+			buildPhases = (
+				F043E0E8245A27CA0070C193 /* Sources */,
+				F043E0E9245A27CA0070C193 /* Frameworks */,
+				F043E0EA245A27CA0070C193 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F043E0EE245A27CA0070C193 /* PBXTargetDependency */,
+			);
+			name = "NI MIDI InterfaceTests";
+			productName = "NI MIDI InterfaceTests";
+			productReference = F043E0EC245A27CA0070C193 /* NI MIDI InterfaceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F043E0F6245A27CA0070C193 /* NI MIDI InterfaceUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F043E106245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceUITests" */;
+			buildPhases = (
+				F043E0F3245A27CA0070C193 /* Sources */,
+				F043E0F4245A27CA0070C193 /* Frameworks */,
+				F043E0F5245A27CA0070C193 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F043E0F9245A27CA0070C193 /* PBXTargetDependency */,
+			);
+			name = "NI MIDI InterfaceUITests";
+			productName = "NI MIDI InterfaceUITests";
+			productReference = F043E0F7245A27CA0070C193 /* NI MIDI InterfaceUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F043E0D2245A27C80070C193 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1130;
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = "William Piotrowski";
+				TargetAttributes = {
+					F043E0D9245A27C80070C193 = {
+						CreatedOnToolsVersion = 11.3;
+					};
+					F043E0EB245A27CA0070C193 = {
+						CreatedOnToolsVersion = 11.3;
+						TestTargetID = F043E0D9245A27C80070C193;
+					};
+					F043E0F6245A27CA0070C193 = {
+						CreatedOnToolsVersion = 11.3;
+						TestTargetID = F043E0D9245A27C80070C193;
+					};
+				};
+			};
+			buildConfigurationList = F043E0D5245A27C80070C193 /* Build configuration list for PBXProject "NI MIDI Interface" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F043E0D1245A27C80070C193;
+			productRefGroup = F043E0DB245A27C80070C193 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F043E0D9245A27C80070C193 /* NI MIDI Interface */,
+				F043E0EB245A27CA0070C193 /* NI MIDI InterfaceTests */,
+				F043E0F6245A27CA0070C193 /* NI MIDI InterfaceUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F043E0D8245A27C80070C193 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F043E0E2245A27CA0070C193 /* Assets.xcassets in Resources */,
+				F043E0E5245A27CA0070C193 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F043E0EA245A27CA0070C193 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F043E0F5245A27CA0070C193 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F043E0D6245A27C80070C193 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F043E0E0245A27C80070C193 /* ViewController.swift in Sources */,
+				F043E0DE245A27C80070C193 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F043E0E8245A27CA0070C193 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F043E0F1245A27CA0070C193 /* NI_MIDI_InterfaceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F043E0F3245A27CA0070C193 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F043E0FC245A27CA0070C193 /* NI_MIDI_InterfaceUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F043E0EE245A27CA0070C193 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F043E0D9245A27C80070C193 /* NI MIDI Interface */;
+			targetProxy = F043E0ED245A27CA0070C193 /* PBXContainerItemProxy */;
+		};
+		F043E0F9245A27CA0070C193 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F043E0D9245A27C80070C193 /* NI MIDI Interface */;
+			targetProxy = F043E0F8245A27CA0070C193 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F043E0E3245A27CA0070C193 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F043E0E4245A27CA0070C193 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F043E0FE245A27CA0070C193 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F043E0FF245A27CA0070C193 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		F043E101245A27CA0070C193 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "NI MIDI Interface/NI_MIDI_Interface.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5Z7STG9PM4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "NI MIDI Interface/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-Interface";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F043E102245A27CA0070C193 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "NI MIDI Interface/NI_MIDI_Interface.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5Z7STG9PM4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "NI MIDI Interface/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-Interface";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F043E104245A27CA0070C193 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5Z7STG9PM4;
+				INFOPLIST_FILE = "NI MIDI InterfaceTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-InterfaceTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NI MIDI Interface.app/Contents/MacOS/NI MIDI Interface";
+			};
+			name = Debug;
+		};
+		F043E105245A27CA0070C193 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5Z7STG9PM4;
+				INFOPLIST_FILE = "NI MIDI InterfaceTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-InterfaceTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NI MIDI Interface.app/Contents/MacOS/NI MIDI Interface";
+			};
+			name = Release;
+		};
+		F043E107245A27CA0070C193 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5Z7STG9PM4;
+				INFOPLIST_FILE = "NI MIDI InterfaceUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-InterfaceUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "NI MIDI Interface";
+			};
+			name = Debug;
+		};
+		F043E108245A27CA0070C193 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5Z7STG9PM4;
+				INFOPLIST_FILE = "NI MIDI InterfaceUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-InterfaceUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "NI MIDI Interface";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F043E0D5245A27C80070C193 /* Build configuration list for PBXProject "NI MIDI Interface" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F043E0FE245A27CA0070C193 /* Debug */,
+				F043E0FF245A27CA0070C193 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F043E100245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI Interface" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F043E101245A27CA0070C193 /* Debug */,
+				F043E102245A27CA0070C193 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F043E103245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F043E104245A27CA0070C193 /* Debug */,
+				F043E105245A27CA0070C193 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F043E106245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F043E107245A27CA0070C193 /* Debug */,
+				F043E108245A27CA0070C193 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F043E0D2245A27C80070C193 /* Project object */;
+}
