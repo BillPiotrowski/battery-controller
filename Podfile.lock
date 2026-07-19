@@ -6,24 +6,20 @@ PODS:
   - AudioKit/UI (4.9.3):
     - AudioKit/Core
   - MIKMIDI (1.7.0)
-  - ReactiveSwift (6.2.1)
 
 DEPENDENCIES:
   - AudioKit
   - MIKMIDI
-  - ReactiveSwift (~> 6.1)
 
 SPEC REPOS:
   trunk:
     - AudioKit
     - MIKMIDI
-    - ReactiveSwift
 
 SPEC CHECKSUMS:
   AudioKit: d025ecbb68f567bba15dab7ea80b8991155729f9
   MIKMIDI: a9192db16687fcf1d2c82b98492b999fa8ede7c6
-  ReactiveSwift: 07ddf579f4eb3ee3bd656214f0461aaf2c0fd639
 
-PODFILE CHECKSUM: 923a1e58b35e1e0e2f1879db63b3d478c8360177
+PODFILE CHECKSUM: 1f2108a5e4ac9054596624db98d7cbbc8ab5db4e
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.16.2

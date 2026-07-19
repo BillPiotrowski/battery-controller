@@ -8,7 +8,6 @@ target 'NI MIDI Interface' do
   use_frameworks!
   
   pod 'AudioKit'#, '~> 4.8.0'
-  pod 'ReactiveSwift', '~> 6.1'
   pod 'MIKMIDI'
 
   # Pods for NI MIDI Interface
