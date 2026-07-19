@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2C84CC832ECBCF7039D83E91 /* Pods_NI_MIDI_InterfaceTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F572FEFD745BDE0FF7E4E224 /* Pods_NI_MIDI_InterfaceTests.framework */; };
 		38DF972FAA964C204996869B /* Pods_NI_MIDI_Interface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529A2414D484FDAA71C8667A /* Pods_NI_MIDI_Interface.framework */; };
+		632B31B3300D76F700442564 /* ReactiveSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 632B31B2300D76F700442564 /* ReactiveSwift */; };
 		81012BDE02462914E3438BB7 /* Pods_NI_MIDI_InterfaceUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C8A70DE51ABFBCFDDB9CF11 /* Pods_NI_MIDI_InterfaceUITests.framework */; };
 		F026D3ED2463AB7B001FE191 /* MidiDeviceSelectionStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026D3EC2463AB7B001FE191 /* MidiDeviceSelectionStruct.swift */; };
 		F026D3EF2463AB90001FE191 /* MidiOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026D3EE2463AB90001FE191 /* MidiOutput.swift */; };
@@ -71,7 +72,6 @@
 			remoteInfo = "NI MIDI Interface";
 		};
 /* End PBXContainerItemProxy section */
-
 
 /* Begin PBXFileReference section */
 		13560F53CF931DD036560744 /* Pods-NI MIDI InterfaceUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI InterfaceUITests.debug.xcconfig"; path = "Target Support Files/Pods-NI MIDI InterfaceUITests/Pods-NI MIDI InterfaceUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -144,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				38DF972FAA964C204996869B /* Pods_NI_MIDI_Interface.framework in Frameworks */,
+				632B31B3300D76F700442564 /* ReactiveSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,6 +424,9 @@
 				Base,
 			);
 			mainGroup = F043E0D1245A27C80070C193;
+			packageReferences = (
+				632B31B1300D76F700442564 /* XCRemoteSwiftPackageReference "ReactiveSwift" */,
+			);
 			productRefGroup = F043E0DB245A27C80070C193 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -930,6 +934,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		632B31B1300D76F700442564 /* XCRemoteSwiftPackageReference "ReactiveSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveCocoa/ReactiveSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.2.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		632B31B2300D76F700442564 /* ReactiveSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 632B31B1300D76F700442564 /* XCRemoteSwiftPackageReference "ReactiveSwift" */;
+			productName = ReactiveSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F043E0D2245A27C80070C193 /* Project object */;
 }
