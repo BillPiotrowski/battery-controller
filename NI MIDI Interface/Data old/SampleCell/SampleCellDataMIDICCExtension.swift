@@ -8,8 +8,8 @@
 
 import Foundation
 
-extension SampleCellData {
-    func getAllMidiCCs(channel: MidiChannel) -> [MidiCC] {
+extension SampleCellPropertyData {
+    func getAllMidiCCs(channel: MidiChannel) -> [MidiCCValueMap] {
         return [
             .start1(value: start1), .start2(value: start2),
             .volume(value: volume), .pan(value: pan),

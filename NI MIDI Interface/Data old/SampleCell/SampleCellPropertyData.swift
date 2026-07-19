@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SampleCellData: ReadableData {
+struct SampleCellPropertyData: ReadableData {
     
     
     var start1: Double
@@ -111,37 +111,37 @@ struct SampleCellData: ReadableData {
     
     init(){
         self.init(
-            start1: SampleCellData.start1Default,
-            start2: SampleCellData.start2Default,
-            volume: SampleCellData.volumeDefault,
-            pan: SampleCellData.panDefault,
-            speed: SampleCellData.speedDefault,
-            fineSpeed: SampleCellData.fineSpeedDefault,
-            pitch: SampleCellData.pitchDefault,
-            filterLow: SampleCellData.filterLowDefault,
-            filterHigh: SampleCellData.filterHighDefault,
-            attack: SampleCellData.attackDefault,
-            hold: SampleCellData.holdDefault,
-            decay: SampleCellData.decayDefault,
-            sustain: SampleCellData.sustainDefault,
-            release: SampleCellData.releaseDefault,
-            enableAttackEnvelope: SampleCellData.enableAttackEnvelopeDefault,
-            transientAttack: SampleCellData.transientAttackDefault,
-            transientSustain: SampleCellData.transientSustainDefault,
-            enableTransientMaster: SampleCellData.enableTransientMasterDefault,
-            tune: SampleCellData.tuneDefault,
-            fineTune: SampleCellData.fineTuneDefault,
-            lofiBits: SampleCellData.lofiBitsDefault,
-            lofiHertz: SampleCellData.lofiHertzDefault,
-            lofiNoise: SampleCellData.lofiNoiseDefault,
-            lofiColor: SampleCellData.lofiColorDefault,
-            lofiOut: SampleCellData.lofiOutDefault,
-            enableLofi: SampleCellData.enableLofiDefault,
-            reverbSend: SampleCellData.reverbSendDefault,
-            delaySend: SampleCellData.delaySendDefault,
-            velocity: SampleCellData.velocityDefault,
-            envOrder: SampleCellData.envOrderDefault,
-            formant: SampleCellData.formantDefault
+            start1: SampleCellPropertyData.default.start1,
+            start2: SampleCellPropertyData.default.start2,
+            volume: SampleCellPropertyData.default.volume,
+            pan: SampleCellPropertyData.default.pan,
+            speed: SampleCellPropertyData.default.speed,
+            fineSpeed: SampleCellPropertyData.default.fineSpeed,
+            pitch: SampleCellPropertyData.default.pitch,
+            filterLow: SampleCellPropertyData.default.filterLow,
+            filterHigh: SampleCellPropertyData.default.filterHigh,
+            attack: SampleCellPropertyData.default.attack,
+            hold: SampleCellPropertyData.default.hold,
+            decay: SampleCellPropertyData.default.decay,
+            sustain: SampleCellPropertyData.default.sustain,
+            release: SampleCellPropertyData.default.release,
+            enableAttackEnvelope: SampleCellPropertyData.default.enableAttackEnvelope,
+            transientAttack: SampleCellPropertyData.default.transientAttack,
+            transientSustain: SampleCellPropertyData.default.transientSustain,
+            enableTransientMaster: SampleCellPropertyData.default.enableTransientMaster,
+            tune: SampleCellPropertyData.default.tune,
+            fineTune: SampleCellPropertyData.default.fineTune,
+            lofiBits: SampleCellPropertyData.default.lofiBits,
+            lofiHertz: SampleCellPropertyData.default.lofiHertz,
+            lofiNoise: SampleCellPropertyData.default.lofiNoise,
+            lofiColor: SampleCellPropertyData.default.lofiColor,
+            lofiOut: SampleCellPropertyData.default.lofiOut,
+            enableLofi: SampleCellPropertyData.default.enableLofi,
+            reverbSend: SampleCellPropertyData.default.reverbSend,
+            delaySend: SampleCellPropertyData.default.delaySend,
+            velocity: SampleCellPropertyData.default.velocity,
+            envOrder: SampleCellPropertyData.default.envOrder,
+            formant: SampleCellPropertyData.default.formant
         )
     }
     
@@ -212,19 +212,58 @@ struct SampleCellData: ReadableData {
             dictionary: dictionary,
             key: Property.transientAttack.rawValue
         )
-        let transientSustain = try Self.asDoubleIn(dictionary: dictionary, key: Property.transientSustain.rawValue)
-        let enableTransientMaster = try Self.asBoolIn(dictionary: dictionary, key: Property.enableTransientMaster.rawValue)
-        let tune = try Self.asDoubleIn(dictionary: dictionary, key: Property.tune.rawValue)
-        let fineTune = try Self.asDoubleIn(dictionary: dictionary, key: Property.fineTune.rawValue)
-        let lofiBits = try Self.asDoubleIn(dictionary: dictionary, key: Property.lofiBits.rawValue)
-        let lofiHertz = try Self.asDoubleIn(dictionary: dictionary, key: Property.lofiHertz.rawValue)
-        let lofiNoise = try Self.asDoubleIn(dictionary: dictionary, key: Property.lofiNoise.rawValue)
-        let lofiColor = try Self.asDoubleIn(dictionary: dictionary, key: Property.lofiColor.rawValue)
-        let lofiOut = try Self.asDoubleIn(dictionary: dictionary, key: Property.lofiOut.rawValue)
-        let enableLofi = try Self.asBoolIn(dictionary: dictionary, key: Property.enableLofi.rawValue)
-        let reverbSend = try Self.asDoubleIn(dictionary: dictionary, key: Property.reverbSend.rawValue)
-        let delaySend = try Self.asDoubleIn(dictionary: dictionary, key: Property.delaySend.rawValue)
-        let velocity = try Self.asDoubleIn(dictionary: dictionary, key: Property.velocity.rawValue)
+        let transientSustain = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.transientSustain.rawValue
+        )
+        let enableTransientMaster = try Self.asBoolIn(
+            dictionary: dictionary,
+            key: Property.enableTransientMaster.rawValue
+        )
+        let tune = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.tune.rawValue
+        )
+        let fineTune = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.fineTune.rawValue
+        )
+        let lofiBits = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.lofiBits.rawValue
+        )
+        let lofiHertz = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.lofiHertz.rawValue
+        )
+        let lofiNoise = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.lofiNoise.rawValue
+        )
+        let lofiColor = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.lofiColor.rawValue
+        )
+        let lofiOut = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.lofiOut.rawValue
+        )
+        let enableLofi = try Self.asBoolIn(
+            dictionary: dictionary,
+            key: Property.enableLofi.rawValue
+        )
+        let reverbSend = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.reverbSend.rawValue
+        )
+        let delaySend = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.delaySend.rawValue
+        )
+        let velocity = try Self.asDoubleIn(
+            dictionary: dictionary,
+            key: Property.velocity.rawValue
+        )
         let envOrder = try Self.asDoubleIn(
             dictionary: dictionary,
             key: Property.envOrder.rawValue
@@ -272,7 +311,7 @@ struct SampleCellData: ReadableData {
     
 }
 
-extension SampleCellData: WriteableData {
+extension SampleCellPropertyData: WriteableData {
     var dictionary: [String : Any] {
         return [
             Property.start1.rawValue: start1,
@@ -305,8 +344,7 @@ extension SampleCellData: WriteableData {
             Property.delaySend.rawValue: delaySend,
             Property.velocity.rawValue: velocity,
             Property.envOrder.rawValue: envOrder,
-            Property.formant.rawValue: formant,
-        
+            Property.formant.rawValue: formant
         ]
     }
     
@@ -314,7 +352,7 @@ extension SampleCellData: WriteableData {
 }
 
 
-extension SampleCellData {
+extension SampleCellPropertyData {
     enum Property: String {
 
         case start1 = "start1"
@@ -350,37 +388,39 @@ extension SampleCellData {
         case formant = "formant"
     }
     
-    static let start1Default: Double = 0
-    static let start2Default: Double = 0
-    static let volumeDefault: Double = 0.8
-    static let pitchDefault: Pitch = Pitch(value: 0.5)
-    static let filterLowDefault: Double = 0
-    static let filterHighDefault: Double = 1
-    static let attackDefault: Double = 0.05
-    static let holdDefault: Double = 0.2
-    static let decayDefault: Double = 0.2
-    static let sustainDefault: Double = 1
-    static let releaseDefault: Double = 0.05
-    static let enableAttackEnvelopeDefault: Bool = true
-    static let transientAttackDefault: Double = 0.5
-    static let transientSustainDefault: Double = 0.5
-    static let enableTransientMasterDefault: Bool = false
-    static let tuneDefault: Double = 0.5
-    static let fineTuneDefault: Double = 0.5
-    static let lofiBitsDefault: Double = 0.4
-    static let lofiHertzDefault: Double = 0.4
-    static let lofiNoiseDefault: Double = 0
-    static let lofiColorDefault: Double = 0.5
-    static let lofiOutDefault: Double = 0.8
-    static let enableLofiDefault: Bool = false
-    static let reverbSendDefault: Double = 0
-    static let delaySendDefault: Double = 0
-    static let velocityDefault: Double = 0
-    static let envOrderDefault: Double = 0.4
-    static let formantDefault: Double = 0.5
-    static let panDefault: Double = 0.5
-    static let speedDefault: Double = 0.5
-    static let fineSpeedDefault: Double = 0.5
+    static let `default` = SampleCellPropertyData(
+        start1: 0,
+        start2: 0,
+        volume: 0.8,
+        pan: 0.5,
+        speed: 0.5,
+        fineSpeed: 0.5,
+        pitch: Pitch(value: 0.5),
+        filterLow: 0,
+        filterHigh: 1,
+        attack: 0.05,
+        hold: 0.2,
+        decay: 0.2,
+        sustain: 1,
+        release: 0.05,
+        enableAttackEnvelope: true,
+        transientAttack: 0.5,
+        transientSustain: 0.5,
+        enableTransientMaster: false,
+        tune: 0.5,
+        fineTune: 0.5,
+        lofiBits: 0.4,
+        lofiHertz: 0.4,
+        lofiNoise: 0,
+        lofiColor: 0.5,
+        lofiOut: 0.8,
+        enableLofi: false,
+        reverbSend: 0,
+        delaySend: 0,
+        velocity: 0,
+        envOrder: 0.4,
+        formant: 0.5
+    )
 }
 
 
