@@ -108,7 +108,7 @@
 		F043E0FD245A27CA0070C193 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F051EAD724629BE30023A8CD /* MidiDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiDevice.swift; sourceTree = "<group>"; };
 		F057F89A247A5FF200869F45 /* NI MIDI Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "NI MIDI Interface"; sourceTree = "<group>"; };
-		F057F8A0247A64CD00869F45 /* SampleCellAmpEnvelopeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SampleCellAmpEnvelopeData.swift; path = "/Users/wpiotrow/Dropbox/MIDI OSX App/NI MIDI Interface/NI MIDI Interface/NI MIDI Interface/Data/SampleCell/SampleCellAmpEnvelopeData.swift"; sourceTree = "<absolute>"; };
+		F057F8A0247A64CD00869F45 /* SampleCellAmpEnvelopeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellAmpEnvelopeData.swift; sourceTree = "<group>"; };
 		F05E47E3247920B7004FEC9A /* UndoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoManager.swift; sourceTree = "<group>"; };
 		F064D19024655D4E00450FBC /* MidiDeviceSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiDeviceSelectionViewController.swift; sourceTree = "<group>"; };
 		F06CFBFA245B59FA008A8CA2 /* SampleCellPropertyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellPropertyData.swift; sourceTree = "<group>"; };
