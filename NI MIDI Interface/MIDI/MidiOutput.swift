@@ -118,6 +118,7 @@ extension MidiOutput {
         try self.midi.send(midiCC: midiCC, devices: selectedMidiDevices)
     }
     func send(midiCCs: [MidiControllerChange]) throws {
+        print(midiCCs)
         try self.midi.send(midiCCs: midiCCs, devices: selectedMidiDevices)
     }
     func send(

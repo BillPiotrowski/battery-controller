@@ -7,3 +7,11 @@
 //
 
 import Foundation
+
+class WPUndoManager {
+    let undoManager: UndoManager
+    
+    init(){
+        self.undoManager = UndoManager()
+    }
+}

@@ -12,18 +12,18 @@ struct MidiControllerChange {
     let ccNumber: MidiControlChangeNumber
     let value: MidiControlChangeValue
     let channel: MidiChannel
-    let destinationDevices: [MidiDevice]?
+    //let destinationDevices: [MidiDevice]?
     
     init(
         ccNumber: MidiControlChangeNumber,
         value: MidiControlChangeValue,
-        channel: MidiChannel,
-        destinationDevices: [MidiDevice]? = nil
+        channel: MidiChannel//,
+        //destinationDevices: [MidiDevice]? = nil
     ){
         self.ccNumber = ccNumber
         self.value = value
         self.channel = channel
-        self.destinationDevices = destinationDevices
+        //self.destinationDevices = destinationDevices
     }
 }
 extension MidiControllerChange {

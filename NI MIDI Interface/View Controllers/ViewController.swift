@@ -19,6 +19,8 @@ class ViewController: NSViewController, NSComboBoxDataSource {
     @IBOutlet weak var samplerOutputPopupButton: NSPopUpButton!
     
     weak var controllerInputVC: MidiDeviceSelectionViewController?
+    weak var toControllerVC: MidiOutputSelectionViewController?
+    weak var toSamplerVC: MidiOutputSelectionViewController?
     
     @IBOutlet weak var controllerInputTableView: NSTableView!
     
@@ -40,27 +42,33 @@ class ViewController: NSViewController, NSComboBoxDataSource {
         let samplerOutputDeviceSelection = maschineInterface!.samplerOutputSelection.midiDeviceSelection.value
         */
        
-        maschineInterface!.controllerInput.options.signal.observe(Signal<[MidiInputInfo], Never>.Observer(value: {val in
+           /* .maschineInterface!.controllerInput.options.signal.observe(Signal<[MidiInputInfo], Never>.Observer(value: {val in
             self.controllerInputTableView.reloadData()
         }))
-         maschineInterface!.samplerOutputSelection.midiDeviceSelection.signal.observe(Signal<MidiDeviceSelectionStruct, Never>.Observer(value: {value in
-            self.samplerOutputDeviceArray.content = self.maschineInterface!.samplerOutputSelection.midiDeviceSelection.value.options
-        }))
-    self.maschineInterface!.controllerOutputDevice.midiDeviceSelection.signal.observe(Signal<MidiDeviceSelectionStruct, Never>.Observer(value: { value in
-        self.outputDeviceController.content = self.maschineInterface!.controllerOutputDevice.midiDeviceSelection.value.options
+         maschineInterface!.samplerOutputSelection.midiDeviceSelection.signal.observe(Signal<[MidiOutputInfo], Never>.Observer(value: {value in
+            self.samplerOutputDeviceArray.content = value
+        })) self.maschineInterface!.controllerOutputDevice.midiDeviceSelection.signal.observe(Signal<[MidiOutputInfo], Never>.Observer(value: { value in
+        self.outputDeviceController.content = self.maschineInterface!.controllerOutputDevice.midiDeviceSelection.value
                    }))
-        
-        outputDeviceController.content = maschineInterface!.controllerOutputDevice.midiDeviceSelection.value.options
-        samplerOutputDeviceArray.content = maschineInterface!.samplerOutputSelection.midiDeviceSelection.value.options
+
+        */
+        //outputDeviceController.content = maschineInterface!.controllerOutputDevice.midiDeviceSelection.value
+        //samplerOutputDeviceArray.content = maschineInterface!.samplerOutputSelection.midiDeviceSelection.value
         //controllerSourceArrayController.content = maschineInterface!.controllerInput.options.value
         //keyboardSourceArrayController.content = maschineInterface!.keyboardInput.options.value
 
- controllerInputTableView.delegate = self
- controllerInputTableView.dataSource = self
-        controllerInputTableView.reloadData()
+ //controllerInputTableView.delegate = self
+ //controllerInputTableView.dataSource = self
+  //      controllerInputTableView.reloadData()
         
         controllerInputVC?.midiInput = maschineInterface!.controllerInput
         controllerInputVC?.tableView.reloadData()
+        
+        toControllerVC?.midiOutput = maschineInterface?.controllerOutputDevice
+        toControllerVC?.tableView.reloadData()
+        
+        toSamplerVC?.midiOutput = maschineInterface?.samplerOutputSelection
+        toSamplerVC?.tableView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -103,13 +111,45 @@ extension ViewController {
             childVC.midiInput = maschineInterface.controllerInput
             
         }
+        if segue.identifier == "toControllerSegue" {
+            
+            guard
+                let childVC = segue.destinationController as? MidiOutputSelectionViewController
+                else {
+                    print("WRONG VC TYPE")
+                    return
+            }
+            self.toControllerVC = childVC
+            guard let maschineInterface = maschineInterface
+                else {
+                    print("maschine interface missing")
+                    return
+            }
+            childVC.midiOutput = maschineInterface.controllerOutputDevice
+        }
+        if segue.identifier == "toSamplerSegue" {
+            
+            guard
+                let childVC = segue.destinationController as? MidiOutputSelectionViewController
+                else {
+                    print("WRONG VC TYPE")
+                    return
+            }
+            self.toSamplerVC = childVC
+            guard let maschineInterface = maschineInterface
+                else {
+                    print("maschine interface missing")
+                    return
+            }
+            childVC.midiOutput = maschineInterface.samplerOutputSelection
+        }
       
  
     }
     
 }
 
-
+/*
 extension ViewController: NSTableViewDelegate, NSTableViewDataSource {
 
     func numberOfRows(in tableView: NSTableView) -> Int {
@@ -168,3 +208,4 @@ extension ViewController: NSTableViewDelegate, NSTableViewDataSource {
     
 }
 
+*/

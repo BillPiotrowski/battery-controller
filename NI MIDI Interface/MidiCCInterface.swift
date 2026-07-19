@@ -8,6 +8,102 @@
 
 import Foundation
 
+enum MidiInputMapping: Int {
+    case pitch = 14
+    case volume = 13
+    case pan = 17
+    case speed = 18
+    case fineSpeed = 45
+    case start1 = 11
+    case start2 = 12
+    case filterLow = 15
+    case filterHigh = 16
+    case attack = 21
+    case hold = 25
+    case decay = 22
+    case sustain = 23
+    case release = 24
+    case enableAttackEnvelope = 52
+    case transientAttack = 27
+    case transientSustain = 28
+    case enableTransientMaster = 53
+    case tune = 26
+    case fineTune = 46
+    case lofiBits = 31
+    case lofiHertz = 32
+    case lofiNoise = 33
+    case lofiColor = 34
+    case lofiOut = 35
+    case enableLofi = 51
+    case reverbSend = 36
+    case delaySend = 37
+    case velocity = 38
+    case envOrder = 41
+    case formant = 42
+    case mute = 62
+    case solo = 63
+    case unsoloAll = 67
+    case lock = 64
+    case lockAll = 65
+    case unlockAll = 66
+    case select = 68
+    case copy = 43
+    case paste = 44
+    case reset = 61
+    case resetAll = 69
+    case undo = 73
+    case redo = 74
+    
+    case loopStart = 81
+    case loopStartFine = 82
+    case loopLength = 83
+    case loopLengthFine = 84
+}
+
+enum MidiOutputMapping: Int {
+    case volume = 59
+    case pan = 60
+    case speed = 28
+    case fineSpeed = 32
+    
+    case speed1 = 75
+    case speed2 = 76
+    case speed3 = 77
+    case speed4 = 78
+    
+    case start1 = 21
+    case start2 = 22
+    case filterLow = 40
+    case filterHigh = 41
+    case attack = 25
+    case hold = 29
+    case decay = 26
+    case sustain = 27
+    case release = 30
+    case enableAttackEnvelope = 72
+    case transientAttack = 42
+    case transientSustain = 43
+    case enableTransientMaster = 45
+    case tune = 44
+    case fineTune = 46
+    case lofiBits = 51
+    case lofiHertz = 52
+    case lofiNoise = 53
+    case lofiColor = 54
+    case lofiOut = 55
+    case enableLofi = 71
+    case reverbSend = 56
+    case delaySend = 57
+    case velocity = 58
+    case envOrder = 61
+    case formant = 62
+    
+    case loopStart = 81
+    case loopStartFine = 82
+    case loopLength = 83
+    case loopLengthFine = 84
+}
+
 enum MidiCCInterface: CaseIterable {
     case pitch
     case volume, pan
@@ -23,6 +119,12 @@ enum MidiCCInterface: CaseIterable {
     case envOrder, formant
     case mute, solo, unsoloAll
     case lock, lockAll, unlockAll
+    case select
+    case copy, paste
+    case reset, resetAll
+    case undo, redo
+    case loopStart, loopStartFine
+    case loopLength, loopLengthFine
     
     init(inputNumber: MidiControlChangeNumber) throws {
         for sampleProperty in MidiCCInterface.allCases {
@@ -72,15 +174,30 @@ enum MidiCCInterface: CaseIterable {
         case .mute: return 62
         case .solo: return 63
         case .unsoloAll: return 67
-        case .lock: return 68
+        case .lock: return 64
         case .lockAll: return 65
         case .unlockAll: return 66
+        case .select: return 68
+        case .copy: return 43
+        case .paste: return 44
+        case .reset: return 61
+        case .resetAll: return 69
+        case .undo: return 73
+        case .redo: return 74
+        case .loopStart:
+            return MidiInputMapping.loopStart.rawValue
+        case .loopStartFine:
+            return MidiInputMapping.loopStartFine.rawValue
+        case .loopLength:
+            return MidiInputMapping.loopLength.rawValue
+        case .loopLengthFine:
+            return MidiInputMapping.loopLengthFine.rawValue
         }
     }
     var midiCCOutputNumber: MidiControlChangeNumber? {
         // instead, make this an associative array with unique numbers. [Int: SampleProperty]
         switch self {
-        case .pitch, .mute, .solo, .unsoloAll, .lock, .lockAll, .unlockAll: return nil
+        case .pitch, .mute, .solo, .unsoloAll, .lock, .lockAll, .unlockAll, .select, .copy, .paste, .reset, .resetAll, .undo, .redo: return nil
         case .volume: return 59
         case .pan: return 60
         case .speed: return 28
@@ -111,9 +228,41 @@ enum MidiCCInterface: CaseIterable {
         case .velocity: return 58
         case .envOrder: return 61
         case .formant: return 62
+        
+        case .loopStart:
+            return MidiOutputMapping.loopStart.rawValue
+        case .loopStartFine:
+            return MidiOutputMapping.loopStartFine.rawValue
+        case .loopLength:
+            return MidiOutputMapping.loopLength.rawValue
+        case .loopLengthFine:
+            return MidiOutputMapping.loopLengthFine.rawValue
         }
     }
     
+    var destination: Destination {
+        switch self {
+        case .attack, .hold, .decay, .sustain, .release, .enableAttackEnvelope:
+            return .ampEnvelope
+        case .pitch:
+            return .sampleData
+        case .start1, .start2, .volume, .pan, .speed, .fineSpeed, .filterLow, .filterHigh, .transientAttack, .transientSustain, .enableTransientMaster, .tune, .fineTune, .reverbSend, .delaySend, .velocity, .envOrder, .formant, .reset, .loopStart, .loopStartFine, .loopLength, .loopLengthFine:
+            return .sampleCellProperty
+        case .lofiBits, .lofiHertz, .lofiNoise, .lofiColor, .lofiOut, .enableLofi:
+            return .loFi
+        case .mute, .solo, .lock:
+            return .sampleCellState
+        case .unsoloAll, .lockAll, .unlockAll, .select, .copy, .paste, .resetAll, .undo, .redo:
+            return .master
+        }
+    }
+    
+    
+    enum Destination {
+        case sampleCellProperty, sampleCellState, master, ampEnvelope, loFi, sampleData
+    }
+    
+    /*
     static let midiCCOutputNumberDictionary: [Int: MidiCCInterface] = [
         59: .volume,
         60: .pan,
@@ -146,8 +295,9 @@ enum MidiCCInterface: CaseIterable {
         61: .envOrder,
         62: .formant,
     ]
+ */
 }
-
+/*
 enum SamplerMidiCC: Int {
     case volume = 59
     case pan = 60
@@ -180,3 +330,4 @@ enum SamplerMidiCC: Int {
     case envOrder = 61
     case formant = 62
 }
+*/

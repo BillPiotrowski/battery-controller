@@ -9,7 +9,21 @@
 import Foundation
 
 
-
+protocol WPData {
+    
+}
+extension WPData {
+    var mirror: Mirror {
+        return Mirror(reflecting: self)
+    }
+    var reflectedDictionary: [String: Any] {
+        return Dictionary(
+            uniqueKeysWithValues: mirror.children.enumerated().map{
+                (String($0),$1)
+            }
+        )
+    }
+}
 
 protocol EmbeddableData: _Data {
     var fullDictionary: [String: Any] { get }

@@ -15,7 +15,7 @@ struct SampleCellAmpEnvelopeData: ReadableData {
     var decay: Double
     var sustain: Double
     var release: Double
-    var enableAttackEnvelope: Bool
+    var enableAmpEnv: Bool
     
     init(
         attack: Double,
@@ -30,7 +30,7 @@ struct SampleCellAmpEnvelopeData: ReadableData {
         self.decay = decay
         self.sustain = sustain
         self.release = release
-        self.enableAttackEnvelope = enableAttackEnvelope
+        self.enableAmpEnv = enableAttackEnvelope        
     }
     
     init(dictionary: [String : Any]) throws {
@@ -56,7 +56,7 @@ struct SampleCellAmpEnvelopeData: ReadableData {
         )
         let enableAttackEnvelope = try Self.asBoolIn(
             dictionary: dictionary,
-            key: Property.enableAttackEnvelope.rawValue
+            key: Property.enableAmpEnv.rawValue
         )
         self.init(
             attack: attack,
@@ -78,7 +78,7 @@ extension SampleCellAmpEnvelopeData: WriteableData {
             Property.decay.rawValue: decay,
             Property.sustain.rawValue: sustain,
             Property.release.rawValue: release,
-            Property.enableAttackEnvelope.rawValue: enableAttackEnvelope
+            Property.enableAmpEnv.rawValue: enableAmpEnv
         ]
     }
 }
@@ -103,6 +103,23 @@ extension SampleCellAmpEnvelopeData {
         case decay = "decay"
         case sustain = "sustain"
         case release = "release"
-        case enableAttackEnvelope = "enableAttackEnvelope"
+        case enableAmpEnv = "enableAmpEnv"
     }
 }
+
+// MARK: SAMPLE PROP
+extension SampleCellAmpEnvelopeData: SampleCellPropertyProtocol {
+    var outputValues: [String: MidiCCValueMap] {
+        return [
+            Property.attack.rawValue: .attack(value: attack),
+            Property.hold.rawValue: .hold(value: hold),
+            Property.decay.rawValue: .decay(value: decay),
+            Property.sustain.rawValue: .sustain(value: sustain),
+            Property.release.rawValue: .release(value: release),
+            Property.enableAmpEnv.rawValue:
+                .enableAttackEnvelope(value: enableAmpEnv)
+        ]
+    }
+    
+}
+

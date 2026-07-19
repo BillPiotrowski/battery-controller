@@ -44,7 +44,7 @@ extension MidiDeviceSelectionViewController: NSTableViewDataSource {
 
     fileprivate enum CellIdentifiers {
       static let enableCell = "enableCellID"
-      static let nameCell = "nameCellID"
+      static let nameCell = "deviceCellID"
       static let channelCell = "channelCellID"
     }
     
@@ -59,7 +59,7 @@ extension MidiDeviceSelectionViewController: NSTableViewDataSource {
         //dateFormatter.dateStyle = .long
         //dateFormatter.timeStyle = .long
         
-        print("ROW: \(row)")
+        //print("ROW: \(row)")
         
         // 1
         guard let item = midiInput?.options.value[row]

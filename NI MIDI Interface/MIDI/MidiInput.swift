@@ -48,7 +48,6 @@ class MidiInput {
                 value: self.midiSourcesObserver(midiSources:)
             )
         )
-        
     }
 }
 
@@ -80,7 +79,7 @@ extension MidiInput {
            for midiCommand in midiCommands {
                switch midiCommand.mikMidiCommand.commandType {
                case .noteOn, .noteOff:
-                   print("NOTE!!")
+                   //print("NOTE!!")
                    guard let mikMidiNote = midiCommand.mikMidiCommand as? MIKMIDINoteCommand
                    //guard let mikMidiNote = midiCommand.mikMidiCommand as? MIKMIDINoteOnCommand
                        else {
