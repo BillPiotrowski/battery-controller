@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -43,8 +43,6 @@
 		F06CFC45245BF0E6008A8CA2 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06CFC44245BF0E6008A8CA2 /* Document.swift */; };
 		F06CFC48245BF897008A8CA2 /* DocumentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06CFC47245BF897008A8CA2 /* DocumentData.swift */; };
 		F073FA8B248B4FF9003CB0E7 /* Speed.swift in Sources */ = {isa = PBXBuildFile; fileRef = F073FA8A248B4FF9003CB0E7 /* Speed.swift */; };
-		F078136224688EF4001FB04F /* Midi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F078136124688EF4001FB04F /* Midi.framework */; };
-		F078136324688EF4001FB04F /* Midi.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F078136124688EF4001FB04F /* Midi.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F079A298245D565200E62118 /* MidiControllerChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079A297245D565200E62118 /* MidiControllerChange.swift */; };
 		F079A29A245D56BF00E62118 /* MidiTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079A299245D56BF00E62118 /* MidiTypeAliases.swift */; };
 		F079A29E245E262C00E62118 /* MidiEndpointName.c in Sources */ = {isa = PBXBuildFile; fileRef = F079A29D245E262C00E62118 /* MidiEndpointName.c */; };
@@ -74,19 +72,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		F078136424688EF4001FB04F /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				F078136324688EF4001FB04F /* Midi.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		13560F53CF931DD036560744 /* Pods-NI MIDI InterfaceUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI InterfaceUITests.debug.xcconfig"; path = "Target Support Files/Pods-NI MIDI InterfaceUITests/Pods-NI MIDI InterfaceUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -137,7 +122,6 @@
 		F06CFC44245BF0E6008A8CA2 /* Document.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		F06CFC47245BF897008A8CA2 /* DocumentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentData.swift; sourceTree = "<group>"; };
 		F073FA8A248B4FF9003CB0E7 /* Speed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Speed.swift; sourceTree = "<group>"; };
-		F078136124688EF4001FB04F /* Midi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Midi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F079A297245D565200E62118 /* MidiControllerChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiControllerChange.swift; sourceTree = "<group>"; };
 		F079A299245D56BF00E62118 /* MidiTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiTypeAliases.swift; sourceTree = "<group>"; };
 		F079A29B245E262C00E62118 /* NI MIDI Interface-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NI MIDI Interface-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -160,7 +144,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				38DF972FAA964C204996869B /* Pods_NI_MIDI_Interface.framework in Frameworks */,
-				F078136224688EF4001FB04F /* Midi.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +169,6 @@
 		4E6F8BA87215EFAE84E347AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F078136124688EF4001FB04F /* Midi.framework */,
 				529A2414D484FDAA71C8667A /* Pods_NI_MIDI_Interface.framework */,
 				F572FEFD745BDE0FF7E4E224 /* Pods_NI_MIDI_InterfaceTests.framework */,
 				6C8A70DE51ABFBCFDDB9CF11 /* Pods_NI_MIDI_InterfaceUITests.framework */,
@@ -360,7 +342,6 @@
 				F043E0D7245A27C80070C193 /* Frameworks */,
 				F043E0D8245A27C80070C193 /* Resources */,
 				0EC6B60F85DE23F2EC93B75E /* [CP] Embed Pods Frameworks */,
-				F078136424688EF4001FB04F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -489,9 +470,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -784,7 +769,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "NI MIDI Interface/MIDI/NI MIDI Interface-Bridging-Header.h";
@@ -809,7 +794,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "NI MIDI Interface/MIDI/NI MIDI Interface-Bridging-Header.h";
