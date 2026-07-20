@@ -130,6 +130,18 @@ extension BatteryCell {
 
 // MARK: UPDATE
 extension BatteryCell {
+    
+    /// A lot of diliberation was put in to how this is executed and multiple options were considered:
+    ///
+    /// **direct property manipulation** - The owner could route MIDI CCs to directly change the property of the cell class instance and then either: each property has a publisher (and therefore 30+ \* 16 publshers) or the owner takes a snapshot before making changes and then compares them afterwards. Side effects would need to be accounted for using `get` and `set`.
+    ///
+    /// This `apply` solution was chosen because it is sequential and easy to read – without needing to reason through property setters. This function simply handles side effects in one place. It leverages enums, so the compiler can enforce any missing definitions. it is slightly more efficient since it does not require snapshots and comparisons – the `diff` is generated directly as it processes the incoming changes.
+    ///
+    /// The downside is that it adds an artificial interface on class property changes. `snapshot and diff` also reports net results: if a single batch triggers a cascade and also explicitly sets the same parameter, it reports only the final value. `apply` must therefore dedupe the returned array by parameter identity — last write wins — to match that behavior.
+    ///
+    /// - Parameters:
+    ///   - midiCC: <#midiCC description#>
+    ///   - destination: <#destination description#>
     func update(
         midiCC: MidiControllerChange,
         destination: MidiCCInterface.Destination

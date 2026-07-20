@@ -35,3 +35,4 @@ Each new kit will need to save a copy of the `Battery Instrument.nbkt` with the 
 
 ## Notes
 - Battery 4 is unmaintained.
+- Refactors should be surgical. Optimized for diff comparisons.
