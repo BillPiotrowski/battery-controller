@@ -12,7 +12,6 @@ import ReactiveSwift
 //import CoreMIDI
 import MIKMIDI
 
-
 struct MIDINote {
     // use type alias?
     let noteNumber: CustomMIDINoteNumber
@@ -29,6 +28,7 @@ class MIDI: NSObject {
         return midi.outputPort
     }
     */
+    private var token: Any?
     @objc dynamic let MIKDeviceManager: MIKMIDIDeviceManager
     
     let midiNoteObserver: Signal<MIDINote, Never>
@@ -85,15 +85,26 @@ class MIDI: NSObject {
         //let allDevices = MIKMIDIDeviceManager.shared.virtualDestinations
         print("ALL DEVICES:")
         print(MIKDeviceManager.virtualDestinations)
-        
+        /*
         NotificationCenter.default.addObserver(self,
         selector: #selector(urlContainerDidChange(_:)),
         name: .MIKMIDIVirtualEndpointWasAdded,
         object: MIKMIDIDeviceManager.shared)
-
-        addObserver(self, forKeyPath: #keyPath(MIKDeviceManager.virtualDestinations), options: [.old, .new], context: nil)
+*/
+        addObserver(
+            self,
+            forKeyPath: #keyPath(MIKDeviceManager.virtualDestinations),
+            options: [.old, .new],
+            context: nil
+        )
+        addObserver(
+            self,
+            forKeyPath: #keyPath(MIKDeviceManager.virtualSources),
+            options: [.old, .new],
+            context: nil
+        )
         
-        //midi.addListener(self)
+        
         
     }
     @objc func urlContainerDidChange(_ test: NSNotification){
@@ -101,21 +112,23 @@ class MIDI: NSObject {
         //dump(test.userInfo)
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        //dump(object)
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey : Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
         if keyPath == #keyPath(MIKDeviceManager.virtualDestinations) {
-            // Update Time Label
-            /*
-            print("VIRTUAL DEST CHANGED!")
-            for virtualDevice in MIKDeviceManager.virtualDestinations {
-                print(virtualDevice.name ?? "UNKNOWN")
-                print(virtualDevice)
-            }
- */
             let outputDevices = MIDI.getOutputDevices(
                 deviceManager: MIKDeviceManager
             )
             self.midiOutputDevicesInput.send(value: outputDevices)
+        }
+        if keyPath == #keyPath(MIKDeviceManager.virtualSources) {
+            let inputDevices = MIDI.getSources(
+                deviceManager: MIKDeviceManager
+            )
+            self.midiSourcesInput.send(value: inputDevices)
         }
         
     }
@@ -145,166 +158,52 @@ class MIDI: NSObject {
         return sources
     }
     
-    func connect(midiSource: MidiSource, eventHandler: @escaping (MidiSource, [MidiCommand]) -> Void) throws -> Any {
-        return try self.MIKDeviceManager.connectInput(midiSource.mikEndpoint, eventHandler: { mikMidiSource, mikMidiCommands in
-            let midiSource = MidiSource(mikMidiSourceEndpoint: mikMidiSource)
-            var midiCommands = [MidiCommand]()
-            for mikMidiCommand in mikMidiCommands {
-                let midiCommand = MidiCommand(mikMidiCommand: mikMidiCommand)
-                midiCommands.append(midiCommand)
+    func connect(
+        midiSource: MidiSource,
+        eventHandler: @escaping (MidiSource, [MidiCommand]) -> Void
+    ) throws -> Any {
+        print("DEVICES")
+        print(MIKMIDIDeviceManager.shared.availableDevices)
+        let token = try MIKMIDIDeviceManager.shared.connectInput(
+            midiSource.mikEndpoint,
+            //eventHandler: <#T##MIKMIDIEventHandlerBlock##MIKMIDIEventHandlerBlock##(MIKMIDISourceEndpoint, [MIKMIDICommand]) -> Void#>)
+        //return try self.MIKDeviceManager.connectInput(
+          //  midiSource.mikEndpoint,
+            eventHandler: { mikMidiSource, mikMidiCommands in
+                //print("mIDI EVENT")
+                let midiSource = MidiSource(mikMidiSourceEndpoint: mikMidiSource)
+                var midiCommands = [MidiCommand]()
+                for mikMidiCommand in mikMidiCommands {
+                    let midiCommand = MidiCommand(mikMidiCommand: mikMidiCommand)
+                    midiCommands.append(midiCommand)
+                }
+                eventHandler(midiSource, midiCommands)
+                
             }
-            eventHandler(midiSource, midiCommands)
-            
-        })
-        
-        /*
-        let signalProducer: SignalProducer<Int, Never> =
-         SignalProducer { (observer, lifetime) in
-            for i in 0..<10 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0 *  Double(i)) {
-              observer.send(value: i)
-              if i == 9 { //Mark completion on 9th iteration
-                observer.sendCompleted()
-              }
-            }
-          }
-        }
- */
-    }
-    
-    
-    
-    
-}
-/*
-extension MIDI: AKMIDIListener{
-    func receivedMIDINoteOn(
-        noteNumber: MIDINoteNumber,
-        velocity: MIDIVelocity,
-        channel: MIDIChannel,
-        portID: MIDIUniqueID?,
-        offset: MIDITimeStamp
-    ){
-        
-        //print("NOTE ON: \(noteNumber) / VEL: \(velocity), port: \(portID)")
-        let midiNote = MIDINote(noteNumber: Int(noteNumber), velocity: Int(velocity))
-        midiNoteInput.send(value: midiNote)
-    }
-    func receivedMIDINoteOff(noteNumber: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        print("NOTE OFF")
-        
-    }
-    func receivedMIDIController(
-        _ controller: MIDIByte,
-        value: MIDIByte,
-        channel: MIDIChannel,
-        portID: MIDIUniqueID?,
-        offset: MIDITimeStamp
-    ){
-        let midiCC = MidiControllerChange(
-            ccNumber: MidiControlChangeNumber(controller),
-            value: Int(value),
-            channel: MidiChannel(channel)
         )
-        midiCCInput.send(value: midiCC)
+        return token
     }
-    func receivedMIDIAftertouch(noteNumber: MIDINoteNumber, pressure: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        
-    }
-    func receivedMIDIAftertouch(_ pressure: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        
-    }
-    func receivedMIDIPitchWheel(_ pitchWheelValue: MIDIWord, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        
-    }
-    func receivedMIDIProgramChange(_ program: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        
-    }
-    func receivedMIDISystemCommand(_ data: [MIDIByte], portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        
+    // DISCONNECT DOES NOT APPEAR TO BE WORKING!!
+    // BUG: https://github.com/mixedinkey-opensource/MIKMIDI/issues/289
+    func disconnect(token: Any){
+        MIKMIDIDeviceManager.shared.disconnectConnection(forToken: token)
     }
     
-    func receivedMIDIPropertyChange(propertyChangeInfo: MIDIObjectPropertyChangeNotification){
-        /*
-        switch propertyChangeInfo.messageID {
-        case .msgObjectAdded:
-            print("OBJECT ADDED!")
-            print("OBJECT TYPE: \(propertyChangeInfo.objectType)")
-            print("OBJECT: \(propertyChangeInfo.object)")
-        case .msgObjectRemoved:
-            print("OBJECT REMOVED!")
-            print("OBJECT TYPE: \(propertyChangeInfo.objectType)")
-            print("OBJECT: \(propertyChangeInfo.object)")
-        case .msgIOError: print("IO ERROR")
-        case .msgPropertyChanged:
-            print("MIDI PROPERTY CHANGE!")
-            // DOES NOT WORK. NEED TO FIGURE OUT!!!!!
-            let object = propertyChangeInfo.object
-            
-            var unmanagedProperties: Unmanaged<CFPropertyList>?
-
-            MIDIObjectGetProperties(object, &unmanagedProperties, true)
-            
-            guard let properties = unmanagedProperties?.takeUnretainedValue() as? [String: Any]
-                else {
-                    unmanagedProperties?.release()
-                    break
-            }
-            /*
-            for property in properties {
-                print(property)
-            }
-            */
-            guard let uniqueID = properties["uniqueID"] as? Int32
-                else { break }
-            //print("PRE COUNT: \(midi.destinationUIDs)")
-            
-            midi.createVirtualOutputPort(uniqueID, name: "NEW PORT")
-            midi.createVirtualInputPort(uniqueID, name: "NEW PORT")
-            //print("DESTINATION NAME: \(midi.destinationName(for: uniqueID))")
-            
-            //print("POST COUNT: \(midi.destinationUIDs)")
-            //print("SOURCE COUNT: \(midi.inputUIDs)")
-            
-            
-            
-        case .msgSerialPortOwnerChanged: print("PORT OWNER CHANGED")
-        case .msgSetupChanged: print("SETUP CHANGED")
-        case .msgThruConnectionsChanged: print("THRU CONNECTION CHANGED")
-        default: break
-        }
-        
-        let newOutputDevices = MIDI.getOutputDevices(midi: midi)
-        if(midiOutputDevices.value != newOutputDevices) {
-            print("NEW OUTPUT DEVICES")
-            midiOutputDevicesInput.send(value: newOutputDevices)
-        }
- */
-    }
-    func receivedMIDINotification(notification: MIDINotification){
-        
-        /*
-        switch notification.messageID{
-        case .msgObjectAdded: print("OBJECT ADDED")
-        case .msgObjectRemoved: print("OBJECT REMOVED")
-        default: break
-        }
- */
-    }
+    
+    
+    
 }
-
-*/
 
 
 extension MIDI {
     func sendMidiNote(midiNote: MIDINote, channel: Int, devices: [MidiDevice]) throws {
-        print("CHANNEL: \(channel)")
+        //print("CHANNEL: \(channel)")
         
         let midiNoteCommand = MIKMIDINoteCommand(
             note: UInt(midiNote.noteNumber),
             velocity: UInt(midiNote.velocity),
             channel: UInt8(channel),
-            isNoteOn: true,
+            isNoteOn: midiNote.isNoteOn,
             midiTimeStamp: MIDITimeStamp()
         )
         for device in devices {

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol Typeguard {
+protocol Typeguard: WPData {
     
 }
 

@@ -6,24 +6,22 @@
 //  Copyright © 2020 William Piotrowski. All rights reserved.
 //
 
-import AudioKit
-
 struct MidiControllerChange {
     let ccNumber: MidiControlChangeNumber
     let value: MidiControlChangeValue
     let channel: MidiChannel
-    let destinationDevices: [MidiDevice]?
+    //let destinationDevices: [MidiDevice]?
     
     init(
         ccNumber: MidiControlChangeNumber,
         value: MidiControlChangeValue,
-        channel: MidiChannel,
-        destinationDevices: [MidiDevice]? = nil
+        channel: MidiChannel//,
+        //destinationDevices: [MidiDevice]? = nil
     ){
         self.ccNumber = ccNumber
         self.value = value
         self.channel = channel
-        self.destinationDevices = destinationDevices
+        //self.destinationDevices = destinationDevices
     }
 }
 extension MidiControllerChange {
@@ -35,22 +33,5 @@ extension MidiControllerChange {
         guard value == MidiControllerChange.totalUnits
             else { return false }
         return true
-    }
-    var midiData : [UInt8] {
-        return [status.byte, UInt8(ccNumber), UInt8(value)]
-    }
-}
-
-// MARK: PRIVATE METHODS
-extension MidiControllerChange {
-    private var midiChannel: MIDIChannel {
-        return MIDIChannel(channel)
-    }
-    private static let statusType = AKMIDIStatusType.controllerChange
-    private var status: AKMIDIStatus {
-        return AKMIDIStatus(
-            type: MidiControllerChange.statusType,
-            channel: midiChannel
-        )
     }
 }
