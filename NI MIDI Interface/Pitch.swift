@@ -50,3 +50,7 @@ struct Pitch {
         return Int(controllerValue * 127)
     }
 }
+
+extension Pitch: Equatable {
+
+}

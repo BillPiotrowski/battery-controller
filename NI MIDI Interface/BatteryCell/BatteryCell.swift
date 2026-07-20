@@ -131,91 +131,10 @@ extension BatteryCell {
 // MARK: UPDATE
 extension BatteryCell {
 
-    func apply(_ intents: [Change]) -> [Change] {
-        var updates: [Change] = []
-        
-        intents.forEach { change in
-            switch change{
-            case .start1(let value):
-                propertyData.start1 = value
-            case .start2(let value):
-                propertyData.start2 = value
-            case .volume(let value):
-                propertyData.volume = value
-            case .pan(let value):
-                propertyData.pan = value
-            case .speedCoarse(let value):
-                propertyData.speed.course = value
-            case .speedFine(let value):
-                propertyData.speed.fine = value
-            case .filterLow(let value):
-                propertyData.filterLow = value
-            case .filterHigh(let value):
-                propertyData.filterHigh = value
-            case .transientAttack(let value):
-                propertyData.transientAttack = value
-            case .transientSustain(let value):
-                propertyData.transientSustain = value
-            case .enableTransientMaster(let value):
-                propertyData.enableTransientMaster = value
-            case .fineTune(let value):
-                propertyData.fineTune = value
-            case .reverbSend(let value):
-                propertyData.reverbSend = value
-            case .delaySend(let value):
-                propertyData.delaySend = value
-            case .velocity(let value):
-                propertyData.velocity = value
-            case .envOrder(let value):
-                propertyData.envOrder = value
-            case .formant(let value):
-                propertyData.formant = value
-            case .loopStart(let value):
-                propertyData.loopStart = value
-            case .loopStartFine(let value):
-                propertyData.loopStartFine = value
-            case .loopLength(let value):
-                propertyData.loopLength = value
-            case .loopLengthFine(let value):
-                propertyData.loopLengthFine = value
-            case .attack(let value):
-                ampEnvelopeData.attack = value
-            case .hold(let value):
-                ampEnvelopeData.hold = value
-            case .decay(let value):
-                ampEnvelopeData.decay = value
-            case .sustain(let value):
-                ampEnvelopeData.sustain = value
-            case .release(let value):
-                ampEnvelopeData.release = value
-            case .enableAmpEnvelope(let value):
-                ampEnvelopeData.enableAmpEnv = value
-            case .lofiBits(let value):
-                loFiData.bits = value
-            case .lofiHertz(let value):
-                loFiData.hertz = value
-            case .lofiNoise(let value):
-                loFiData.noise = value
-            case .lofiColor(let value):
-                loFiData.color = value
-            case .lofiOut(let value):
-                loFiData.out = value
-            case .enableLofi(let value):
-                loFiData.enable = value
-            case .pitch(let value):
-                sampleData.pitch = value
-            case .mute(let value):
-                stateData.mute = value
-            case .solo(let value):
-                stateData.solo = value
-            case .lock(let value):
-                stateData.lock = value
-            }
-            updates.append(change)
-        }
-        
-        return updates
-        
+    private func write<T: Equatable>(_ new: T, _ current: inout T) -> Bool {
+        guard current != new else { return false }
+        current = new
+        return true
     }
     
     /// A lot of diliberation was put in to how this is executed and multiple options were considered:
@@ -225,6 +144,61 @@ extension BatteryCell {
     /// This `apply` solution was chosen because it is sequential and easy to read – without needing to reason through property setters. This function simply handles side effects in one place. It leverages enums, so the compiler can enforce any missing definitions. it is slightly more efficient since it does not require snapshots and comparisons – the `diff` is generated directly as it processes the incoming changes.
     ///
     /// The downside is that it adds an artificial interface on class property changes. `snapshot and diff` also reports net results: if a single batch triggers a cascade and also explicitly sets the same parameter, it reports only the final value. `apply` must therefore dedupe the returned array by parameter identity — last write wins — to match that behavior.
+    /// 
+    /// - Parameter intents: <#intents description#>
+    /// - Returns: <#description#>
+    func apply(_ intents: [Change]) -> [Change] {
+        var updates: [Change] = []
+        
+        intents.forEach { change in
+            let didChange: Bool
+            
+            switch change{
+            case .start1(let v): didChange = write(v, &propertyData.start1)
+            case .start2(let v): didChange = write(v, &propertyData.start2)
+            case .volume(let v): didChange = write(v, &propertyData.volume)
+            case .pan(let v): didChange = write(v, &propertyData.pan)
+            case .speedCoarse(let v): didChange = write(v, &propertyData.speed.course)
+            case .speedFine(let v): didChange = write(v, &propertyData.speed.fine)
+            case .filterLow(let v): didChange = write(v, &propertyData.filterLow)
+            case .filterHigh(let v): didChange = write(v, &propertyData.filterHigh)
+            case .transientAttack(let v): didChange = write(v, &propertyData.transientAttack)
+            case .transientSustain(let v): didChange = write(v, &propertyData.transientSustain)
+            case .enableTransientMaster(let v): didChange = write(v, &propertyData.enableTransientMaster)
+            case .fineTune(let v): didChange = write(v, &propertyData.fineTune)
+            case .reverbSend(let v): didChange = write(v, &propertyData.reverbSend)
+            case .delaySend(let v): didChange = write(v, &propertyData.delaySend)
+            case .velocity(let v): didChange = write(v, &propertyData.velocity)
+            case .envOrder(let v): didChange = write(v, &propertyData.envOrder)
+            case .formant(let v): didChange = write(v, &propertyData.formant)
+            case .loopStart(let v): didChange = write(v, &propertyData.loopStart)
+            case .loopStartFine(let v): didChange = write(v, &propertyData.loopStartFine)
+            case .loopLength(let v): didChange = write(v, &propertyData.loopLength)
+            case .loopLengthFine(let v): didChange = write(v, &propertyData.loopLengthFine)
+            case .attack(let v): didChange = write(v, &ampEnvelopeData.attack)
+            case .hold(let v): didChange = write(v, &ampEnvelopeData.hold)
+            case .decay(let v): didChange = write(v, &ampEnvelopeData.decay)
+            case .sustain(let v): didChange = write(v, &ampEnvelopeData.sustain)
+            case .release(let v): didChange = write(v, &ampEnvelopeData.release)
+            case .enableAmpEnvelope(let v): didChange = write(v, &ampEnvelopeData.enableAmpEnv)
+            case .lofiBits(let v): didChange = write(v, &loFiData.bits)
+            case .lofiHertz(let v): didChange = write(v, &loFiData.hertz)
+            case .lofiNoise(let v): didChange = write(v, &loFiData.noise)
+            case .lofiColor(let v): didChange = write(v, &loFiData.color)
+            case .lofiOut(let v): didChange = write(v, &loFiData.out)
+            case .enableLofi(let v): didChange = write(v, &loFiData.enable)
+            case .pitch(let v): didChange = write(v, &sampleData.pitch)
+            case .mute(let v): didChange = write(v, &stateData.mute)
+            case .solo(let v): didChange = write(v, &stateData.solo)
+            case .lock(let v): didChange = write(v, &stateData.lock)
+            }
+            if didChange { updates.append(change) }
+        }
+        
+        return updates
+        
+    }
+    
     ///
     /// - Parameters:
     ///   - midiCC: <#midiCC description#>

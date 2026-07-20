@@ -19,6 +19,7 @@ This architecture was designed to solve a few problems:
 - Swap scattered print() debugging for os.Logger.
 - Reconsider ReactiveSwift usage, starting with the simplest spots (MidiInput/MidiOutput's Signal/Property pairs) as a candidate for @Published/Combine. This is explicitly not a "do it alongside other cleanup" item — bigger and riskier, deserves its own pass.
 - convert all input buttons from toggle to trigger: ot trigger-safe (mute, solo, lock, select): these take the raw incoming value and assign it directly as the new persistent state:
+- add two new pitch inputs: octave and note? for more granular input control.
 
 
 ## Battery Modulator Limitation
