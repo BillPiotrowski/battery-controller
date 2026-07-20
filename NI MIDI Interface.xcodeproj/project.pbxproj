@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2C84CC832ECBCF7039D83E91 /* Pods_NI_MIDI_InterfaceTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F572FEFD745BDE0FF7E4E224 /* Pods_NI_MIDI_InterfaceTests.framework */; };
-		38DF972FAA964C204996869B /* Pods_NI_MIDI_Interface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 529A2414D484FDAA71C8667A /* Pods_NI_MIDI_Interface.framework */; };
 		632B31B3300D76F700442564 /* ReactiveSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 632B31B2300D76F700442564 /* ReactiveSwift */; };
-		81012BDE02462914E3438BB7 /* Pods_NI_MIDI_InterfaceUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C8A70DE51ABFBCFDDB9CF11 /* Pods_NI_MIDI_InterfaceUITests.framework */; };
 		F026D3ED2463AB7B001FE191 /* MidiDeviceSelectionStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026D3EC2463AB7B001FE191 /* MidiDeviceSelectionStruct.swift */; };
 		F026D3EF2463AB90001FE191 /* MidiOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026D3EE2463AB90001FE191 /* MidiOutput.swift */; };
 		F026D3F12463ABB3001FE191 /* MidiNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026D3F02463ABB3001FE191 /* MidiNote.swift */; };
@@ -71,14 +68,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		13560F53CF931DD036560744 /* Pods-NI MIDI InterfaceUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI InterfaceUITests.debug.xcconfig"; path = "Target Support Files/Pods-NI MIDI InterfaceUITests/Pods-NI MIDI InterfaceUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		3808EF9E235D8EB39F2E876D /* Pods-NI MIDI Interface.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI Interface.debug.xcconfig"; path = "Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface.debug.xcconfig"; sourceTree = "<group>"; };
-		529A2414D484FDAA71C8667A /* Pods_NI_MIDI_Interface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NI_MIDI_Interface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		57798045C7A081D31E09ACDF /* Pods-NI MIDI Interface.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI Interface.release.xcconfig"; path = "Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface.release.xcconfig"; sourceTree = "<group>"; };
-		6C8A70DE51ABFBCFDDB9CF11 /* Pods_NI_MIDI_InterfaceUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NI_MIDI_InterfaceUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		88D0BFD7106E9CA7F3C2F7B9 /* Pods-NI MIDI InterfaceUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI InterfaceUITests.release.xcconfig"; path = "Target Support Files/Pods-NI MIDI InterfaceUITests/Pods-NI MIDI InterfaceUITests.release.xcconfig"; sourceTree = "<group>"; };
-		C63346FEE85B3E88223FB459 /* Pods-NI MIDI InterfaceTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI InterfaceTests.release.xcconfig"; path = "Target Support Files/Pods-NI MIDI InterfaceTests/Pods-NI MIDI InterfaceTests.release.xcconfig"; sourceTree = "<group>"; };
-		D3896657BDDEE1125539AC98 /* Pods-NI MIDI InterfaceTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NI MIDI InterfaceTests.debug.xcconfig"; path = "Target Support Files/Pods-NI MIDI InterfaceTests/Pods-NI MIDI InterfaceTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F026D3EC2463AB7B001FE191 /* MidiDeviceSelectionStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiDeviceSelectionStruct.swift; sourceTree = "<group>"; };
 		F026D3EE2463AB90001FE191 /* MidiOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiOutput.swift; sourceTree = "<group>"; };
 		F026D3F02463ABB3001FE191 /* MidiNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiNote.swift; sourceTree = "<group>"; };
@@ -126,7 +115,6 @@
 		F0F6E6BA2466749F006BC9CC /* Pitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pitch.swift; sourceTree = "<group>"; };
 		F0F6E6BC24669106006BC9CC /* MidiCCValueMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiCCValueMap.swift; sourceTree = "<group>"; };
 		F0F6E6BE2466BD75006BC9CC /* MidiOutputSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiOutputSelectionViewController.swift; sourceTree = "<group>"; };
-		F572FEFD745BDE0FF7E4E224 /* Pods_NI_MIDI_InterfaceTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NI_MIDI_InterfaceTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,7 +122,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38DF972FAA964C204996869B /* Pods_NI_MIDI_Interface.framework in Frameworks */,
 				632B31B3300D76F700442564 /* ReactiveSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,7 +130,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C84CC832ECBCF7039D83E91 /* Pods_NI_MIDI_InterfaceTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,32 +137,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81012BDE02462914E3438BB7 /* Pods_NI_MIDI_InterfaceUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4E6F8BA87215EFAE84E347AC /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				529A2414D484FDAA71C8667A /* Pods_NI_MIDI_Interface.framework */,
-				F572FEFD745BDE0FF7E4E224 /* Pods_NI_MIDI_InterfaceTests.framework */,
-				6C8A70DE51ABFBCFDDB9CF11 /* Pods_NI_MIDI_InterfaceUITests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		A3EAE45A4904E8B849CB0F76 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3808EF9E235D8EB39F2E876D /* Pods-NI MIDI Interface.debug.xcconfig */,
-				57798045C7A081D31E09ACDF /* Pods-NI MIDI Interface.release.xcconfig */,
-				D3896657BDDEE1125539AC98 /* Pods-NI MIDI InterfaceTests.debug.xcconfig */,
-				C63346FEE85B3E88223FB459 /* Pods-NI MIDI InterfaceTests.release.xcconfig */,
-				13560F53CF931DD036560744 /* Pods-NI MIDI InterfaceUITests.debug.xcconfig */,
-				88D0BFD7106E9CA7F3C2F7B9 /* Pods-NI MIDI InterfaceUITests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -215,7 +184,6 @@
 				F043E0FA245A27CA0070C193 /* NI MIDI InterfaceUITests */,
 				F043E0DB245A27C80070C193 /* Products */,
 				A3EAE45A4904E8B849CB0F76 /* Pods */,
-				4E6F8BA87215EFAE84E347AC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -315,7 +283,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F043E100245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI Interface" */;
 			buildPhases = (
-				6265524C812C7F3D3097C1F7 /* [CP] Check Pods Manifest.lock */,
 				F043E0D6245A27C80070C193 /* Sources */,
 				F043E0D7245A27C80070C193 /* Frameworks */,
 				F043E0D8245A27C80070C193 /* Resources */,
@@ -333,7 +300,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F043E103245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceTests" */;
 			buildPhases = (
-				C171FBF5D1A21F1AE6CB9C6E /* [CP] Check Pods Manifest.lock */,
 				F043E0E8245A27CA0070C193 /* Sources */,
 				F043E0E9245A27CA0070C193 /* Frameworks */,
 				F043E0EA245A27CA0070C193 /* Resources */,
@@ -352,7 +318,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F043E106245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceUITests" */;
 			buildPhases = (
-				C2B27A173FC08BEDDB7D0ECF /* [CP] Check Pods Manifest.lock */,
 				F043E0F3245A27CA0070C193 /* Sources */,
 				F043E0F4245A27CA0070C193 /* Frameworks */,
 				F043E0F5245A27CA0070C193 /* Resources */,
@@ -440,75 +405,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6265524C812C7F3D3097C1F7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NI MIDI Interface-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C171FBF5D1A21F1AE6CB9C6E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NI MIDI InterfaceTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C2B27A173FC08BEDDB7D0ECF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NI MIDI InterfaceUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F043E0D6245A27C80070C193 /* Sources */ = {
@@ -711,7 +607,6 @@
 		};
 		F043E101245A27CA0070C193 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3808EF9E235D8EB39F2E876D /* Pods-NI MIDI Interface.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -738,7 +633,6 @@
 		};
 		F043E102245A27CA0070C193 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 57798045C7A081D31E09ACDF /* Pods-NI MIDI Interface.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -764,7 +658,6 @@
 		};
 		F043E104245A27CA0070C193 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3896657BDDEE1125539AC98 /* Pods-NI MIDI InterfaceTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -787,7 +680,6 @@
 		};
 		F043E105245A27CA0070C193 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C63346FEE85B3E88223FB459 /* Pods-NI MIDI InterfaceTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -810,7 +702,6 @@
 		};
 		F043E107245A27CA0070C193 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 13560F53CF931DD036560744 /* Pods-NI MIDI InterfaceUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -831,7 +722,6 @@
 		};
 		F043E108245A27CA0070C193 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 88D0BFD7106E9CA7F3C2F7B9 /* Pods-NI MIDI InterfaceUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
