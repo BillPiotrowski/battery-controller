@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MidiInputMapping: Int {
+enum MidiInputMapping: Int, CaseIterable {
     case pitch = 14
     case volume = 13
     case pan = 17
@@ -139,74 +139,6 @@ enum MidiCCInterface: CaseIterable {
     case loopStart, loopStartFine
     case loopLength, loopLengthFine
     
-    init(inputNumber: MidiControlChangeNumber) throws {
-        for sampleProperty in MidiCCInterface.allCases {
-            guard sampleProperty.controllerMidiCCNumber == inputNumber
-                else { continue }
-            //print("MATCH!")
-            self = sampleProperty
-            return
-        }
-        //print("NO MATCH!")
-        throw NSError(domain: "Does not match", code: 234, userInfo: nil)
-    }
-    
-    var controllerMidiCCNumber: MidiControlChangeNumber {
-        switch self {
-        case .pitch: return 14
-        case .volume: return 13
-        case .pan: return 17
-        case .speed: return 18
-        case .fineSpeed: return 45
-        case .start1: return 11
-        case .start2: return 12
-        case .filterLow: return 15
-        case .filterHigh: return 16
-        case .attack: return 21
-        case .hold: return 25
-        case .decay: return 22
-        case .sustain: return 23
-        case .release: return 24
-        case .enableAttackEnvelope: return 52
-        case .transientAttack: return 27
-        case .transientSustain: return 28
-        case .enableTransientMaster: return 53
-        case .tune: return 26
-        case .fineTune: return 46
-        case .lofiBits: return 31
-        case .lofiHertz: return 32
-        case .lofiNoise: return 33
-        case .lofiColor: return 34
-        case .lofiOut: return 35
-        case .enableLofi: return 51
-        case .reverbSend: return 36
-        case .delaySend: return 37
-        case .velocity: return 38
-        case .envOrder: return 41
-        case .formant: return 42
-        case .mute: return 62
-        case .solo: return 63
-        case .unsoloAll: return 67
-        case .lock: return 64
-        case .lockAll: return 65
-        case .unlockAll: return 66
-        case .select: return 68
-        case .copy: return 43
-        case .paste: return 44
-        case .reset: return 61
-        case .resetAll: return 69
-        case .undo: return 73
-        case .redo: return 74
-        case .loopStart:
-            return MidiInputMapping.loopStart.rawValue
-        case .loopStartFine:
-            return MidiInputMapping.loopStartFine.rawValue
-        case .loopLength:
-            return MidiInputMapping.loopLength.rawValue
-        case .loopLengthFine:
-            return MidiInputMapping.loopLengthFine.rawValue
-        }
-    }
     var midiCCOutputNumber: MidiControlChangeNumber? {
         // instead, make this an associative array with unique numbers. [Int: SampleProperty]
         switch self {
