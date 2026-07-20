@@ -130,6 +130,93 @@ extension BatteryCell {
 
 // MARK: UPDATE
 extension BatteryCell {
+
+    func apply(_ intents: [Change]) -> [Change] {
+        var updates: [Change] = []
+        
+        intents.forEach { change in
+            switch change{
+            case .start1(let value):
+                propertyData.start1 = value
+            case .start2(let value):
+                propertyData.start2 = value
+            case .volume(let value):
+                propertyData.volume = value
+            case .pan(let value):
+                propertyData.pan = value
+            case .speedCoarse(let value):
+                propertyData.speed.course = value
+            case .speedFine(let value):
+                propertyData.speed.fine = value
+            case .filterLow(let value):
+                propertyData.filterLow = value
+            case .filterHigh(let value):
+                propertyData.filterHigh = value
+            case .transientAttack(let value):
+                propertyData.transientAttack = value
+            case .transientSustain(let value):
+                propertyData.transientSustain = value
+            case .enableTransientMaster(let value):
+                propertyData.enableTransientMaster = value
+            case .fineTune(let value):
+                propertyData.fineTune = value
+            case .reverbSend(let value):
+                propertyData.reverbSend = value
+            case .delaySend(let value):
+                propertyData.delaySend = value
+            case .velocity(let value):
+                propertyData.velocity = value
+            case .envOrder(let value):
+                propertyData.envOrder = value
+            case .formant(let value):
+                propertyData.formant = value
+            case .loopStart(let value):
+                propertyData.loopStart = value
+            case .loopStartFine(let value):
+                propertyData.loopStartFine = value
+            case .loopLength(let value):
+                propertyData.loopLength = value
+            case .loopLengthFine(let value):
+                propertyData.loopLengthFine = value
+            case .attack(let value):
+                ampEnvelopeData.attack = value
+            case .hold(let value):
+                ampEnvelopeData.hold = value
+            case .decay(let value):
+                ampEnvelopeData.decay = value
+            case .sustain(let value):
+                ampEnvelopeData.sustain = value
+            case .release(let value):
+                ampEnvelopeData.release = value
+            case .enableAmpEnvelope(let value):
+                ampEnvelopeData.enableAmpEnv = value
+            case .lofiBits(let value):
+                loFiData.bits = value
+            case .lofiHertz(let value):
+                loFiData.hertz = value
+            case .lofiNoise(let value):
+                loFiData.noise = value
+            case .lofiColor(let value):
+                loFiData.color = value
+            case .lofiOut(let value):
+                loFiData.out = value
+            case .enableLofi(let value):
+                loFiData.enable = value
+            case .pitch(let value):
+                sampleData.pitch = value
+            case .mute(let value):
+                stateData.mute = value
+            case .solo(let value):
+                stateData.solo = value
+            case .lock(let value):
+                stateData.lock = value
+            }
+            updates.append(change)
+        }
+        
+        return updates
+        
+    }
     
     /// A lot of diliberation was put in to how this is executed and multiple options were considered:
     ///
