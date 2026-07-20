@@ -6,256 +6,234 @@
 //  Copyright © 2020 William Piotrowski. All rights reserved.
 //
 
-//import Foundation
-//import AudioKit
+import CoreMIDI
+import Foundation
 import ReactiveSwift
-//import CoreMIDI
-import MIKMIDI
 
 struct MIDINote {
-    // use type alias?
     let noteNumber: CustomMIDINoteNumber
     let velocity: Int
     let isNoteOn: Bool
 }
 
+enum MidiEvent {
+    case note(MIDINote)
+    case controlChange(MidiControllerChange)
+}
 
-class MIDI: NSObject {
-    //private let midi: AKMIDI
-    //var outputDevices: [MidiDevice] = []
-    /*
-    var  portRef: MIDIPortRef {
-        return midi.outputPort
-    }
-    */
-    private var token: Any?
-    @objc dynamic let MIKDeviceManager: MIKMIDIDeviceManager
-    
-    let midiNoteObserver: Signal<MIDINote, Never>
-    private let midiNoteInput: Signal<MIDINote, Never>.Observer
-    
-    let midiCCObserver: Signal<MidiControllerChange, Never>
-    private let midiCCInput: Signal<MidiControllerChange, Never>.Observer
-    
+class MIDI {
+    private var client = MIDIClientRef()
+    private var inputPort = MIDIPortRef()
+    private var outputPort = MIDIPortRef()
+
     private let midiOutputDevicesInput: Signal<[MidiDevice], Never>.Observer
     let midiOutputDevices: Property<[MidiDevice]>
-    
+
     private let midiSourcesInput: Signal<[MidiSource], Never>.Observer
     let midiSources: Property<[MidiSource]>
-    
-    
-    override init(){
-        //let midi = AudioKit.midi
-        let midiNoteSignal = Signal<MIDINote, Never>.pipe()
-        let midiCCSignal = Signal<MidiControllerChange, Never>.pipe()
+
+    // Keyed by the connected source's uniqueID. Lets the single shared input
+    // port fan packets back out to whichever MidiInput registered that source.
+    private var connections: [MIDIUniqueID: ([MidiEvent]) -> Void] = [:]
+
+    init() {
         let midiOutputDeviceSignal = Signal<[MidiDevice], Never>.pipe()
-        let midiSources = Signal<[MidiSource], Never>.pipe()
-        
-        //midi.openInput()
-        //midi.openOutput()
-        
-        let deviceManager = MIKMIDIDeviceManager.shared
-        
-        let outputDevices = MIDI.getOutputDevices(
-            deviceManager: deviceManager
-        )
-        
-        let sourceDevices = MIDI.getSources(deviceManager: deviceManager)
-        
-        
-        print()
-        
-        self.MIKDeviceManager = deviceManager
-        //self.midi = midi
-        self.midiNoteInput = midiNoteSignal.input
-        self.midiNoteObserver = midiNoteSignal.output
-        self.midiCCInput = midiCCSignal.input
-        self.midiCCObserver = midiCCSignal.output
+        let midiSourceSignal = Signal<[MidiSource], Never>.pipe()
+
         self.midiOutputDevicesInput = midiOutputDeviceSignal.input
+        self.midiSourcesInput = midiSourceSignal.input
+
+        let outputDevices = MIDI.getOutputDevices()
+        let sources = MIDI.getSources()
+
         self.midiOutputDevices = Property(initial: outputDevices, then: midiOutputDeviceSignal.output)
-        self.midiSourcesInput = midiSources.input
-        self.midiSources = Property(initial: sourceDevices, then: midiSources.output)
-        super.init()
-        //midi.createVirtualInputPort(98909, name: "NI Interface")
-        //print(midi.virtualInput)
-        
-        //self.outputDevices = MIDI.getOutputDevices(midi: midi)
-        
-        
-        //let allDevices = MIKMIDIDeviceManager.shared.virtualDestinations
-        print("ALL DEVICES:")
-        print(MIKDeviceManager.virtualDestinations)
-        /*
-        NotificationCenter.default.addObserver(self,
-        selector: #selector(urlContainerDidChange(_:)),
-        name: .MIKMIDIVirtualEndpointWasAdded,
-        object: MIKMIDIDeviceManager.shared)
-*/
-        addObserver(
-            self,
-            forKeyPath: #keyPath(MIKDeviceManager.virtualDestinations),
-            options: [.old, .new],
-            context: nil
-        )
-        addObserver(
-            self,
-            forKeyPath: #keyPath(MIKDeviceManager.virtualSources),
-            options: [.old, .new],
-            context: nil
-        )
-        
-        
-        
-    }
-    @objc func urlContainerDidChange(_ test: NSNotification){
-        //print("CHANGED!!!!!!")
-        //dump(test.userInfo)
-    }
-    
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(MIKDeviceManager.virtualDestinations) {
-            let outputDevices = MIDI.getOutputDevices(
-                deviceManager: MIKDeviceManager
-            )
-            self.midiOutputDevicesInput.send(value: outputDevices)
+        self.midiSources = Property(initial: sources, then: midiSourceSignal.output)
+
+        MIDIClientCreateWithBlock("NI MIDI Interface" as CFString, &client) { [weak self] notification in
+            self?.handleMIDINotification(notification)
         }
-        if keyPath == #keyPath(MIKDeviceManager.virtualSources) {
-            let inputDevices = MIDI.getSources(
-                deviceManager: MIKDeviceManager
-            )
-            self.midiSourcesInput.send(value: inputDevices)
+        MIDIInputPortCreateWithBlock(client, "NI MIDI Interface Input" as CFString, &inputPort) { [weak self] packetList, connRefCon in
+            self?.handle(packetList: packetList, connRefCon: connRefCon)
         }
-        
+        MIDIOutputPortCreate(client, "NI MIDI Interface Output" as CFString, &outputPort)
     }
-    
-    private static func getOutputDevices(
-        deviceManager: MIKMIDIDeviceManager
-    ) -> [MidiDevice]{
-        var outputDevices = [MidiDevice]()
-        for virtualDestination in deviceManager.virtualDestinations {
-            let outputDevice = MidiDevice(
-                virtualDestination: virtualDestination
-            )
-            outputDevices.append(outputDevice)
+
+    deinit {
+        MIDIClientDispose(client)
+    }
+}
+
+// MARK: DEVICE LIST
+extension MIDI {
+    private func handleMIDINotification(_ notification: UnsafePointer<MIDINotification>) {
+        switch notification.pointee.messageID {
+        case .msgObjectAdded, .msgObjectRemoved, .msgSetupChanged:
+            DispatchQueue.main.async { [weak self] in
+                self?.refreshDevices()
+            }
+        default:
+            break
         }
-        return outputDevices
     }
-    private static func getSources (
-        deviceManager: MIKMIDIDeviceManager
-    ) -> [MidiSource]{
+
+    private func refreshDevices() {
+        let outputDevices = MIDI.getOutputDevices()
+        midiOutputDevicesInput.send(value: outputDevices)
+
+        let sources = MIDI.getSources()
+        midiSourcesInput.send(value: sources)
+
+        // Drop bookkeeping for any source that disappeared out from under us.
+        let currentSourceIDs = Set(sources.map { $0.uniqueID })
+        for uniqueID in connections.keys where !currentSourceIDs.contains(uniqueID) {
+            connections.removeValue(forKey: uniqueID)
+        }
+    }
+
+    private static func getOutputDevices() -> [MidiDevice] {
+        var devices = [MidiDevice]()
+        for i in 0..<MIDIGetNumberOfDestinations() {
+            let endpoint = MIDIGetDestination(i)
+            guard let uniqueID = endpointUniqueID(endpoint) else { continue }
+            devices.append(MidiDevice(endpointRef: endpoint, uniqueID: uniqueID, name: endpointName(endpoint)))
+        }
+        return devices
+    }
+
+    private static func getSources() -> [MidiSource] {
         var sources = [MidiSource]()
-        for virtualSource in deviceManager.virtualSources {
-            let source = MidiSource(
-                mikMidiSourceEndpoint: virtualSource
-            )
-            sources.append(source)
+        for i in 0..<MIDIGetNumberOfSources() {
+            let endpoint = MIDIGetSource(i)
+            guard let uniqueID = endpointUniqueID(endpoint) else { continue }
+            sources.append(MidiSource(endpointRef: endpoint, uniqueID: uniqueID, name: endpointName(endpoint)))
         }
         return sources
     }
-    
-    func connect(
-        midiSource: MidiSource,
-        eventHandler: @escaping (MidiSource, [MidiCommand]) -> Void
-    ) throws -> Any {
-        print("DEVICES")
-        print(MIKMIDIDeviceManager.shared.availableDevices)
-        let token = try MIKMIDIDeviceManager.shared.connectInput(
-            midiSource.mikEndpoint,
-            //eventHandler: <#T##MIKMIDIEventHandlerBlock##MIKMIDIEventHandlerBlock##(MIKMIDISourceEndpoint, [MIKMIDICommand]) -> Void#>)
-        //return try self.MIKDeviceManager.connectInput(
-          //  midiSource.mikEndpoint,
-            eventHandler: { mikMidiSource, mikMidiCommands in
-                //print("mIDI EVENT")
-                let midiSource = MidiSource(mikMidiSourceEndpoint: mikMidiSource)
-                var midiCommands = [MidiCommand]()
-                for mikMidiCommand in mikMidiCommands {
-                    let midiCommand = MidiCommand(mikMidiCommand: mikMidiCommand)
-                    midiCommands.append(midiCommand)
-                }
-                eventHandler(midiSource, midiCommands)
-                
-            }
-        )
-        return token
+
+    private static func endpointUniqueID(_ endpoint: MIDIEndpointRef) -> MIDIUniqueID? {
+        var uniqueID: MIDIUniqueID = 0
+        guard MIDIObjectGetIntegerProperty(endpoint, kMIDIPropertyUniqueID, &uniqueID) == noErr else { return nil }
+        return uniqueID
     }
-    // DISCONNECT DOES NOT APPEAR TO BE WORKING!!
-    // BUG: https://github.com/mixedinkey-opensource/MIKMIDI/issues/289
-    func disconnect(token: Any){
-        MIKMIDIDeviceManager.shared.disconnectConnection(forToken: token)
+
+    private static func endpointName(_ endpoint: MIDIObjectRef) -> String {
+        var name: Unmanaged<CFString>?
+        MIDIObjectGetStringProperty(endpoint, kMIDIPropertyName, &name)
+        return name?.takeRetainedValue() as String? ?? "Unknown"
     }
-    
-    
-    
-    
 }
 
+// MARK: CONNECT / DISCONNECT
+extension MIDI {
+    func connect(
+        midiSource: MidiSource,
+        eventHandler: @escaping ([MidiEvent]) -> Void
+    ) throws {
+        let status = MIDIPortConnectSource(inputPort, midiSource.endpointRef, MIDI.connRefCon(for: midiSource.uniqueID))
+        guard status == noErr else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil)
+        }
+        connections[midiSource.uniqueID] = eventHandler
+    }
 
+    func disconnect(midiSource: MidiSource) {
+        MIDIPortDisconnectSource(inputPort, midiSource.endpointRef)
+        connections.removeValue(forKey: midiSource.uniqueID)
+    }
+
+    private static func connRefCon(for uniqueID: MIDIUniqueID) -> UnsafeMutableRawPointer? {
+        UnsafeMutableRawPointer(bitPattern: Int(uniqueID))
+    }
+
+    private static func uniqueID(from connRefCon: UnsafeMutableRawPointer?) -> MIDIUniqueID? {
+        guard let connRefCon = connRefCon else { return nil }
+        return MIDIUniqueID(Int(bitPattern: connRefCon))
+    }
+}
+
+// MARK: RECEIVE
+extension MIDI {
+    private func handle(packetList: UnsafePointer<MIDIPacketList>, connRefCon: UnsafeMutableRawPointer?) {
+        guard
+            let uniqueID = MIDI.uniqueID(from: connRefCon),
+            let eventHandler = connections[uniqueID]
+        else { return }
+
+        let events = MIDI.parseEvents(from: packetList)
+        guard !events.isEmpty else { return }
+        eventHandler(events)
+    }
+
+    private static func parseEvents(from packetList: UnsafePointer<MIDIPacketList>) -> [MidiEvent] {
+        var events = [MidiEvent]()
+        var packet = packetList.pointee.packet
+        for _ in 0..<packetList.pointee.numPackets {
+            if let event = parseEvent(from: packet) {
+                events.append(event)
+            }
+            packet = MIDIPacketNext(&packet).pointee
+        }
+        return events
+    }
+
+    private static func parseEvent(from packet: MIDIPacket) -> MidiEvent? {
+        let bytes = Mirror(reflecting: packet.data).children
+            .prefix(Int(packet.length))
+            .compactMap { $0.value as? UInt8 }
+
+        guard let status = bytes.first else { return nil }
+        let type = status & 0xF0
+        let channel = Int(status & 0x0F)
+
+        switch type {
+        case 0x80 where bytes.count >= 3:
+            return .note(MIDINote(noteNumber: Int(bytes[1]), velocity: Int(bytes[2]), isNoteOn: false))
+        case 0x90 where bytes.count >= 3:
+            let velocity = Int(bytes[2])
+            return .note(MIDINote(noteNumber: Int(bytes[1]), velocity: velocity, isNoteOn: velocity > 0))
+        case 0xB0 where bytes.count >= 3:
+            return .controlChange(MidiControllerChange(ccNumber: Int(bytes[1]), value: Int(bytes[2]), channel: channel))
+        default:
+            return nil
+        }
+    }
+}
+
+// MARK: SEND
 extension MIDI {
     func sendMidiNote(midiNote: MIDINote, channel: Int, devices: [MidiDevice]) throws {
-        //print("CHANNEL: \(channel)")
-        
-        let midiNoteCommand = MIKMIDINoteCommand(
-            note: UInt(midiNote.noteNumber),
-            velocity: UInt(midiNote.velocity),
-            channel: UInt8(channel),
-            isNoteOn: midiNote.isNoteOn,
-            midiTimeStamp: MIDITimeStamp()
-        )
-        for device in devices {
-            try MIKDeviceManager.send(
-                [midiNoteCommand],
-                to: device.mikEndpoint
-            )
-        }
+        let status: UInt8 = (midiNote.isNoteOn ? 0x90 : 0x80) | UInt8(channel & 0x0F)
+        let bytes: [UInt8] = [status, UInt8(clamping: midiNote.noteNumber), UInt8(clamping: midiNote.velocity)]
+        try send(bytes: bytes, to: devices)
     }
+
     func send(midiCC: MidiControllerChange, devices: [MidiDevice]) throws {
-        let midiCommand = MIKMutableMIDIControlChangeCommand(
-            controllerNumber: UInt(midiCC.ccNumber),
-            value: UInt(midiCC.value)
-        )
-        midiCommand.channel = UInt8(midiCC.channel)
-        for device in devices {
-            try MIKDeviceManager.send([midiCommand], to: device.mikEndpoint)
-        }
-        
-        
-        
-        
-        // SAVE SOME OF THIS. A LOT OF WORK WENT INTO STARTING TO FIGURE OUT HOW TO INTEGRATE OBJ C
-        
-        /*
-        guard
-            let destinationDevices = midiCC.destinationDevices,
-            destinationDevices.count > 0
-            else {
-                print("bad")
-                return
-        }
-        let midiEndpoint = destinationDevices[0].midiEndpointRef
-        
-        
-        var pkt = UnsafeMutablePointer<MIDIPacket>.allocate(capacity: 1)
-        let pktList = UnsafeMutablePointer<MIDIPacketList>.allocate(capacity: 1)
-        pkt = MIDIPacketListInit(pktList)
-        pkt = MIDIPacketListAdd(pktList, 1024, pkt, 0, 3, midiCC.midiData)
-        print("SENDING: \(destinationDevices[0].name)")
-        
-        MIDISend(self.portRef, midiEndpoint, pktList)
-        */
+        let status: UInt8 = 0xB0 | UInt8(midiCC.channel & 0x0F)
+        let bytes: [UInt8] = [status, UInt8(clamping: midiCC.ccNumber), UInt8(clamping: midiCC.value)]
+        try send(bytes: bytes, to: devices)
     }
+
     func send(midiCCs: [MidiControllerChange], devices: [MidiDevice]) throws {
         for midiCC in midiCCs {
             try send(midiCC: midiCC, devices: devices)
         }
     }
-}
 
+    private func send(bytes: [UInt8], to devices: [MidiDevice]) throws {
+        guard !devices.isEmpty else { return }
 
-struct MidiCommand {
-    let mikMidiCommand: MIKMIDICommand
+        var sendError: OSStatus = noErr
+        var packetList = MIDIPacketList()
+        withUnsafeMutablePointer(to: &packetList) { packetListPtr in
+            var packet = MIDIPacketListInit(packetListPtr)
+            packet = MIDIPacketListAdd(packetListPtr, 1024, packet, 0, bytes.count, bytes)
+            for device in devices {
+                let status = MIDISend(outputPort, device.endpointRef, packetListPtr)
+                if status != noErr { sendError = status }
+            }
+        }
+        guard sendError == noErr else {
+            throw NSError(domain: NSOSStatusErrorDomain, code: Int(sendError), userInfo: nil)
+        }
+    }
 }

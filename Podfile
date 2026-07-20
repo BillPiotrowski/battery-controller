@@ -6,8 +6,6 @@ project 'NI MIDI Interface.xcodeproj'
 target 'NI MIDI Interface' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
-  
-  pod 'MIKMIDI'
 
   # Pods for NI MIDI Interface
 

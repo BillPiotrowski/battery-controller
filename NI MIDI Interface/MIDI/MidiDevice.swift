@@ -6,58 +6,48 @@
 //  Copyright © 2020 William Piotrowski. All rights reserved.
 //
 
-import MIKMIDI
+import CoreMIDI
 
 struct MidiDevice {
-    let mikEndpoint: MIKMIDIDestinationEndpoint
-    
+    let endpointRef: MIDIEndpointRef
+    let uniqueID: MIDIUniqueID
+    let name: String
+
     init(
-        virtualDestination: MIKMIDIDestinationEndpoint
+        endpointRef: MIDIEndpointRef,
+        uniqueID: MIDIUniqueID,
+        name: String
     ){
-        self.mikEndpoint = virtualDestination
+        self.endpointRef = endpointRef
+        self.uniqueID = uniqueID
+        self.name = name
     }
-}
-extension MidiDevice {
-    var name: String {
-        return mikEndpoint.name ?? "Unknown"
-        //return endpointInfo?.displayName ?? "Unknown"
-    }
-    // CORE MIDI ENPOINT REF AND OBJECT REF ARE TYPEALIAS??
-    /*
-    var midiEndpointRef: MIDIEndpointRef {
-        return mikEndpoint.objectRef
-    }
- */
 }
 extension MidiDevice: Equatable {
     static func == (lhs: MidiDevice, rhs: MidiDevice) -> Bool {
-        return
-            lhs.mikEndpoint == rhs.mikEndpoint
+        return lhs.uniqueID == rhs.uniqueID
     }
-    
 }
 
 
 
 struct MidiSource {
-    let mikEndpoint: MIKMIDISourceEndpoint
-    
+    let endpointRef: MIDIEndpointRef
+    let uniqueID: MIDIUniqueID
+    let name: String
+
     init(
-        mikMidiSourceEndpoint: MIKMIDISourceEndpoint
+        endpointRef: MIDIEndpointRef,
+        uniqueID: MIDIUniqueID,
+        name: String
     ){
-        self.mikEndpoint = mikMidiSourceEndpoint
-    }
-}
-extension MidiSource {
-    var name: String {
-        return mikEndpoint.name ?? "Unknown"
-        //return endpointInfo?.displayName ?? "Unknown"
+        self.endpointRef = endpointRef
+        self.uniqueID = uniqueID
+        self.name = name
     }
 }
 extension MidiSource: Equatable {
     static func == (lhs: MidiSource, rhs: MidiSource) -> Bool {
-        return
-            lhs.mikEndpoint == rhs.mikEndpoint
+        return lhs.uniqueID == rhs.uniqueID
     }
-    
 }

@@ -319,7 +319,6 @@
 				F043E0D6245A27C80070C193 /* Sources */,
 				F043E0D7245A27C80070C193 /* Frameworks */,
 				F043E0D8245A27C80070C193 /* Resources */,
-				0EC6B60F85DE23F2EC93B75E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -443,27 +442,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0EC6B60F85DE23F2EC93B75E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NI MIDI Interface/Pods-NI MIDI Interface-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6265524C812C7F3D3097C1F7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
