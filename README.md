@@ -18,6 +18,7 @@ This architecture was designed to solve a few problems:
 - A dead/commented-out-code sweep — BatteryCell.swift and MaschineInterface.swift still have sizable commented blocks (MIDI.swift's got cleaned as a side effect of the rewrite, those two didn't). 
 - Swap scattered print() debugging for os.Logger.
 - Reconsider ReactiveSwift usage, starting with the simplest spots (MidiInput/MidiOutput's Signal/Property pairs) as a candidate for @Published/Combine. This is explicitly not a "do it alongside other cleanup" item — bigger and riskier, deserves its own pass.
+- convert all input buttons from toggle to trigger: ot trigger-safe (mute, solo, lock, select): these take the raw incoming value and assign it directly as the new persistent state:
 
 
 ## Battery Modulator Limitation
