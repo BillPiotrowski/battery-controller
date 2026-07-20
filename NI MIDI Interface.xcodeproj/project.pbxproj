@@ -31,7 +31,6 @@
 		F051EAD824629BE30023A8CD /* MidiDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F051EAD724629BE30023A8CD /* MidiDevice.swift */; };
 		F057F89B247A5FF200869F45 /* NI MIDI Interface in Resources */ = {isa = PBXBuildFile; fileRef = F057F89A247A5FF200869F45 /* NI MIDI Interface */; };
 		F057F8A1247A64CD00869F45 /* SampleCellAmpEnvelopeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F057F8A0247A64CD00869F45 /* SampleCellAmpEnvelopeData.swift */; };
-		F05E47E4247920B7004FEC9A /* UndoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05E47E3247920B7004FEC9A /* UndoManager.swift */; };
 		F064D19124655D4E00450FBC /* MidiDeviceSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F064D19024655D4E00450FBC /* MidiDeviceSelectionViewController.swift */; };
 		F06CFBFB245B59FA008A8CA2 /* SampleCellPropertyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06CFBFA245B59FA008A8CA2 /* SampleCellPropertyData.swift */; };
 		F06CFC00245B5D2F008A8CA2 /* WriteableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06CFBFC245B5D2E008A8CA2 /* WriteableData.swift */; };
@@ -46,8 +45,6 @@
 		F073FA8B248B4FF9003CB0E7 /* Speed.swift in Sources */ = {isa = PBXBuildFile; fileRef = F073FA8A248B4FF9003CB0E7 /* Speed.swift */; };
 		F079A298245D565200E62118 /* MidiControllerChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079A297245D565200E62118 /* MidiControllerChange.swift */; };
 		F079A29A245D56BF00E62118 /* MidiTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079A299245D56BF00E62118 /* MidiTypeAliases.swift */; };
-		F079A29E245E262C00E62118 /* MidiEndpointName.c in Sources */ = {isa = PBXBuildFile; fileRef = F079A29D245E262C00E62118 /* MidiEndpointName.c */; };
-		F079A2A0245E279C00E62118 /* nameTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F079A29F245E279C00E62118 /* nameTest.m */; };
 		F0C67658245AC89D00D1A9EE /* MidiCCInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C67657245AC89D00D1A9EE /* MidiCCInterface.swift */; };
 		F0CCD78624675445004D0CDF /* SampleCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD78524675445004D0CDF /* SampleCellData.swift */; };
 		F0F6E6B9246670FF006BC9CC /* SampleCellStateData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F6E6B8246670FF006BC9CC /* SampleCellStateData.swift */; };
@@ -109,7 +106,6 @@
 		F051EAD724629BE30023A8CD /* MidiDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiDevice.swift; sourceTree = "<group>"; };
 		F057F89A247A5FF200869F45 /* NI MIDI Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "NI MIDI Interface"; sourceTree = "<group>"; };
 		F057F8A0247A64CD00869F45 /* SampleCellAmpEnvelopeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellAmpEnvelopeData.swift; sourceTree = "<group>"; };
-		F05E47E3247920B7004FEC9A /* UndoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoManager.swift; sourceTree = "<group>"; };
 		F064D19024655D4E00450FBC /* MidiDeviceSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiDeviceSelectionViewController.swift; sourceTree = "<group>"; };
 		F06CFBFA245B59FA008A8CA2 /* SampleCellPropertyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellPropertyData.swift; sourceTree = "<group>"; };
 		F06CFBFC245B5D2E008A8CA2 /* WriteableData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteableData.swift; sourceTree = "<group>"; };
@@ -124,11 +120,6 @@
 		F073FA8A248B4FF9003CB0E7 /* Speed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Speed.swift; sourceTree = "<group>"; };
 		F079A297245D565200E62118 /* MidiControllerChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiControllerChange.swift; sourceTree = "<group>"; };
 		F079A299245D56BF00E62118 /* MidiTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiTypeAliases.swift; sourceTree = "<group>"; };
-		F079A29B245E262C00E62118 /* NI MIDI Interface-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NI MIDI Interface-Bridging-Header.h"; sourceTree = "<group>"; };
-		F079A29C245E262C00E62118 /* MidiEndpointName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MidiEndpointName.h; sourceTree = "<group>"; };
-		F079A29D245E262C00E62118 /* MidiEndpointName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MidiEndpointName.c; sourceTree = "<group>"; };
-		F079A29F245E279C00E62118 /* nameTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = nameTest.m; sourceTree = "<group>"; };
-		F079A2A1245E2DCF00E62118 /* nameTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nameTest.h; sourceTree = "<group>"; };
 		F0C67657245AC89D00D1A9EE /* MidiCCInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiCCInterface.swift; sourceTree = "<group>"; };
 		F0CCD78524675445004D0CDF /* SampleCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellData.swift; sourceTree = "<group>"; };
 		F0F6E6B8246670FF006BC9CC /* SampleCellStateData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellStateData.swift; sourceTree = "<group>"; };
@@ -204,14 +195,8 @@
 			isa = PBXGroup;
 			children = (
 				F0414C7F245A695400B15751 /* MIDI.swift */,
-				F079A29C245E262C00E62118 /* MidiEndpointName.h */,
-				F079A29D245E262C00E62118 /* MidiEndpointName.c */,
-				F079A29F245E279C00E62118 /* nameTest.m */,
-				F079A2A1245E2DCF00E62118 /* nameTest.h */,
-				F079A29B245E262C00E62118 /* NI MIDI Interface-Bridging-Header.h */,
 				F079A297245D565200E62118 /* MidiControllerChange.swift */,
 				F079A299245D56BF00E62118 /* MidiTypeAliases.swift */,
-				F064D18F2464F8A300450FBC /* Deprecated */,
 				F051EAD724629BE30023A8CD /* MidiDevice.swift */,
 				F026D3F22463F462001FE191 /* MidiInput.swift */,
 				F03D88AD2465EE83005A6C05 /* MidiInputInfo.swift */,
@@ -263,7 +248,6 @@
 				F0F6E6BA2466749F006BC9CC /* Pitch.swift */,
 				F073FA8A248B4FF9003CB0E7 /* Speed.swift */,
 				F0F6E6BC24669106006BC9CC /* MidiCCValueMap.swift */,
-				F05E47E3247920B7004FEC9A /* UndoManager.swift */,
 			);
 			path = "NI MIDI Interface";
 			sourceTree = "<group>";
@@ -284,13 +268,6 @@
 				F043E0FD245A27CA0070C193 /* Info.plist */,
 			);
 			path = "NI MIDI InterfaceUITests";
-			sourceTree = "<group>";
-		};
-		F064D18F2464F8A300450FBC /* Deprecated */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Deprecated;
 			sourceTree = "<group>";
 		};
 		F06CFBF8245B59E2008A8CA2 /* Data */ = {
@@ -572,7 +549,6 @@
 				F0C67658245AC89D00D1A9EE /* MidiCCInterface.swift in Sources */,
 				F06CFC07245B6D5C008A8CA2 /* TypeguardExtension.swift in Sources */,
 				F0F6E6BF2466BD75006BC9CC /* MidiOutputSelectionViewController.swift in Sources */,
-				F079A2A0245E279C00E62118 /* nameTest.m in Sources */,
 				F0CCD78624675445004D0CDF /* SampleCellData.swift in Sources */,
 				F057F8A1247A64CD00869F45 /* SampleCellAmpEnvelopeData.swift in Sources */,
 				F06CFC48245BF897008A8CA2 /* DocumentData.swift in Sources */,
@@ -580,7 +556,6 @@
 				F043E0DE245A27C80070C193 /* AppDelegate.swift in Sources */,
 				F026D3EF2463AB90001FE191 /* MidiOutput.swift in Sources */,
 				F06CFC01245B5D2F008A8CA2 /* DataProtocol.swift in Sources */,
-				F05E47E4247920B7004FEC9A /* UndoManager.swift in Sources */,
 				F0F6E6BB2466749F006BC9CC /* Pitch.swift in Sources */,
 				F026D3ED2463AB7B001FE191 /* MidiDeviceSelectionStruct.swift in Sources */,
 				F06CFC03245B5D2F008A8CA2 /* Typeguard.swift in Sources */,
@@ -591,7 +566,6 @@
 				F0F6E6BD24669106006BC9CC /* MidiCCValueMap.swift in Sources */,
 				F02DA049247BAC250051D912 /* SampleCellSampleData.swift in Sources */,
 				F0F6E6B9246670FF006BC9CC /* SampleCellStateData.swift in Sources */,
-				F079A29E245E262C00E62118 /* MidiEndpointName.c in Sources */,
 				F03D88AE2465EE83005A6C05 /* MidiInputInfo.swift in Sources */,
 				F02DA045247B68D40051D912 /* SampleCellPropertyProtocol.swift in Sources */,
 				F079A298245D565200E62118 /* MidiControllerChange.swift in Sources */,
@@ -779,7 +753,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "NI MIDI Interface/MIDI/NI MIDI Interface-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -807,7 +780,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-Interface";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "NI MIDI Interface/MIDI/NI MIDI Interface-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
