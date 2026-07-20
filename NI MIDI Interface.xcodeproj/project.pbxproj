@@ -143,13 +143,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A3EAE45A4904E8B849CB0F76 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		F03D88AF24665345005A6C05 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -183,7 +176,6 @@
 				F043E0EF245A27CA0070C193 /* NI MIDI InterfaceTests */,
 				F043E0FA245A27CA0070C193 /* NI MIDI InterfaceUITests */,
 				F043E0DB245A27C80070C193 /* Products */,
-				A3EAE45A4904E8B849CB0F76 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
