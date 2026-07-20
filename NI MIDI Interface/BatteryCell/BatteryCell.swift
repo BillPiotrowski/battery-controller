@@ -188,9 +188,6 @@ extension BatteryCell {
             case .lofiOut(let v): didChange = write(v, &loFiData.out)
             case .enableLofi(let v): didChange = write(v, &loFiData.enable)
             case .pitch(let v): didChange = write(v, &sampleData.pitch)
-            case .mute(let v): didChange = write(v, &stateData.mute)
-            case .solo(let v): didChange = write(v, &stateData.solo)
-            case .lock(let v): didChange = write(v, &stateData.lock)
             }
             if didChange { updates.append(change) }
         }

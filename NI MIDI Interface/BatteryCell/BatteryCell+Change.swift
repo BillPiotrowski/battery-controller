@@ -46,11 +46,6 @@ extension BatteryCell {
 
         // MARK: Sample
         case pitch(Pitch)
-
-        // MARK: State
-        case mute(Bool)
-        case solo(Bool)
-        case lock(Bool)
     }
 
 }
