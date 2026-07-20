@@ -6,6 +6,7 @@
 //  Copyright © 2020 William Piotrowski. All rights reserved.
 //
 
+import Foundation
 import ReactiveSwift
 
 

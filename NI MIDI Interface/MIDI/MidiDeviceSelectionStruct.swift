@@ -28,7 +28,7 @@ class MidiOutputInfo {
 }
 extension MidiOutputInfo {
     var uid: Int32 {
-        return midiDestination.mikEndpoint.uniqueID
+        return midiDestination.uniqueID
     }
     var name: String {
         return midiDestination.name

@@ -66,7 +66,7 @@ extension MidiOutput {
     func setDevice(index: Int){
         // Index 0 of string options is "None". This offsets it to match the actual devices options.
         let destination = availableDestinations[index]
-        self.selectedUIDs.append(destination.mikEndpoint.uniqueID)
+        self.selectedUIDs.append(destination.uniqueID)
         
         //selectedDeviceIndex = offsetIndex
         //print("SET DEVICE: \(selectedMidiDevice?.name)")
@@ -78,7 +78,7 @@ extension MidiOutput {
         self.midiDeviceSelectionInput.send(value: deviceInfo)
     }
     func disconnect(midiOutputInfo: MidiOutputInfo){
-        self.selectedUIDs.removeAll(where: { $0 == midiOutputInfo.midiDestination.mikEndpoint.uniqueID })
+        self.selectedUIDs.removeAll(where: { $0 == midiOutputInfo.midiDestination.uniqueID })
         let deviceInfo = MidiOutput.getMidiInputInfoArray(
             availableDestinations: self.availableDestinations,
             selectedUIDs: self.selectedUIDs
@@ -95,7 +95,7 @@ extension MidiOutput {
         for uid in selectedUIDs {
             guard
                 let device = availableDestinations.first(
-                    where: {$0.mikEndpoint.uniqueID == uid}
+                    where: {$0.uniqueID == uid}
                 )
                 else {
                     print("ERROR: Device missing. UID: \(uid)")
@@ -149,7 +149,7 @@ extension MidiOutput {
     ) -> [MidiOutputInfo] {
         var devices = [MidiOutputInfo]()
         for midiDestination in availableDestinations {
-            let uid = midiDestination.mikEndpoint.uniqueID
+            let uid = midiDestination.uniqueID
             let active = MidiOutput.isActive(
                 uid: uid,
                 selectedUIDs: selectedUIDs
