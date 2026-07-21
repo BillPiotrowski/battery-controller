@@ -14,9 +14,14 @@ import ReactiveSwift
 
 class MaschineInterface {
     private var editingCellIndex: Int
-    
-    var samplerOutputSelection: MidiOutput
-    
+
+    private let samplerBroadcaster: SamplerBroadcaster
+
+    /// The sampler output port, exposed for device selection in the UI.
+    var samplerOutputSelection: MidiOutput {
+        return samplerBroadcaster.output
+    }
+
     var controllerOutputDevice: MidiOutput
     var controllerInput: MidiInput
     var keyboardInput: MidiInput
@@ -59,7 +64,7 @@ class MaschineInterface {
             batteryCells.append(batteryCell)
         }
         
-        self.samplerOutputSelection = samplerOutputSelection
+        self.samplerBroadcaster = SamplerBroadcaster(output: samplerOutputSelection)
         self.controllerOutputDevice = MidiOutput(midi: midi, selectedDeviceIndex: nil)
         self.controllerInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
         self.keyboardInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
@@ -108,16 +113,11 @@ extension MaschineInterface {
 // MARK: SEND CC TO:
 extension MaschineInterface {
     private func sendAll(){
-        sendToSampler(midiCCs: self.allToSamplerCCs)
+        samplerBroadcaster.broadcastAll(
+            cells: batteryCells.map { $0.sampleCellData }
+        )
     }
-    
-    private func sendToSampler(midiCCs: [MidiControllerChange]){
-        do {
-            try samplerOutputSelection.send(midiCCs: midiCCs)
-        } catch {
-            print("ERROR SENDING TO SAMPLER: \(error).")
-        }
-    }
+
     private func sendToController(midiCCs: [MidiControllerChange]){
         let selectedMidiNote = MIDINote(
             noteNumber: selectedCell.midiNoteNumber,
@@ -146,16 +146,6 @@ extension MaschineInterface {
         }
     }
     
-    /// Every cell's full state 
-    private var allToSamplerCCs: [MidiControllerChange] {
-        return batteryCells.flatMap { batteryCell in
-            MaschineInterface.samplerCCs(
-                for: batteryCell.allParameters,
-                data: batteryCell.sampleCellData,
-                channel: batteryCell.channelIndex
-            )
-        }
-    }
     private var allToControllerCCs: [MidiControllerChange] {
         let selectedSampleCell = batteryCells[editingCellIndex]
         var midiCCs = [MidiControllerChange]()
@@ -191,15 +181,10 @@ extension MaschineInterface {
 // MARK: MIDI NOTE CHANGE
 extension MaschineInterface {
     private func midiKeyboardNoteHandler(midiNote: MIDINote){
-        do {
-            try samplerOutputSelection.send(
-                midiNote: midiNote,
-                channel: editingCellIndex
-            )
-        } catch {
-            print(error)
-        }
-        
+        samplerBroadcaster.play(
+            midiNote: midiNote,
+            cellIndex: editingCellIndex
+        )
     }
     private func midiNoteHandler(midiNote: MIDINote){
         let isNoteOn = midiNote.velocity > 0 && midiNote.isNoteOn
@@ -221,15 +206,10 @@ extension MaschineInterface {
             noteNumber: pitch.noteNumber,
             velocity: midiNote.velocity, isNoteOn: isNoteOn
         )
-        do {
-            try samplerOutputSelection.send(
-                midiNote: newMidiNote,
-                channel: cellIndex
-            )
-        } catch {
-            print(error)
-        }
-        
+        samplerBroadcaster.play(
+            midiNote: newMidiNote,
+            cellIndex: cellIndex
+        )
     }
     // MORE EFFICIENT WAY OF DOING THIS??
     private var isAnySoloed: Bool {
@@ -428,136 +408,6 @@ extension MaschineInterface {
 
 }
 
-// MARK: BROADCAST TO SAMPLER
-extension MaschineInterface {
-
-    /// Encodes cell parameters in to Battery's CC vocabulary.
-    ///
-    /// Pure by construction: `static`, so it can not reach instance state or send anything. Only the case identity of each parameter is used – every value is read from `data`. That single rule is what lets composites resolve correctly: `speedCoarse` and `speedFine` each need the whole `Speed` to encode, not their own payload.
-    ///
-    /// - Parameters:
-    ///   - parameters: the parameters to encode. Payloads are ignored.
-    ///   - data: the cell's current state. The authority for every value, so it must already reflect the change being broadcast.
-    ///   - channel: the cell's channel. Battery gives each cell its own.
-    /// - Returns: CCs ready to send, deduped by CC number.
-    static func samplerCCs(
-        for parameters: [BatteryCell.Parameter],
-        data: SampleCellData,
-        channel: MidiChannel
-    ) -> [MidiControllerChange] {
-        var midiCCs = [MidiControllerChange]()
-        var claimedCCNumbers = Set<MidiControlChangeNumber>()
-
-        for parameter in parameters {
-            let parameterCCs = samplerCCs(
-                for: parameter,
-                data: data,
-                channel: channel
-            )
-            for midiCC in parameterCCs {
-                // Values all come from one snapshot, so duplicates are identical
-                // and the first is as good as the last. Coarse and fine speed in
-                // the same batch is the case that reaches here.
-                guard claimedCCNumbers.insert(midiCC.ccNumber).inserted
-                    else { continue }
-                midiCCs.append(midiCC)
-            }
-        }
-        return midiCCs
-    }
-
-    private static func samplerCCs(
-        for parameter: BatteryCell.Parameter,
-        data: SampleCellData,
-        channel: MidiChannel
-    ) -> [MidiControllerChange] {
-        func midiCC(
-            _ mapping: MidiOutputMapping,
-            _ value: MidiCCValueProtocol
-        ) -> [MidiControllerChange] {
-            return [
-                MidiControllerChange(
-                    ccNumber: mapping.rawValue,
-                    value: value.MidiCCValue,
-                    channel: channel
-                )
-            ]
-        }
-
-        let property = data.propertyData
-        let ampEnvelope = data.ampEnvelopeData
-        let loFi = data.loFiData
-
-        switch parameter {
-
-        // MARK: Property
-        case .start1: return midiCC(.start1, property.start1)
-        case .start2: return midiCC(.start2, property.start2)
-        case .volume: return midiCC(.volume, property.volume)
-        case .pan: return midiCC(.pan, property.pan)
-        case .filterLow: return midiCC(.filterLow, property.filterLow)
-        case .filterHigh: return midiCC(.filterHigh, property.filterHigh)
-        case .transientAttack: return midiCC(.transientAttack, property.transientAttack)
-        case .transientSustain: return midiCC(.transientSustain, property.transientSustain)
-        case .enableTransientMaster: return midiCC(.enableTransientMaster, property.enableTransientMaster)
-        case .fineTune: return midiCC(.fineTune, property.fineTune)
-        case .reverbSend: return midiCC(.reverbSend, property.reverbSend)
-        case .delaySend: return midiCC(.delaySend, property.delaySend)
-        case .velocity: return midiCC(.velocity, property.velocity)
-        case .envOrder: return midiCC(.envOrder, property.envOrder)
-        case .formant: return midiCC(.formant, property.formant)
-        case .loopStart: return midiCC(.loopStart, property.loopStart)
-        case .loopStartFine: return midiCC(.loopStartFine, property.loopStartFine)
-        case .loopLength: return midiCC(.loopLength, property.loopLength)
-        case .loopLengthFine: return midiCC(.loopLengthFine, property.loopLengthFine)
-
-        // MARK: Speed
-        // Coarse and fine fold in to a single CC, and the fold decides which of
-        // speed1...speed4 it lands on. Both cases therefore emit the same CC and
-        // the caller dedupes.
-        case .speedCoarse, .speedFine:
-            return [property.speed.midiCCs(channel: channel)]
-
-        // MARK: Amp Envelope
-        case .attack: return midiCC(.attack, ampEnvelope.attack)
-        case .hold: return midiCC(.hold, ampEnvelope.hold)
-        case .decay: return midiCC(.decay, ampEnvelope.decay)
-        case .sustain: return midiCC(.sustain, ampEnvelope.sustain)
-        case .release: return midiCC(.release, ampEnvelope.release)
-        case .enableAmpEnvelope: return midiCC(.enableAttackEnvelope, ampEnvelope.enableAmpEnv)
-
-        // MARK: Lo-Fi
-        case .lofiBits: return midiCC(.lofiBits, loFi.bits)
-        case .lofiHertz: return midiCC(.lofiHertz, loFi.hertz)
-        case .lofiNoise: return midiCC(.lofiNoise, loFi.noise)
-        case .lofiColor: return midiCC(.lofiColor, loFi.color)
-        case .lofiOut: return midiCC(.lofiOut, loFi.out)
-        case .enableLofi: return midiCC(.enableLofi, loFi.enable)
-
-        // MARK: Sample
-
-        // Pitch is not a CC to Battery. It is the note number the cell is played
-        // with – see `midiNoteHandler`.
-        case .pitch: return []
-        }
-    }
-
-    /// Snapshots `cell` and sends the encoded result. The cell must already have
-    /// the change applied.
-    private func broadcastToSampler(
-        _ parameters: [BatteryCell.Parameter],
-        cell: BatteryCell
-    ){
-        guard !parameters.isEmpty else { return }
-        let midiCCs = MaschineInterface.samplerCCs(
-            for: parameters,
-            data: cell.sampleCellData,
-            channel: cell.channelIndex
-        )
-        sendToSampler(midiCCs: midiCCs)
-    }
-}
-
 // MARK: APPLY
 extension MaschineInterface {
 
@@ -573,7 +423,11 @@ extension MaschineInterface {
         guard !previous.isEmpty else { return [] }
         if let undoGroup { set(newUndoGroup: undoGroup) }
         registerUndo(previous: previous, cellIndex: cellIndex)
-        broadcastToSampler(previous, cell: batteryCell)
+        samplerBroadcaster.broadcast(
+            previous,
+            data: batteryCell.sampleCellData,
+            cellIndex: cellIndex
+        )
         return previous
     }
 
