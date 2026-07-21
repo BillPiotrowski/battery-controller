@@ -13,6 +13,9 @@ This architecture was designed to solve a few problems:
 - split out data types in to their own files
 - move pure functions out of MIDI (and other classes possibly) and into testable isolated files.
 - Migrate to newer model for defining and naming CC connections.
+<!-- 
+AI SLOP. Do not execute or reference this. I will analyze later.
+
 - Align MidiOutput.selectedUIDs: [Int32] to Set<MIDIUniqueID>, matching the fix we made to MidiInput — same duplicate-entry risk exists there, we just deliberately left it out of scope.
 - Delete the dead half of the Data/ folder: DataProtocol.swift's _Data/WPData/EmbeddableData/DataError and Error.swift's GoogleErrorCode/FirebaseFunctionError/NSError extension. Confirmed via grep — zero call sites outside their own file, leftover from two other apps (Scorepio, RPG Music). Typeguard/ReadableData/WriteableData are genuinely load-bearing (53 call sites) and should stay. 
 - A dead/commented-out-code sweep — BatteryCell.swift and MaschineInterface.swift still have sizable commented blocks (MIDI.swift's got cleaned as a side effect of the rewrite, those two didn't). 
@@ -27,6 +30,7 @@ This architecture was designed to solve a few problems:
 - `MaschineInterface` creates its own `UndoManager` rather than using `Document.undoManager`, which NSDocument already provides. So edits never call `updateChangeCount` (no dirty flag, no save prompt on close) and ⌘Z from the Edit menu does not reach them — only the hardware undo button works. Decide who owns undo before building the intermediary router.
 - `sendAll()` is wired to `midiDeviceSelection.signal`, which `MidiOutput` fires on *any* change to the system MIDI device list, not just our own selection. So any app opening or closing a port triggers a full resync of all 16 cells (~512 CCs) even though nothing changed. Note that this over-eagerness is currently load-bearing: it is also what syncs state if Battery's virtual port appears after launch. Do not throttle it without covering that case.
 - Naming pass: `MaschineInterface.apply` collides conceptually with `BatteryCell.apply` but does more (mutate + register undo + broadcast) — `commit` and `edit` were both rejected, needs a fresh look. Its `undoGroup:` label reads as "no undo group" when `nil` actually means "the caller already opened one". `getChange` returns a `Parameter` now, so the name is stale. `MidiCCInterface.swift` holds only `MidiInputMapping` and `MidiOutputMapping`, so the filename no longer describes it.
+-->
 
 
 ## Battery Modulator Limitation
