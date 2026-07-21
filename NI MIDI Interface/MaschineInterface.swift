@@ -340,8 +340,10 @@ extension MaschineInterface {
             }
             
             set(newUndoGroup: UndoGroup(task: sampleProperty, sampleCellIndex: editingCellIndex))
-            let effected = batteryCell.apply([change])
-            
+            let previous = batteryCell.apply([change])
+            registerUndo(previous: previous, cellIndex: editingCellIndex)
+            // TODO: broadcast to sampler.
+
         }
         catch { print(error) }
     }
@@ -414,6 +416,20 @@ extension MaschineInterface {
         }
     }
     
+}
+
+// MARK: REGISTER UNDO
+extension MaschineInterface {
+
+    /// Re-registering inside the handler is what makes redo work: `UndoManager` routes registrations to the redo stack while `isUndoing`, and back to the undo stack while `isRedoing`
+    private func registerUndo(previous: [BatteryCell.Change], cellIndex: Int){
+        guard !previous.isEmpty else { return }
+        undoManager.registerUndo(withTarget: self){ maschineInterface in
+            let previous = maschineInterface.batteryCells[cellIndex].apply(previous)
+            // TODO: broadcast to sampler.
+            maschineInterface.registerUndo(previous: previous, cellIndex: cellIndex)
+        }
+    }
 }
 
 // MARK: UNDO GROUP

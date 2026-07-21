@@ -133,10 +133,14 @@ extension BatteryCell {
 // MARK: UPDATE
 extension BatteryCell {
 
-    private func write<T: Equatable>(_ new: T, _ current: inout T) -> Bool {
-        guard current != new else { return false }
+    /// Writes `new` into `current` if it differs.
+    ///
+    /// - Returns: the replaced value, or `nil` if nothing changed.
+    private func write<T: Equatable>(_ new: T, _ current: inout T) -> T? {
+        guard current != new else { return nil }
+        let previous = current
         current = new
-        return true
+        return previous
     }
     
     /// A lot of diliberation was put in to how this is executed and multiple options were considered:
@@ -145,56 +149,56 @@ extension BatteryCell {
     ///
     /// This `apply` solution was chosen because it is sequential and easy to read – without needing to reason through property setters. This function simply handles side effects in one place. It leverages enums, so the compiler can enforce any missing definitions. it is slightly more efficient since it does not require snapshots and comparisons – the `diff` is generated directly as it processes the incoming changes.
     ///
-    /// The downside is that it adds an artificial interface on class property changes. `snapshot and diff` also reports net results: if a single batch triggers a cascade and also explicitly sets the same parameter, it reports only the final value. `apply` must therefore dedupe the returned array by parameter identity — last write wins — to match that behavior.
-    /// 
-    /// - Parameter intents: <#intents description#>
-    /// - Returns: <#description#>
+    /// The downside is that it adds an artificial interface on class property changes.
+
+    /// - Parameter intents: the changes to apply.
+    /// - Returns: the previous values. Empty if nothing changed.
     func apply(_ intents: [Change]) -> [Change] {
-        var updates: [Change] = []
+        var previous: [Change] = []
         
         intents.forEach { change in
-            let didChange: Bool
+            let replaced: Change?
             
             switch change{
-            case .start1(let v): didChange = write(v, &propertyData.start1)
-            case .start2(let v): didChange = write(v, &propertyData.start2)
-            case .volume(let v): didChange = write(v, &propertyData.volume)
-            case .pan(let v): didChange = write(v, &propertyData.pan)
-            case .speedCoarse(let v): didChange = write(v, &propertyData.speed.course)
-            case .speedFine(let v): didChange = write(v, &propertyData.speed.fine)
-            case .filterLow(let v): didChange = write(v, &propertyData.filterLow)
-            case .filterHigh(let v): didChange = write(v, &propertyData.filterHigh)
-            case .transientAttack(let v): didChange = write(v, &propertyData.transientAttack)
-            case .transientSustain(let v): didChange = write(v, &propertyData.transientSustain)
-            case .enableTransientMaster(let v): didChange = write(v, &propertyData.enableTransientMaster)
-            case .fineTune(let v): didChange = write(v, &propertyData.fineTune)
-            case .reverbSend(let v): didChange = write(v, &propertyData.reverbSend)
-            case .delaySend(let v): didChange = write(v, &propertyData.delaySend)
-            case .velocity(let v): didChange = write(v, &propertyData.velocity)
-            case .envOrder(let v): didChange = write(v, &propertyData.envOrder)
-            case .formant(let v): didChange = write(v, &propertyData.formant)
-            case .loopStart(let v): didChange = write(v, &propertyData.loopStart)
-            case .loopStartFine(let v): didChange = write(v, &propertyData.loopStartFine)
-            case .loopLength(let v): didChange = write(v, &propertyData.loopLength)
-            case .loopLengthFine(let v): didChange = write(v, &propertyData.loopLengthFine)
-            case .attack(let v): didChange = write(v, &ampEnvelopeData.attack)
-            case .hold(let v): didChange = write(v, &ampEnvelopeData.hold)
-            case .decay(let v): didChange = write(v, &ampEnvelopeData.decay)
-            case .sustain(let v): didChange = write(v, &ampEnvelopeData.sustain)
-            case .release(let v): didChange = write(v, &ampEnvelopeData.release)
-            case .enableAmpEnvelope(let v): didChange = write(v, &ampEnvelopeData.enableAmpEnv)
-            case .lofiBits(let v): didChange = write(v, &loFiData.bits)
-            case .lofiHertz(let v): didChange = write(v, &loFiData.hertz)
-            case .lofiNoise(let v): didChange = write(v, &loFiData.noise)
-            case .lofiColor(let v): didChange = write(v, &loFiData.color)
-            case .lofiOut(let v): didChange = write(v, &loFiData.out)
-            case .enableLofi(let v): didChange = write(v, &loFiData.enable)
-            case .pitch(let v): didChange = write(v, &sampleData.pitch)
+            case .start1(let v): replaced = write(v, &propertyData.start1).map(Change.start1)
+            case .start2(let v): replaced = write(v, &propertyData.start2).map(Change.start2)
+            case .volume(let v): replaced = write(v, &propertyData.volume).map(Change.volume)
+            case .pan(let v): replaced = write(v, &propertyData.pan).map(Change.pan)
+            case .speedCoarse(let v): replaced = write(v, &propertyData.speed.course).map(Change.speedCoarse)
+            case .speedFine(let v): replaced = write(v, &propertyData.speed.fine).map(Change.speedFine)
+            case .filterLow(let v): replaced = write(v, &propertyData.filterLow).map(Change.filterLow)
+            case .filterHigh(let v): replaced = write(v, &propertyData.filterHigh).map(Change.filterHigh)
+            case .transientAttack(let v): replaced = write(v, &propertyData.transientAttack).map(Change.transientAttack)
+            case .transientSustain(let v): replaced = write(v, &propertyData.transientSustain).map(Change.transientSustain)
+            case .enableTransientMaster(let v): replaced = write(v, &propertyData.enableTransientMaster).map(Change.enableTransientMaster)
+            case .fineTune(let v): replaced = write(v, &propertyData.fineTune).map(Change.fineTune)
+            case .reverbSend(let v): replaced = write(v, &propertyData.reverbSend).map(Change.reverbSend)
+            case .delaySend(let v): replaced = write(v, &propertyData.delaySend).map(Change.delaySend)
+            case .velocity(let v): replaced = write(v, &propertyData.velocity).map(Change.velocity)
+            case .envOrder(let v): replaced = write(v, &propertyData.envOrder).map(Change.envOrder)
+            case .formant(let v): replaced = write(v, &propertyData.formant).map(Change.formant)
+            case .loopStart(let v): replaced = write(v, &propertyData.loopStart).map(Change.loopStart)
+            case .loopStartFine(let v): replaced = write(v, &propertyData.loopStartFine).map(Change.loopStartFine)
+            case .loopLength(let v): replaced = write(v, &propertyData.loopLength).map(Change.loopLength)
+            case .loopLengthFine(let v): replaced = write(v, &propertyData.loopLengthFine).map(Change.loopLengthFine)
+            case .attack(let v): replaced = write(v, &ampEnvelopeData.attack).map(Change.attack)
+            case .hold(let v): replaced = write(v, &ampEnvelopeData.hold).map(Change.hold)
+            case .decay(let v): replaced = write(v, &ampEnvelopeData.decay).map(Change.decay)
+            case .sustain(let v): replaced = write(v, &ampEnvelopeData.sustain).map(Change.sustain)
+            case .release(let v): replaced = write(v, &ampEnvelopeData.release).map(Change.release)
+            case .enableAmpEnvelope(let v): replaced = write(v, &ampEnvelopeData.enableAmpEnv).map(Change.enableAmpEnvelope)
+            case .lofiBits(let v): replaced = write(v, &loFiData.bits).map(Change.lofiBits)
+            case .lofiHertz(let v): replaced = write(v, &loFiData.hertz).map(Change.lofiHertz)
+            case .lofiNoise(let v): replaced = write(v, &loFiData.noise).map(Change.lofiNoise)
+            case .lofiColor(let v): replaced = write(v, &loFiData.color).map(Change.lofiColor)
+            case .lofiOut(let v): replaced = write(v, &loFiData.out).map(Change.lofiOut)
+            case .enableLofi(let v): replaced = write(v, &loFiData.enable).map(Change.enableLofi)
+            case .pitch(let v): replaced = write(v, &sampleData.pitch).map(Change.pitch)
             }
-            if didChange { updates.append(change) }
+            if let replaced { previous.append(replaced) }
         }
         
-        return updates
+        return previous
         
     }
 }
