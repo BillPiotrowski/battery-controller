@@ -26,7 +26,8 @@ class MaschineInterface {
     
     private var isSelectionLocked: Bool
     
-    private var copiedPropertyData: [SampleCellPropertyProtocol]?
+    // Is there a way to store this to a clipboard?
+    private var copiedParameters: [BatteryCell.Parameter]?
     
     /* private */ let midi: MIDI
     private let batteryCells: [BatteryCell]
@@ -53,10 +54,7 @@ class MaschineInterface {
         for n in 0...15 {
             let batteryCell = BatteryCell(
                 sampleCellData: documentData.sampleCellsData[n],
-                midi: midi,
-                channelIndex: n,
-                samplerOutputSelection: samplerOutputSelection,
-                undoManager: undoManager
+                channelIndex: n
             )
             batteryCells.append(batteryCell)
         }
@@ -148,12 +146,15 @@ extension MaschineInterface {
         }
     }
     
+    /// Every cell's full state 
     private var allToSamplerCCs: [MidiControllerChange] {
-        var midiCCs = [MidiControllerChange]()
-        for sampleCell in batteryCells {
-            midiCCs.append(contentsOf: sampleCell.allMIDISamplerCCs)
+        return batteryCells.flatMap { batteryCell in
+            MaschineInterface.samplerCCs(
+                for: batteryCell.allParameters,
+                data: batteryCell.sampleCellData,
+                channel: batteryCell.channelIndex
+            )
         }
-        return midiCCs
     }
     private var allToControllerCCs: [MidiControllerChange] {
         let selectedSampleCell = batteryCells[editingCellIndex]
@@ -247,47 +248,340 @@ extension MaschineInterface {
 }
 // MARK: MIDI CC CHANGE
 extension MaschineInterface {
+
+  enum RouterError: ScorepioError {
+      case unmappedCC(MidiControlChangeNumber)
+  
+      var message: String {
+          switch self {
+          case .unmappedCC(let n): return "No input mapping for CC \(n)."
+          }
+      }
+  }
+
     private func midiCCHandler(midiCC: MidiControllerChange){
         do {
-            let sampleProperty = try MidiCCInterface(inputNumber: midiCC.ccNumber)
-
-
+            guard let sampleProperty = MidiInputMapping(rawValue: midiCC.ccNumber) else {
+                throw RouterError.unmappedCC(midiCC.ccNumber)
+            }
             
-            
-            let batteryCell = batteryCells[editingCellIndex]
+            // TODO: these switches end in `default: break`, so a new
+            // MidiInputMapping case falls through silently instead of failing to
+            // build. One exhaustive switch returning a route would catch it.
+            // MASTER
+            switch sampleProperty {
+            case .unsoloAll:
+                guard midiCC.bool else { return }
+                self.unsoloAll()
+                return
+            case .unlockAll:
+                guard midiCC.bool else { return }
+                self.unlockAll()
+                return
+            case .lockAll:
+                guard midiCC.bool else { return }
+                self.lockAll()
+                return
+//            case .isSelectionLocked(let value): self.isSelectionLocked = value
+            case .copy:
+                guard midiCC.bool else { return }
+                self.copy()
+                return
+            case .paste:
+                guard midiCC.bool else { return }
+                self.paste()
+                return
+            case .undo:
+                guard midiCC.bool else { return }
+                self.undo()
+                return
+            case .redo:
+                guard midiCC.bool else { return }
+                self.redo()
+                return
+            case .resetAll:
+                guard midiCC.bool else { return }
+                self.resetAll()
+                return
 
-            switch sampleProperty.destination {
-            case
-                .sampleCellProperty,
-                .ampEnvelope,
-                .loFi,
-                .sampleData:
+            case .select:
+                self.isSelectionLocked = midiCC.bool
+                return
                 
-                let newUndoGroup = UndoGroup(
+            default: break
+            }
+            
+            // does this require a guard?
+            let batteryCell = batteryCells[editingCellIndex]
+            
+            
+            switch sampleProperty {
+            case .mute:
+                batteryCell.stateData.mute = midiCC.bool
+                return
+            case .solo:
+                batteryCell.stateData.solo = midiCC.bool
+                return
+            case .lock:
+                batteryCell.stateData.lock = midiCC.bool
+                return
+            case .reset:
+                guard midiCC.bool else { return }
+                apply(
+                    BatteryCell.defaultParameters,
+                    cellIndex: editingCellIndex,
+                    undoGroup: UndoGroup(
+                        task: .reset,
+                        sampleCellIndex: editingCellIndex
+                    )
+                )
+                updateController()
+                return
+
+            default: break
+            }
+
+            guard let change = MaschineInterface.getChange(mapping: sampleProperty, midiCC: midiCC) else {
+                // Add warning.
+                return
+            }
+
+            apply(
+                [change],
+                cellIndex: editingCellIndex,
+                undoGroup: UndoGroup(
                     task: sampleProperty,
                     sampleCellIndex: editingCellIndex
                 )
-                set(newUndoGroup: newUndoGroup)
-                
-                
-                
-                 batteryCell.update(
-                    midiCC: midiCC,
-                    destination: sampleProperty.destination
-                )
-            case .sampleCellState:
-
-                let newMidiCC = try MidiCCValueMap(midiCCInterface: sampleProperty, midiCC: midiCC)
-                batteryCell.setStateFrom(midiCC: newMidiCC)
-            case .master:
-
-                let newMidiCC = try MidiCCValueMap(midiCCInterface: sampleProperty, midiCC: midiCC)
-                self.handleMasterCC(midiCC: newMidiCC)
-            }
+            )
         }
         catch { print(error) }
     }
     
+    static func getChange(mapping: MidiInputMapping, midiCC: MidiControllerChange) -> BatteryCell.Parameter? {
+        switch mapping {
+
+        // MARK: Property
+        case .start1: return .start1(midiCC.ratio)
+        case .start2: return .start2(midiCC.ratio)
+        case .volume: return .volume(midiCC.ratio)
+        case .pan: return .pan(midiCC.ratio)
+        case .speed: return .speedCoarse(midiCC.ratio)
+        case .fineSpeed: return .speedFine(midiCC.ratio)
+        case .filterLow: return .filterLow(midiCC.ratio)
+        case .filterHigh: return .filterHigh(midiCC.ratio)
+        case .transientAttack: return .transientAttack(midiCC.ratio)
+        case .transientSustain: return .transientSustain(midiCC.ratio)
+        case .enableTransientMaster: return .enableTransientMaster(midiCC.bool)
+        case .fineTune: return .fineTune(midiCC.ratio)
+        case .reverbSend: return .reverbSend(midiCC.ratio)
+        case .delaySend: return .delaySend(midiCC.ratio)
+        case .velocity: return .velocity(midiCC.ratio)
+        case .envOrder: return .envOrder(midiCC.ratio)
+        case .formant: return .formant(midiCC.ratio)
+        case .loopStart: return .loopStart(midiCC.ratio)
+        case .loopStartFine: return .loopStartFine(midiCC.ratio)
+        case .loopLength: return .loopLength(midiCC.ratio)
+        case .loopLengthFine: return .loopLengthFine(midiCC.ratio)
+
+        // MARK: Amp Envelope
+        case .attack: return .attack(midiCC.ratio)
+        case .hold: return .hold(midiCC.ratio)
+        case .decay: return .decay(midiCC.ratio)
+        case .sustain: return .sustain(midiCC.ratio)
+        case .release: return .release(midiCC.ratio)
+        case .enableAttackEnvelope: return .enableAmpEnvelope(midiCC.bool)
+
+        // MARK: Lo-Fi
+        case .lofiBits: return .lofiBits(midiCC.ratio)
+        case .lofiHertz: return .lofiHertz(midiCC.ratio)
+        case .lofiNoise: return .lofiNoise(midiCC.ratio)
+        case .lofiColor: return .lofiColor(midiCC.ratio)
+        case .lofiOut: return .lofiOut(midiCC.ratio)
+        case .enableLofi: return .enableLofi(midiCC.bool)
+
+        // MARK: Sample
+        case .pitch: return .pitch(Pitch(value: midiCC.ratio))
+
+        // MARK: Not a cell parameter
+
+        // Coarse tune is intentionally ignored - only fine tune is allowed.
+        case .tune: return nil
+
+        // Performance state. Not undoable, not copied, applied directly.
+        case .mute, .solo, .lock: return nil
+
+        // Master / kit-level actions, handled by the caller.
+        case .unsoloAll,
+             .lockAll,
+             .unlockAll,
+             .select,
+             .copy,
+             .paste,
+             .reset,
+             .resetAll,
+             .undo,
+             .redo:
+            return nil
+        }
+    }
+
+}
+
+// MARK: BROADCAST TO SAMPLER
+extension MaschineInterface {
+
+    /// Encodes cell parameters in to Battery's CC vocabulary.
+    ///
+    /// Pure by construction: `static`, so it can not reach instance state or send anything. Only the case identity of each parameter is used – every value is read from `data`. That single rule is what lets composites resolve correctly: `speedCoarse` and `speedFine` each need the whole `Speed` to encode, not their own payload.
+    ///
+    /// - Parameters:
+    ///   - parameters: the parameters to encode. Payloads are ignored.
+    ///   - data: the cell's current state. The authority for every value, so it must already reflect the change being broadcast.
+    ///   - channel: the cell's channel. Battery gives each cell its own.
+    /// - Returns: CCs ready to send, deduped by CC number.
+    static func samplerCCs(
+        for parameters: [BatteryCell.Parameter],
+        data: SampleCellData,
+        channel: MidiChannel
+    ) -> [MidiControllerChange] {
+        var midiCCs = [MidiControllerChange]()
+        var claimedCCNumbers = Set<MidiControlChangeNumber>()
+
+        for parameter in parameters {
+            let parameterCCs = samplerCCs(
+                for: parameter,
+                data: data,
+                channel: channel
+            )
+            for midiCC in parameterCCs {
+                // Values all come from one snapshot, so duplicates are identical
+                // and the first is as good as the last. Coarse and fine speed in
+                // the same batch is the case that reaches here.
+                guard claimedCCNumbers.insert(midiCC.ccNumber).inserted
+                    else { continue }
+                midiCCs.append(midiCC)
+            }
+        }
+        return midiCCs
+    }
+
+    private static func samplerCCs(
+        for parameter: BatteryCell.Parameter,
+        data: SampleCellData,
+        channel: MidiChannel
+    ) -> [MidiControllerChange] {
+        func midiCC(
+            _ mapping: MidiOutputMapping,
+            _ value: MidiCCValueProtocol
+        ) -> [MidiControllerChange] {
+            return [
+                MidiControllerChange(
+                    ccNumber: mapping.rawValue,
+                    value: value.MidiCCValue,
+                    channel: channel
+                )
+            ]
+        }
+
+        let property = data.propertyData
+        let ampEnvelope = data.ampEnvelopeData
+        let loFi = data.loFiData
+
+        switch parameter {
+
+        // MARK: Property
+        case .start1: return midiCC(.start1, property.start1)
+        case .start2: return midiCC(.start2, property.start2)
+        case .volume: return midiCC(.volume, property.volume)
+        case .pan: return midiCC(.pan, property.pan)
+        case .filterLow: return midiCC(.filterLow, property.filterLow)
+        case .filterHigh: return midiCC(.filterHigh, property.filterHigh)
+        case .transientAttack: return midiCC(.transientAttack, property.transientAttack)
+        case .transientSustain: return midiCC(.transientSustain, property.transientSustain)
+        case .enableTransientMaster: return midiCC(.enableTransientMaster, property.enableTransientMaster)
+        case .fineTune: return midiCC(.fineTune, property.fineTune)
+        case .reverbSend: return midiCC(.reverbSend, property.reverbSend)
+        case .delaySend: return midiCC(.delaySend, property.delaySend)
+        case .velocity: return midiCC(.velocity, property.velocity)
+        case .envOrder: return midiCC(.envOrder, property.envOrder)
+        case .formant: return midiCC(.formant, property.formant)
+        case .loopStart: return midiCC(.loopStart, property.loopStart)
+        case .loopStartFine: return midiCC(.loopStartFine, property.loopStartFine)
+        case .loopLength: return midiCC(.loopLength, property.loopLength)
+        case .loopLengthFine: return midiCC(.loopLengthFine, property.loopLengthFine)
+
+        // MARK: Speed
+        // Coarse and fine fold in to a single CC, and the fold decides which of
+        // speed1...speed4 it lands on. Both cases therefore emit the same CC and
+        // the caller dedupes.
+        case .speedCoarse, .speedFine:
+            return [property.speed.midiCCs(channel: channel)]
+
+        // MARK: Amp Envelope
+        case .attack: return midiCC(.attack, ampEnvelope.attack)
+        case .hold: return midiCC(.hold, ampEnvelope.hold)
+        case .decay: return midiCC(.decay, ampEnvelope.decay)
+        case .sustain: return midiCC(.sustain, ampEnvelope.sustain)
+        case .release: return midiCC(.release, ampEnvelope.release)
+        case .enableAmpEnvelope: return midiCC(.enableAttackEnvelope, ampEnvelope.enableAmpEnv)
+
+        // MARK: Lo-Fi
+        case .lofiBits: return midiCC(.lofiBits, loFi.bits)
+        case .lofiHertz: return midiCC(.lofiHertz, loFi.hertz)
+        case .lofiNoise: return midiCC(.lofiNoise, loFi.noise)
+        case .lofiColor: return midiCC(.lofiColor, loFi.color)
+        case .lofiOut: return midiCC(.lofiOut, loFi.out)
+        case .enableLofi: return midiCC(.enableLofi, loFi.enable)
+
+        // MARK: Sample
+
+        // Pitch is not a CC to Battery. It is the note number the cell is played
+        // with – see `midiNoteHandler`.
+        case .pitch: return []
+        }
+    }
+
+    /// Snapshots `cell` and sends the encoded result. The cell must already have
+    /// the change applied.
+    private func broadcastToSampler(
+        _ parameters: [BatteryCell.Parameter],
+        cell: BatteryCell
+    ){
+        guard !parameters.isEmpty else { return }
+        let midiCCs = MaschineInterface.samplerCCs(
+            for: parameters,
+            data: cell.sampleCellData,
+            channel: cell.channelIndex
+        )
+        sendToSampler(midiCCs: midiCCs)
+    }
+}
+
+// MARK: APPLY
+extension MaschineInterface {
+
+    /// Pass `undoGroup` to open one, or `nil` when the caller owns the group –
+    @discardableResult
+    private func apply(
+        _ parameters: [BatteryCell.Parameter],
+        cellIndex: Int,
+        undoGroup: UndoGroup?
+    ) -> [BatteryCell.Parameter] {
+        let batteryCell = batteryCells[cellIndex]
+        let previous = batteryCell.apply(parameters)
+        guard !previous.isEmpty else { return [] }
+        if let undoGroup { set(newUndoGroup: undoGroup) }
+        registerUndo(previous: previous, cellIndex: cellIndex)
+        broadcastToSampler(previous, cell: batteryCell)
+        return previous
+    }
+
+    private func registerUndo(previous: [BatteryCell.Parameter], cellIndex: Int){
+        undoManager.registerUndo(withTarget: self){ maschineInterface in
+            maschineInterface.apply(previous, cellIndex: cellIndex, undoGroup: nil)
+        }
+    }
 }
 
 // MARK: UNDO GROUP
@@ -321,33 +615,17 @@ extension MaschineInterface {
 
 // MARK: MASTER
 extension MaschineInterface {
-    private func handleMasterCC(midiCC: MidiCCValueMap){
-        guard case .master = midiCC.midiCCInterface.destination
-            else {
-                print("WARNING: Midi CC not a master setting.")
-                return
-        }
-        switch midiCC {
-        case .unsoloAll: self.unsoloAll()
-        case .unlockAll: self.unlockAll()
-        case .lockAll: self.lockAll()
-        case .isSelectionLocked(let value): self.isSelectionLocked = value
-        case .copy: self.copy()
-        case .paste: self.paste()
-        case .undo: self.undo()
-        case .redo: self.redo()
-        case .resetAll: self.resetAll()
-        default:
-            print("WARNING: MIDI CC: \(midiCC) not handled.")
-        }
-    }
     private func resetAll(){
-        let undoGroup = UndoGroup(task: .resetAll, sampleCellIndex: nil)
-        set(newUndoGroup: undoGroup)
-        for batteryCell in batteryCells {
-            batteryCell.reset()
+        set(newUndoGroup: UndoGroup(task: .resetAll, sampleCellIndex: nil))
+        for cellIndex in batteryCells.indices {
+            apply(
+                BatteryCell.defaultParameters,
+                cellIndex: cellIndex,
+                undoGroup: nil
+            )
         }
         closeUndoGroup()
+        updateController()
     }
     
     private func undo(){
@@ -362,21 +640,17 @@ extension MaschineInterface {
     }
     
     private func copy(){
-        let currentCell = batteryCells[editingCellIndex]
-        self.copiedPropertyData = currentCell.copy()
+        self.copiedParameters = batteryCells[editingCellIndex].allParameters
     }
     private func paste(){
-        guard let propertyData = self.copiedPropertyData
+        guard let copiedParameters = self.copiedParameters
             else {
                 print("No copied data.")
                 return
         }
-        let newUndoGroup = UndoGroup(
-            task: .paste,
-            sampleCellIndex: nil
-        )
-        set(newUndoGroup: newUndoGroup)
-        batteryCells[editingCellIndex].paste(datas: propertyData)
+        set(newUndoGroup: UndoGroup(task: .paste, sampleCellIndex: nil))
+        apply(copiedParameters, cellIndex: editingCellIndex, undoGroup: nil)
+        closeUndoGroup()
         updateController()
     }
     
@@ -409,7 +683,8 @@ extension MaschineInterface {
 
 struct UndoGroup {
     //let task: MidiCCValueMap
-    let task: MidiCCInterface
+    // Likely should be internal domain and not midi domain. but easy solution for now. 
+    let task: MidiInputMapping
     let sampleCellIndex: Int?
 }
 

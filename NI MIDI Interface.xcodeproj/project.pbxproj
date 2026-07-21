@@ -18,36 +18,14 @@
 			remoteGlobalIDString = F043E0D9245A27C80070C193;
 			remoteInfo = "NI MIDI Interface";
 		};
-		F043E0F8245A27CA0070C193 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F043E0D2245A27C80070C193 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F043E0D9245A27C80070C193;
-			remoteInfo = "NI MIDI Interface";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		F043E0DA245A27C80070C193 /* NI MIDI Interface.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NI MIDI Interface.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F043E0EC245A27CA0070C193 /* NI MIDI InterfaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NI MIDI InterfaceTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F043E0F7245A27CA0070C193 /* NI MIDI InterfaceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NI MIDI InterfaceUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		63152F19300EAAE500697A54 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				NI_MIDI_InterfaceTests.swift,
-			);
-			target = F043E0EB245A27CA0070C193 /* NI MIDI InterfaceTests */;
-		};
-		63152F1E300EAAE700697A54 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				NI_MIDI_InterfaceUITests.swift,
-			);
-			target = F043E0F6245A27CA0070C193 /* NI MIDI InterfaceUITests */;
-		};
 		631B1DAA300EA9CE00353366 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -58,8 +36,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		63152F17300EAAE500697A54 /* NI MIDI InterfaceTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (63152F19300EAAE500697A54 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "NI MIDI InterfaceTests"; sourceTree = "<group>"; };
-		63152F1C300EAAE700697A54 /* NI MIDI InterfaceUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (63152F1E300EAAE700697A54 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "NI MIDI InterfaceUITests"; sourceTree = "<group>"; };
+		63152F17300EAAE500697A54 /* NI MIDI InterfaceTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "NI MIDI InterfaceTests"; sourceTree = "<group>"; };
 		631B1D83300EA9CE00353366 /* NI MIDI Interface */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (631B1DAA300EA9CE00353366 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "NI MIDI Interface"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -79,13 +56,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F043E0F4245A27CA0070C193 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -94,7 +64,6 @@
 			children = (
 				631B1D83300EA9CE00353366 /* NI MIDI Interface */,
 				63152F17300EAAE500697A54 /* NI MIDI InterfaceTests */,
-				63152F1C300EAAE700697A54 /* NI MIDI InterfaceUITests */,
 				F043E0DB245A27C80070C193 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,7 +73,6 @@
 			children = (
 				F043E0DA245A27C80070C193 /* NI MIDI Interface.app */,
 				F043E0EC245A27CA0070C193 /* NI MIDI InterfaceTests.xctest */,
-				F043E0F7245A27CA0070C193 /* NI MIDI InterfaceUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -145,28 +113,13 @@
 			dependencies = (
 				F043E0EE245A27CA0070C193 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				63152F17300EAAE500697A54 /* NI MIDI InterfaceTests */,
+			);
 			name = "NI MIDI InterfaceTests";
 			productName = "NI MIDI InterfaceTests";
 			productReference = F043E0EC245A27CA0070C193 /* NI MIDI InterfaceTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		F043E0F6245A27CA0070C193 /* NI MIDI InterfaceUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F043E106245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceUITests" */;
-			buildPhases = (
-				F043E0F3245A27CA0070C193 /* Sources */,
-				F043E0F4245A27CA0070C193 /* Frameworks */,
-				F043E0F5245A27CA0070C193 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F043E0F9245A27CA0070C193 /* PBXTargetDependency */,
-			);
-			name = "NI MIDI InterfaceUITests";
-			productName = "NI MIDI InterfaceUITests";
-			productReference = F043E0F7245A27CA0070C193 /* NI MIDI InterfaceUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -183,10 +136,6 @@
 						LastSwiftMigration = 1130;
 					};
 					F043E0EB245A27CA0070C193 = {
-						CreatedOnToolsVersion = 11.3;
-						TestTargetID = F043E0D9245A27C80070C193;
-					};
-					F043E0F6245A27CA0070C193 = {
 						CreatedOnToolsVersion = 11.3;
 						TestTargetID = F043E0D9245A27C80070C193;
 					};
@@ -210,7 +159,6 @@
 			targets = (
 				F043E0D9245A27C80070C193 /* NI MIDI Interface */,
 				F043E0EB245A27CA0070C193 /* NI MIDI InterfaceTests */,
-				F043E0F6245A27CA0070C193 /* NI MIDI InterfaceUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -224,13 +172,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F043E0EA245A27CA0070C193 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F043E0F5245A27CA0070C193 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -254,13 +195,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F043E0F3245A27CA0070C193 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -268,11 +202,6 @@
 			isa = PBXTargetDependency;
 			target = F043E0D9245A27C80070C193 /* NI MIDI Interface */;
 			targetProxy = F043E0ED245A27CA0070C193 /* PBXContainerItemProxy */;
-		};
-		F043E0F9245A27CA0070C193 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F043E0D9245A27C80070C193 /* NI MIDI Interface */;
-			targetProxy = F043E0F8245A27CA0070C193 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -485,48 +414,6 @@
 			};
 			name = Release;
 		};
-		F043E107245A27CA0070C193 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5Z7STG9PM4;
-				INFOPLIST_FILE = "NI MIDI InterfaceUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-InterfaceUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = "NI MIDI Interface";
-			};
-			name = Debug;
-		};
-		F043E108245A27CA0070C193 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5Z7STG9PM4;
-				INFOPLIST_FILE = "NI MIDI InterfaceUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				PRODUCT_BUNDLE_IDENTIFIER = "William-Piotrowski.NI-MIDI-InterfaceUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = "NI MIDI Interface";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -553,15 +440,6 @@
 			buildConfigurations = (
 				F043E104245A27CA0070C193 /* Debug */,
 				F043E105245A27CA0070C193 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F043E106245A27CA0070C193 /* Build configuration list for PBXNativeTarget "NI MIDI InterfaceUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F043E107245A27CA0070C193 /* Debug */,
-				F043E108245A27CA0070C193 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

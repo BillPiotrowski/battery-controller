@@ -83,19 +83,6 @@ extension SampleCellLoFiData: WriteableData {
     }
 }
 
-extension SampleCellLoFiData: SampleCellPropertyProtocol {
-    var outputValues: [String : MidiCCValueMap] {
-        return [
-            Property.lofiBits.rawValue: .lofiBits(value: bits),
-            Property.lofiHertz.rawValue: .lofiHertz(value: hertz),
-            Property.lofiNoise.rawValue: .lofiNoise(value: noise),
-            Property.lofiColor.rawValue: .lofiColor(value: color),
-            Property.lofiOut.rawValue: .lofiOut(value: out),
-            Property.enableLofi.rawValue: .enableLofi(value: enable)
-        ]
-    }
-}
-
 // MARK: DEFAULT
 extension SampleCellLoFiData {
     static let `default` = SampleCellLoFiData(
@@ -118,3 +105,7 @@ extension SampleCellLoFiData {
         case enableLofi = "enableLofi"
     }
 }
+
+// Synthesized. Every stored property is already Equatable.
+// Lets cell state be compared as a whole – see `BatteryCellParameterTests`.
+extension SampleCellLoFiData: Equatable {}

@@ -107,19 +107,7 @@ extension SampleCellAmpEnvelopeData {
     }
 }
 
-// MARK: SAMPLE PROP
-extension SampleCellAmpEnvelopeData: SampleCellPropertyProtocol {
-    var outputValues: [String: MidiCCValueMap] {
-        return [
-            Property.attack.rawValue: .attack(value: attack),
-            Property.hold.rawValue: .hold(value: hold),
-            Property.decay.rawValue: .decay(value: decay),
-            Property.sustain.rawValue: .sustain(value: sustain),
-            Property.release.rawValue: .release(value: release),
-            Property.enableAmpEnv.rawValue:
-                .enableAttackEnvelope(value: enableAmpEnv)
-        ]
-    }
-    
-}
 
+// Synthesized. Every stored property is already Equatable.
+// Lets cell state be compared as a whole – see `BatteryCellParameterTests`.
+extension SampleCellAmpEnvelopeData: Equatable {}

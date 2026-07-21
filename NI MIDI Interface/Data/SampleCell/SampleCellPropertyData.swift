@@ -294,35 +294,6 @@ extension SampleCellPropertyData {
     )
 }
 
-extension SampleCellPropertyData: SampleCellPropertyProtocol {
-    var outputValues: [String : MidiCCValueMap] {
-        return [
-            Property.start1.rawValue: .start1(value: start1),
-            Property.start2.rawValue: .start2(value: start2),
-            Property.volume.rawValue: .volume(value: volume),
-            Property.pan.rawValue: .pan(value: pan),
-            Property.speed.rawValue: .speed(value: speed),
-            //Property.fineSpeed.rawValue: .fineSpeed(value: fineSpeed),
-            Property.filterLow.rawValue: .filterLow(value: filterLow),
-            Property.filterHigh.rawValue: .filterHigh(value: filterHigh),
-            Property.transientAttack.rawValue: .transientAttack(value: transientAttack),
-            Property.transientSustain.rawValue: .transientSustain(value: transientSustain),
-            Property.enableTransientMaster.rawValue: .enableTransientMaster(value: enableTransientMaster),
-            //Property.tune.rawValue: .tune(value: tune),
-            Property.fineTune.rawValue: .fineTune(value: fineTune),
-            Property.reverbSend.rawValue: .reverbSend(value: reverbSend),
-            Property.delaySend.rawValue: .delaySend(value: delaySend),
-            Property.velocity.rawValue: .velocity(value: velocity),
-            Property.envOrder.rawValue: .envOrder(value: envOrder),
-            Property.formant.rawValue: .formant(value: formant),
-            Property.loopStart.rawValue: .loopStart(value: loopStart),
-            Property.loopStartFine.rawValue: .loopStartFine(value: loopStartFine),
-            Property.loopLength.rawValue: .loopLength(value: loopLength),
-            Property.loopLengthFine.rawValue: .loopLengthFine(value: loopLengthFine)
-        ]
-    }
-}
-
 
 
 
@@ -356,3 +327,7 @@ extension Double: MidiCCValueProtocol {
 }
 
 
+
+// Synthesized. Every stored property is already Equatable.
+// Lets cell state be compared as a whole – see `BatteryCellParameterTests`.
+extension SampleCellPropertyData: Equatable {}
