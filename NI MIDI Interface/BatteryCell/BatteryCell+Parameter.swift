@@ -4,7 +4,7 @@
 // MARK: SET
 extension BatteryCell {
 
-    enum Change {
+    enum Parameter {
         // MARK: Property
         case start1(Double)
         case start2(Double)

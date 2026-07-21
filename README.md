@@ -21,6 +21,7 @@ This architecture was designed to solve a few problems:
 - convert all input buttons from toggle to trigger: ot trigger-safe (mute, solo, lock, select): these take the raw incoming value and assign it directly as the new persistent state:
 - add two new pitch inputs: octave and note? for more granular input control.
 - look at how undo / redo affects locked cells.
+- redo() nils `undoGroup` without calling `closeUndoGroup()`, so the Foundation grouping level leaks. Sequence: knob turn (opens group) -> redo -> knob turn (opens a second, nested) -> undo crashes with "too many nested undo groups". Fix is to make redo() symmetric with undo(). Pre-existing, not from the BatteryCell refactor.
 
 
 ## Battery Modulator Limitation
