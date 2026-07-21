@@ -7,7 +7,9 @@ extension MidiInputMapping {
     ///
     /// Returns `nil` for anything that is not a cell parameter – master actions,
     /// performance state, and deliberately ignored CCs.
-    static func getChange(mapping: MidiInputMapping, midiCC: MidiControllerChange) -> BatteryCell.Parameter? {
+    ///
+    /// TODO: When we build the kit, we may want to consider a parent to BatteryCell.Parameter – something like Kit Parameter and return that.
+    static func parameter(mapping: MidiInputMapping, midiCC: MidiControllerChange) -> BatteryCell.Parameter? {
         switch mapping {
 
         // MARK: Property

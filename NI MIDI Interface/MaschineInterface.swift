@@ -211,6 +211,19 @@ extension MaschineInterface {
       }
   }
 
+    enum KitIntent {
+        case unsoloAll, unlockAll, lockAll, undo, redo, resetAll
+
+        case select(cellIndex: Int, Bool)
+
+        case copy(fromCellIndex: Int), paste(toCellIndex: Int)
+
+        case mute(cellIndex: Int, isMuted: Bool), solo(cellIndex: Int, isSoloed: Bool), lock(cellIndex: Int, isLocked: Bool)
+
+        case reset(cellIndex: Int)
+        case updateCellParameter(cellIndex: Int, parameter: BatteryCell.Parameter)
+    }
+
     private func midiCCHandler(midiCC: MidiControllerChange){
         do {
             guard let sampleProperty = MidiInputMapping(rawValue: midiCC.ccNumber) else {
@@ -293,7 +306,7 @@ extension MaschineInterface {
             default: break
             }
 
-            guard let change = MidiInputMapping.getChange(mapping: sampleProperty, midiCC: midiCC) else {
+            guard let change = MidiInputMapping.parameter(mapping: sampleProperty, midiCC: midiCC) else {
                 // Add warning.
                 return
             }
