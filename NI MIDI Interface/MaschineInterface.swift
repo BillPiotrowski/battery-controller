@@ -265,6 +265,9 @@ extension MaschineInterface {
                 throw RouterError.unmappedCC(midiCC.ccNumber)
             }
             
+            // TODO: these switches end in `default: break`, so a new
+            // MidiInputMapping case falls through silently instead of failing to
+            // build. One exhaustive switch returning a route would catch it.
             // MASTER
             switch sampleProperty {
             case .unsoloAll:

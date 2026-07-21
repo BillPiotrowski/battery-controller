@@ -22,6 +22,8 @@ This architecture was designed to solve a few problems:
 - add two new pitch inputs: octave and note? for more granular input control.
 - look at how undo / redo affects locked cells.
 - redo() nils `undoGroup` without calling `closeUndoGroup()`, so the Foundation grouping level leaks. Sequence: knob turn (opens group) -> redo -> knob turn (opens a second, nested) -> undo crashes with "too many nested undo groups". Fix is to make redo() symmetric with undo(). Pre-existing, not from the BatteryCell refactor.
+- `midiCCHandler` routes through several switches that end in `default: break`, so a new `MidiInputMapping` case falls through silently rather than failing to build. Replace with one exhaustive switch returning a route (master action / state / parameter) so the compiler enforces it. Same guarantee `apply` and `samplerCCs` already have.
+- `isEditable` has no call sites, so cell lock does nothing — no path checks `stateData.lock` before applying a change. 
 
 
 ## Battery Modulator Limitation
