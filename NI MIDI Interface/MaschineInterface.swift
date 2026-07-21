@@ -26,7 +26,8 @@ class MaschineInterface {
     
     private var isSelectionLocked: Bool
     
-    private var copiedPropertyData: [SampleCellPropertyProtocol]?
+    // Is there a way to store this to a clipboard?
+    private var copiedParameters: [BatteryCell.Parameter]?
     
     /* private */ let midi: MIDI
     private let batteryCells: [BatteryCell]
@@ -53,10 +54,7 @@ class MaschineInterface {
         for n in 0...15 {
             let batteryCell = BatteryCell(
                 sampleCellData: documentData.sampleCellsData[n],
-                midi: midi,
-                channelIndex: n,
-                samplerOutputSelection: samplerOutputSelection,
-                undoManager: undoManager
+                channelIndex: n
             )
             batteryCells.append(batteryCell)
         }
@@ -325,32 +323,34 @@ extension MaschineInterface {
                 batteryCell.stateData.lock = midiCC.bool
                 return
             case .reset:
-                batteryCell.reset()
+                guard midiCC.bool else { return }
+                apply(
+                    BatteryCell.defaultParameters,
+                    cellIndex: editingCellIndex,
+                    undoGroup: UndoGroup(
+                        task: .reset,
+                        sampleCellIndex: editingCellIndex
+                    )
+                )
+                updateController()
                 return
-            
+
             default: break
             }
-            
-            
-            
-//            let sampleProperty = try MidiCCInterface(inputNumber: midiCC.ccNumber)
-            
 
-
-            
             guard let change = MaschineInterface.getChange(mapping: sampleProperty, midiCC: midiCC) else {
-//                throw RouterError.unmappedCC(midiCC.ccNumber)
+                // Add warning.
                 return
             }
-            
-            let previous = batteryCell.apply([change])
-            guard !previous.isEmpty else { return }
-            set(newUndoGroup: UndoGroup(task: sampleProperty, sampleCellIndex: editingCellIndex))
-            registerUndo(previous: previous, cellIndex: editingCellIndex)
-            // `previous` carries the old values, but only its case identity is
-            // used - the cell is the value authority.
-            broadcastToSampler(previous, cell: batteryCell)
 
+            apply(
+                [change],
+                cellIndex: editingCellIndex,
+                undoGroup: UndoGroup(
+                    task: sampleProperty,
+                    sampleCellIndex: editingCellIndex
+                )
+            )
         }
         catch { print(error) }
     }
@@ -555,17 +555,28 @@ extension MaschineInterface {
     }
 }
 
-// MARK: REGISTER UNDO
+// MARK: APPLY
 extension MaschineInterface {
 
-    /// Re-registering inside the handler is what makes redo work: `UndoManager` routes registrations to the redo stack while `isUndoing`, and back to the undo stack while `isRedoing`
+    /// Pass `undoGroup` to open one, or `nil` when the caller owns the group –
+    @discardableResult
+    private func apply(
+        _ parameters: [BatteryCell.Parameter],
+        cellIndex: Int,
+        undoGroup: UndoGroup?
+    ) -> [BatteryCell.Parameter] {
+        let batteryCell = batteryCells[cellIndex]
+        let previous = batteryCell.apply(parameters)
+        guard !previous.isEmpty else { return [] }
+        if let undoGroup { set(newUndoGroup: undoGroup) }
+        registerUndo(previous: previous, cellIndex: cellIndex)
+        broadcastToSampler(previous, cell: batteryCell)
+        return previous
+    }
+
     private func registerUndo(previous: [BatteryCell.Parameter], cellIndex: Int){
-        guard !previous.isEmpty else { return }
         undoManager.registerUndo(withTarget: self){ maschineInterface in
-            let batteryCell = maschineInterface.batteryCells[cellIndex]
-            let previous = batteryCell.apply(previous)
-            maschineInterface.broadcastToSampler(previous, cell: batteryCell)
-            maschineInterface.registerUndo(previous: previous, cellIndex: cellIndex)
+            maschineInterface.apply(previous, cellIndex: cellIndex, undoGroup: nil)
         }
     }
 }
@@ -602,12 +613,16 @@ extension MaschineInterface {
 // MARK: MASTER
 extension MaschineInterface {
     private func resetAll(){
-        let undoGroup = UndoGroup(task: .resetAll, sampleCellIndex: nil)
-        set(newUndoGroup: undoGroup)
-        for batteryCell in batteryCells {
-            batteryCell.reset()
+        set(newUndoGroup: UndoGroup(task: .resetAll, sampleCellIndex: nil))
+        for cellIndex in batteryCells.indices {
+            apply(
+                BatteryCell.defaultParameters,
+                cellIndex: cellIndex,
+                undoGroup: nil
+            )
         }
         closeUndoGroup()
+        updateController()
     }
     
     private func undo(){
@@ -622,21 +637,17 @@ extension MaschineInterface {
     }
     
     private func copy(){
-        let currentCell = batteryCells[editingCellIndex]
-        self.copiedPropertyData = currentCell.copy()
+        self.copiedParameters = batteryCells[editingCellIndex].allParameters
     }
     private func paste(){
-        guard let propertyData = self.copiedPropertyData
+        guard let copiedParameters = self.copiedParameters
             else {
                 print("No copied data.")
                 return
         }
-        let newUndoGroup = UndoGroup(
-            task: .paste,
-            sampleCellIndex: nil
-        )
-        set(newUndoGroup: newUndoGroup)
-        batteryCells[editingCellIndex].paste(datas: propertyData)
+        set(newUndoGroup: UndoGroup(task: .paste, sampleCellIndex: nil))
+        apply(copiedParameters, cellIndex: editingCellIndex, undoGroup: nil)
+        closeUndoGroup()
         updateController()
     }
     

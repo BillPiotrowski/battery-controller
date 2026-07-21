@@ -12,28 +12,10 @@ import XCTest
 /// not check for completeness.
 class BatteryCellParameterTests: XCTestCase {
 
-    private var midi: MIDI!
-
-    override func setUp() {
-        super.setUp()
-        midi = MIDI()
-    }
-
-    override func tearDown() {
-        midi = nil
-        super.tearDown()
-    }
-
     private func makeCell(data: SampleCellData) -> BatteryCell {
         return BatteryCell(
             sampleCellData: data,
-            midi: midi,
-            channelIndex: 0,
-            samplerOutputSelection: MidiOutput(
-                midi: midi,
-                selectedDeviceIndex: nil
-            ),
-            undoManager: UndoManager()
+            channelIndex: 0
         )
     }
 

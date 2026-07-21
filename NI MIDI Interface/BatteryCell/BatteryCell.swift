@@ -9,20 +9,16 @@
 import Foundation
 
 class BatteryCell {
-    private let midi: MIDI
     let channelIndex: Int
-    //private (set) var sampleCellData: SampleCellData
-    
+
     // consider adding getter and setter to protect this
     var stateData: SampleCellStateData
-    
+
     private (set) var propertyData: SampleCellPropertyData
     private (set) var ampEnvelopeData: SampleCellAmpEnvelopeData
     private (set) var loFiData: SampleCellLoFiData
     private (set) var sampleData: SampleCellSampleData
-    
-    private weak var samplerOutputSelection: MidiOutput?
-    private weak var undoManager: UndoManager?
+
     var sampleCellData: SampleCellData {
         return SampleCellData(
             propertyData: propertyData,
@@ -37,21 +33,14 @@ class BatteryCell {
     
     init(
         sampleCellData: SampleCellData,
-        midi: MIDI,
-        channelIndex: Int,
-        samplerOutputSelection: MidiOutput,
-        undoManager: UndoManager
+        channelIndex: Int
     ){
         self.propertyData = sampleCellData.propertyData
         self.stateData = sampleCellData.stateData
         self.ampEnvelopeData = sampleCellData.ampEnvelopeData
         self.loFiData = sampleCellData.loFiData
         self.sampleData = sampleCellData.sampleData
-        //self.sampleCellData = sampleCellData
-        self.midi = midi
         self.channelIndex = channelIndex
-        self.samplerOutputSelection = samplerOutputSelection
-        self.undoManager = undoManager
     }
 }
 
@@ -70,63 +59,6 @@ extension BatteryCell {
         switch property {
         case .lock(let value): stateData.lock = value
         }
-    }
-    func set(
-        propertyProtocol: SampleCellPropertyProtocol
-    ) -> SampleCellPropertyProtocol? {
-        let previous: SampleCellPropertyProtocol
-        if let ampEnvData = propertyProtocol as? SampleCellAmpEnvelopeData {
-            previous = self.ampEnvelopeData
-            self.ampEnvelopeData = ampEnvData
-        } else if let loFiData = propertyProtocol as? SampleCellLoFiData {
-            previous = self.loFiData
-            self.loFiData = loFiData
-        } else if let propertyData = propertyProtocol as? SampleCellPropertyData {
-            previous = self.propertyData
-            self.propertyData = propertyData
-        } else if let sampleData = propertyProtocol as? SampleCellSampleData {
-            previous = self.sampleData
-            self.sampleData = sampleData
-        } else {
-            print("NO PREVIOUS")
-            return nil
-        }
-        registerData(previous: previous)
-        let midiCCs = propertyProtocol.getUpdatedMidiCCs(midiChannel: self.channelIndex, old: previous)
-        sendToSampler(midiCCs: midiCCs)
-        return previous
-    }
-}
-
-// MARK: SEND TO SAMPLER
-extension BatteryCell {
-    private func sendToSampler(midiCCs: [MidiControllerChange]){
-        do {
-            try samplerOutputSelection?.send(midiCCs: midiCCs)
-        } catch {
-            print(error)
-        }
-    }
-}
-
-// MARK: RESET
-extension BatteryCell {
-    func reset(){
-        _ = self.set(propertyProtocol: SampleCellPropertyData.default)
-        _ = self.set(propertyProtocol: SampleCellAmpEnvelopeData.default)
-        _ = self.set(propertyProtocol: SampleCellLoFiData.default)
-        _ = self.set(propertyProtocol: SampleCellSampleData.default)
-        //self.propertyData = SampleCellPropertyData.default
-        //self.ampEnvelopeData = SampleCellAmpEnvelopeData.default
-        //self.loFiData = SampleCellLoFiData.default
-        //self.sampleData = SampleCellSampleData.default
-        
-        print("Channel: \(channelIndex)")
-        //let midiCCs = self.allMIDISamplerCCs
-        //print(midiCCs)
-        //sendToSampler(midiCCs: midiCCs)
-        //let midiCCs2 = propertyData.getUpdatedMidiCCs(midiChannel: channelIndex)
-        //sendToSampler(midiCCs: midiCCs2)
     }
 }
 
@@ -204,163 +136,12 @@ extension BatteryCell {
 }
 
 
-// MARK: UPDATE SAMPLE PROPS
-extension BatteryCell {
-    private func updateSampleProperty(
-        midiCC: MidiControllerChange,
-        inputMapping: MidiInputMapping
-    ){
-        print(midiCC)
-        var newPropertyData = propertyData
-        switch inputMapping {
-        case .start1: newPropertyData.start1 = midiCC.ratio
-        case .start2: newPropertyData.start2 = midiCC.ratio
-        case .volume: newPropertyData.volume = midiCC.ratio
-        case .filterLow: newPropertyData.filterLow = midiCC.ratio
-        case .filterHigh: newPropertyData.filterHigh = midiCC.ratio
-        case .transientAttack:
-            newPropertyData.transientAttack = midiCC.ratio
-        case .transientSustain:
-            newPropertyData.transientSustain = midiCC.ratio
-        case .enableTransientMaster:
-            newPropertyData.enableTransientMaster = midiCC.bool
-        case .tune:
-            // ONLY ALLOW FINE TUNE!!
-            break
-            //newPropertyData.tune = midiCC.ratio
-        case .fineTune: newPropertyData.fineTune = midiCC.ratio
-        case .reverbSend: newPropertyData.reverbSend = midiCC.ratio
-        case .delaySend: newPropertyData.delaySend = midiCC.ratio
-        case .velocity: newPropertyData.velocity = midiCC.ratio
-        case .envOrder: newPropertyData.envOrder = midiCC.ratio
-        case .formant: newPropertyData.formant = midiCC.ratio
-        case .pan: newPropertyData.pan = midiCC.ratio
-        case .speed:
-            var speed = newPropertyData.speed
-            speed.course = midiCC.ratio
-            newPropertyData.speed = speed
-        case .fineSpeed:
-            var speed = newPropertyData.speed
-            speed.fine = midiCC.ratio
-            newPropertyData.speed = speed
-            //newPropertyData.fineSpeed = midiCC.ratio
-        case .reset:
-            print("RESET 2")
-            self.reset()
-            // NO NEED TO SET, SO RETURN
-            // WILL OVERRIDE RESET IF IF CONTINUES TO set() func below.
-            return
-        case .loopStart: newPropertyData.loopStart = midiCC.ratio
-        case .loopStartFine:
-            newPropertyData.loopStartFine = midiCC.ratio
-        case .loopLength:
-            newPropertyData.loopLength = midiCC.ratio
-        case .loopLengthFine:
-            newPropertyData.loopLengthFine = midiCC.ratio
-        default:
-            print("BAD COMMAND TO PROPERTY DATA")
-            break
-        }
-        print(newPropertyData)
-        _ = self.set(propertyProtocol: newPropertyData)
-    }
-}
-
-// MARK: UPDATE SAMPLE DATA
-extension BatteryCell {
-    private func updateSampleData(
-        midiCC: MidiControllerChange,
-        inputMapping: MidiInputMapping
-    ){
-        var newSampleData = sampleData
-        switch inputMapping {
-        case .pitch: newSampleData.pitch = Pitch(value: midiCC.ratio)
-        default: break
-        }
-        _ = set(propertyProtocol: newSampleData)
-    }
-}
-
-
-// MARK: UPDATE AMP ENV
-extension BatteryCell {
-    private func updateAmpEnv(
-        midiCC: MidiControllerChange,
-        inputMapping: MidiInputMapping
-    ){
-        var newAmpEnvelopeData = ampEnvelopeData
-        switch inputMapping {
-        case .attack: newAmpEnvelopeData.attack = midiCC.ratio
-        case .hold: newAmpEnvelopeData.hold = midiCC.ratio
-        case .decay: newAmpEnvelopeData.decay = midiCC.ratio
-        case .sustain: newAmpEnvelopeData.sustain = midiCC.ratio
-        case .release: newAmpEnvelopeData.release = midiCC.ratio
-        case .enableAttackEnvelope:
-            newAmpEnvelopeData.enableAmpEnv = midiCC.bool
-        default: break
-        }
-        _ = self.set(propertyProtocol: newAmpEnvelopeData)
-    }
-}
-// MARK: UPDATE LOFI
-extension BatteryCell {
-    private func updateLoFi(
-        midiCC: MidiControllerChange,
-        inputMapping: MidiInputMapping
-    ){
-        var newLoFiData = loFiData
-        switch inputMapping {
-        case .lofiBits: newLoFiData.bits = midiCC.ratio
-        case .lofiHertz: newLoFiData.hertz = midiCC.ratio
-        case .lofiNoise: newLoFiData.noise = midiCC.ratio
-        case .lofiColor: newLoFiData.color = midiCC.ratio
-        case .lofiOut: newLoFiData.out = midiCC.ratio
-        case .enableLofi: newLoFiData.enable = midiCC.bool
-        default: break
-        }
-        _ = self.set(propertyProtocol: newLoFiData)
-    }
-}
-
-// MARK: UPDATE STATE
-// NOT UNDOABLE
-extension BatteryCell {
-    func setStateFrom(midiCC: MidiCCValueMap){
-        guard case .sampleCellState = midiCC.midiCCInterface.destination
-            else {
-                print("WARNING: MIDI CC is not state.")
-                return
-        }
-        switch midiCC {
-        case .mute(let value): self.stateData.mute = value
-        case .solo(let value): self.stateData.solo = value
-        case .isEditingLocked(let value): self.stateData.lock = value
-        default:
-            print("WARNING: MidiCC state not handled.")
-        }
-    }
-}
-
 extension BatteryCell {
     func unsolo(){
         self.stateData.solo = false
     }
 }
 
-
-// MARK: REGISTER UNDO
-extension BatteryCell {
-    private func registerData(
-        previous: SampleCellPropertyProtocol
-    ){
-        undoManager?.registerUndo(withTarget: self){
-            //$0.isEditing = nil
-            guard let temp = $0.set(propertyProtocol: previous)
-                else { return }
-            $0.registerData(previous: temp)
-        }
-    }
-}
 
 // MARK: SEND TO CONTROLLER
 extension BatteryCell {
@@ -513,23 +294,6 @@ extension BatteryCell {
              .undo,
              .redo:
             return nil
-        }
-    }
-}
-
-// MARK: COPY & PASTE
-extension BatteryCell {
-    func copy() -> [SampleCellPropertyProtocol] {
-        return [
-            propertyData,
-            sampleData,
-            ampEnvelopeData,
-            loFiData
-        ]
-    }
-    func paste(datas: [SampleCellPropertyProtocol]){
-        for data in datas {
-            _ = set(propertyProtocol: data)
         }
     }
 }
