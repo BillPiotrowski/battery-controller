@@ -84,16 +84,6 @@ extension SampleCellStateData {
     }
 }
 
-extension SampleCellStateData {
-    func getAllMidiCCs(channel: MidiChannel) -> [MidiCCValueMap] {
-        return [
-            .mute(value: mute),
-            .solo(value: solo),
-            .isEditingLocked(value: lock)
-        ]
-    }
-}
-
 // Synthesized. Every stored property is already Equatable.
 // Lets cell state be compared as a whole – see `BatteryCellParameterTests`.
 extension SampleCellStateData: Equatable {}

@@ -175,33 +175,6 @@ extension BatteryCell {
     }
 }
 
-
-extension BatteryCell {
-    enum MidiInProperty {
-        case attack(value: Double), hold(value: Double), decay(value: Double), sustain(value: Double), release(value: Double), enableAttackEnvelope(value: Bool)
-
-        init(
-            midiCC: MidiControllerChange
-        ) throws {
-            guard let inputMapping = MidiInputMapping(rawValue: midiCC.ccNumber)
-                else {
-                    throw NSError(domain: "no input mapping", code: 12, userInfo: nil)
-            }
-            switch inputMapping {
-            case .attack: self = .attack(value: midiCC.ratio)
-            case .hold: self = .hold(value: midiCC.ratio)
-            case .decay: self = .decay(value: midiCC.ratio)
-            case .sustain: self = .sustain(value: midiCC.ratio)
-            case .release: self = .release(value: midiCC.ratio)
-            case .enableAttackEnvelope:
-                self = .enableAttackEnvelope(value: midiCC.bool)
-            default: throw NSError(domain: "no matching value", code: 234, userInfo: nil)
-            }
-        }
-    }
-    
-}
-
 // MARK: GET ALL CCs
 extension BatteryCell {
     /// Full state broadcast to the control surface.

@@ -50,15 +50,6 @@ extension SampleCellSampleData {
 }
 
 
-extension SampleCellSampleData: SampleCellPropertyProtocol {
-    var outputValues: [String : MidiCCValueMap] {
-        return [
-            Property.pitch.rawValue: .pitch(pitch: pitch)
-        ]
-    }
-}
-
-
 // Synthesized. Every stored property is already Equatable.
 // Lets cell state be compared as a whole – see `BatteryCellParameterTests`.
 extension SampleCellSampleData: Equatable {}
