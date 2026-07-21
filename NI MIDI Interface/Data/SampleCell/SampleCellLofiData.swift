@@ -118,3 +118,7 @@ extension SampleCellLoFiData {
         case enableLofi = "enableLofi"
     }
 }
+
+// Synthesized. Every stored property is already Equatable.
+// Lets cell state be compared as a whole – see `BatteryCellParameterTests`.
+extension SampleCellLoFiData: Equatable {}
