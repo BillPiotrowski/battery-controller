@@ -423,37 +423,6 @@ extension BatteryCell {
 
 // MARK: GET ALL CCs
 extension BatteryCell {
-    var allMidiVals: [MidiCCValueMap] {
-        var allMidiVals = [MidiCCValueMap]()
-        allMidiVals.append(
-            contentsOf: propertyData.getUpdatedValues()
-        )
-        allMidiVals.append(
-            contentsOf: loFiData.getUpdatedValues()
-        )
-        allMidiVals.append(
-            contentsOf: ampEnvelopeData.getUpdatedValues()
-        )
-        allMidiVals.append(
-            contentsOf: sampleData.getUpdatedValues()
-        )
-        return allMidiVals
-    }
-    var allMIDISamplerCCs: [MidiControllerChange] {
-        let allMidiVals = self.allMidiVals
-        var midiCCs = [MidiControllerChange]()
-        for ccEnum in allMidiVals {
-            guard let ccNumber = ccEnum.midiCCInterface.midiCCOutputNumber
-                else { continue }
-            let midiCC = MidiControllerChange(
-                ccNumber: ccNumber,
-                value: ccEnum.midiCCValue,
-                channel: self.channelIndex
-            )
-            midiCCs.append(midiCC)
-        }
-        return midiCCs
-    }
     /// Full state broadcast to the control surface.
     ///
     /// Iterates the controller contract itself, so every mapped control reports

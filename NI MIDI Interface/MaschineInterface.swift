@@ -148,12 +148,15 @@ extension MaschineInterface {
         }
     }
     
+    /// Every cell's full state 
     private var allToSamplerCCs: [MidiControllerChange] {
-        var midiCCs = [MidiControllerChange]()
-        for sampleCell in batteryCells {
-            midiCCs.append(contentsOf: sampleCell.allMIDISamplerCCs)
+        return batteryCells.flatMap { batteryCell in
+            MaschineInterface.samplerCCs(
+                for: batteryCell.allParameters,
+                data: batteryCell.sampleCellData,
+                channel: batteryCell.channelIndex
+            )
         }
-        return midiCCs
     }
     private var allToControllerCCs: [MidiControllerChange] {
         let selectedSampleCell = batteryCells[editingCellIndex]
