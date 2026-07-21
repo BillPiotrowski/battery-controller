@@ -633,8 +633,9 @@ extension MaschineInterface {
         undoManager.undo()
         updateController()
     }
-    private func redo() {
-        undoGroup = nil
+    // Symmetric with undo() - leaving a group open here nests the next one.
+    private func redo(){
+        closeUndoGroup()
         undoManager.redo()
         updateController()
     }
