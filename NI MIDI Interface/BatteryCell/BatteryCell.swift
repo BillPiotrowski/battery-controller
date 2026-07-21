@@ -9,7 +9,6 @@
 import Foundation
 
 class BatteryCell {
-    let channelIndex: Int
 
     // consider adding getter and setter to protect this
     var stateData: SampleCellStateData
@@ -32,15 +31,13 @@ class BatteryCell {
     //var isEditing: MidiCCValueMap?
     
     init(
-        sampleCellData: SampleCellData,
-        channelIndex: Int
+        sampleCellData: SampleCellData
     ){
         self.propertyData = sampleCellData.propertyData
         self.stateData = sampleCellData.stateData
         self.ampEnvelopeData = sampleCellData.ampEnvelopeData
         self.loFiData = sampleCellData.loFiData
         self.sampleData = sampleCellData.sampleData
-        self.channelIndex = channelIndex
     }
 }
 
@@ -143,16 +140,6 @@ extension BatteryCell {
 }
 
 
-// MARK: SEND TO CONTROLLER
-extension BatteryCell {
-    func sendToController(controllerDevice: MidiOutput) throws {
-        let midiCCs = allMidiControllerCCs
-        try controllerDevice.send(midiCCs: midiCCs)
-    }
-}
-
-
-
 extension BatteryCell {
     
     
@@ -172,108 +159,5 @@ extension BatteryCell {
 extension BatteryCell {
     enum Property {
         case lock(value: Bool)
-    }
-}
-
-// MARK: GET ALL CCs
-extension BatteryCell {
-    /// Full state broadcast to the control surface.
-    ///
-    /// Iterates the controller contract itself, so every mapped control reports
-    /// its current value. Controls with no readable value (actions, and `tune`,
-    /// which is deliberately never broadcast) are skipped.
-    ///
-    /// Controller CCs always go out on channel 0.
-    var allMidiControllerCCs: [MidiControllerChange] {
-        return MidiInputMapping.allCases.compactMap { mapping in
-            guard let value = controllerValue(for: mapping)
-                else { return nil }
-            return MidiControllerChange(
-                ccNumber: mapping.rawValue,
-                value: value,
-                channel: 0
-            )
-        }
-    }
-
-    /// Current value of a control, in the controller's own CC vocabulary.
-    /// Returns `nil` where the mapping has no readable state.
-    private func controllerValue(
-        for mapping: MidiInputMapping
-    ) -> MidiControlChangeValue? {
-        switch mapping {
-
-        // MARK: Property
-        case .start1: return propertyData.start1.MidiCCValue
-        case .start2: return propertyData.start2.MidiCCValue
-        case .volume: return propertyData.volume.MidiCCValue
-        case .pan: return propertyData.pan.MidiCCValue
-        case .speed: return propertyData.speed.course.MidiCCValue
-        case .fineSpeed: return propertyData.speed.fine.MidiCCValue
-        case .filterLow: return propertyData.filterLow.MidiCCValue
-        case .filterHigh: return propertyData.filterHigh.MidiCCValue
-        case .transientAttack: return propertyData.transientAttack.MidiCCValue
-        case .transientSustain: return propertyData.transientSustain.MidiCCValue
-        case .enableTransientMaster: return propertyData.enableTransientMaster.MidiCCValue
-        case .fineTune: return propertyData.fineTune.MidiCCValue
-        case .reverbSend: return propertyData.reverbSend.MidiCCValue
-        case .delaySend: return propertyData.delaySend.MidiCCValue
-        case .velocity: return propertyData.velocity.MidiCCValue
-        case .envOrder: return propertyData.envOrder.MidiCCValue
-        case .formant: return propertyData.formant.MidiCCValue
-        case .loopStart: return propertyData.loopStart.MidiCCValue
-        case .loopStartFine: return propertyData.loopStartFine.MidiCCValue
-        case .loopLength: return propertyData.loopLength.MidiCCValue
-        case .loopLengthFine: return propertyData.loopLengthFine.MidiCCValue
-
-        // MARK: Amp Envelope
-        case .attack: return ampEnvelopeData.attack.MidiCCValue
-        case .hold: return ampEnvelopeData.hold.MidiCCValue
-        case .decay: return ampEnvelopeData.decay.MidiCCValue
-        case .sustain: return ampEnvelopeData.sustain.MidiCCValue
-        case .release: return ampEnvelopeData.release.MidiCCValue
-        case .enableAttackEnvelope: return ampEnvelopeData.enableAmpEnv.MidiCCValue
-
-        // MARK: Lo-Fi
-        case .lofiBits: return loFiData.bits.MidiCCValue
-        case .lofiHertz: return loFiData.hertz.MidiCCValue
-        case .lofiNoise: return loFiData.noise.MidiCCValue
-        case .lofiColor: return loFiData.color.MidiCCValue
-        case .lofiOut: return loFiData.out.MidiCCValue
-        case .enableLofi: return loFiData.enable.MidiCCValue
-
-        // MARK: Sample
-        case .pitch: return sampleData.pitch.controllerMidiValue
-
-        // MARK: State
-        case .mute: return stateData.mute.MidiCCValue
-        case .solo: return stateData.solo.MidiCCValue
-        case .lock: return stateData.lock.MidiCCValue
-
-        // MARK: No readable value
-
-        // Coarse tune is never broadcast - only fine tune is used.
-        case .tune: return nil
-
-        // Actions have no current state to report.
-        case .unsoloAll,
-             .lockAll,
-             .unlockAll,
-             .select,
-             .copy,
-             .paste,
-             .reset,
-             .resetAll,
-             .undo,
-             .redo:
-            return nil
-        }
-    }
-}
-
-// MARK: HELPERS
-extension BatteryCell {
-    var midiNoteNumber: Int {
-        return MIDINote.noteNumber(cellIndex: channelIndex)
     }
 }

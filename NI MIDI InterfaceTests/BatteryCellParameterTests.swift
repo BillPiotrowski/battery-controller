@@ -14,8 +14,7 @@ class BatteryCellParameterTests: XCTestCase {
 
     private func makeCell(data: SampleCellData) -> BatteryCell {
         return BatteryCell(
-            sampleCellData: data,
-            channelIndex: 0
+            sampleCellData: data
         )
     }
 

@@ -17,12 +17,16 @@ class MaschineInterface {
 
     private let samplerBroadcaster: SamplerBroadcaster
 
-    /// The sampler output port, exposed for device selection in the UI.
     var samplerOutputSelection: MidiOutput {
         return samplerBroadcaster.output
     }
 
-    var controllerOutputDevice: MidiOutput
+    private let controllerBroadcaster: ControllerBroadcaster
+
+    var controllerOutputDevice: MidiOutput {
+        return controllerBroadcaster.output
+    }
+
     var controllerInput: MidiInput
     var keyboardInput: MidiInput
     private var undoGroup: UndoGroup?
@@ -58,14 +62,15 @@ class MaschineInterface {
         var batteryCells = [BatteryCell]()
         for n in 0...15 {
             let batteryCell = BatteryCell(
-                sampleCellData: documentData.sampleCellsData[n],
-                channelIndex: n
+                sampleCellData: documentData.sampleCellsData[n]
             )
             batteryCells.append(batteryCell)
         }
-        
+
         self.samplerBroadcaster = SamplerBroadcaster(output: samplerOutputSelection)
-        self.controllerOutputDevice = MidiOutput(midi: midi, selectedDeviceIndex: nil)
+        self.controllerBroadcaster = ControllerBroadcaster(
+            output: MidiOutput(midi: midi, selectedDeviceIndex: nil)
+        )
         self.controllerInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
         self.keyboardInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
         self.editingCellIndex = 0
@@ -118,45 +123,12 @@ extension MaschineInterface {
         )
     }
 
-    private func sendToController(midiCCs: [MidiControllerChange]){
-        let selectedMidiNote = MIDINote(
-            noteNumber: selectedCell.midiNoteNumber,
-            velocity: 127,
-            isNoteOn: true
-        )
-        do {
-            for batteryCell in batteryCells {
-                let deselectedMidiNote = MIDINote(
-                    noteNumber: batteryCell.midiNoteNumber,
-                    velocity: 0,
-                    isNoteOn: false
-                )
-                try controllerOutputDevice.send(
-                    midiNote: deselectedMidiNote,
-                    channel: 0
-                )
-            }
-            try controllerOutputDevice.send(midiCCs: midiCCs)
-            try controllerOutputDevice.send(
-                midiNote: selectedMidiNote,
-                channel: 0
-            )
-        } catch {
-            print("ERROR SENDING TO SAMPLER: \(error).")
-        }
-    }
-    
-    private var allToControllerCCs: [MidiControllerChange] {
-        let selectedSampleCell = batteryCells[editingCellIndex]
-        var midiCCs = [MidiControllerChange]()
-        midiCCs.append(
-            contentsOf: selectedSampleCell.allMidiControllerCCs
-        )
-        return midiCCs
-    }
-    
     private func updateController(){
-        sendToController(midiCCs: allToControllerCCs)
+        controllerBroadcaster.broadcastAll(
+            data: selectedCell.sampleCellData,
+            selectedCellIndex: editingCellIndex,
+            cellCount: batteryCells.count
+        )
     }
 }
 
