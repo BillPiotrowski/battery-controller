@@ -35,7 +35,7 @@ class Document: NSDocument {
         let documentData = self.documentData ?? DocumentData()
         // FIX FORCED
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let maschineInterface = try! MaschineInterface(documentData: documentData, midi: appDelegate.midi!)
+        let maschineInterface = try! MaschineInterface(documentData: documentData, midi: appDelegate.midi!, undoManager: self.undoManager!)
         self.maschineInterface = maschineInterface
         
         self.addWindowController(windowController)

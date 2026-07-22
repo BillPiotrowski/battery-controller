@@ -31,7 +31,7 @@ class MaschineInterface {
     var keyboardInput: MidiInput
     private var undoGroup: UndoGroup?
     
-    private let undoManager: UndoManager
+    private weak var undoManager: UndoManager?
     
     /* private */ let midi: MIDI
     var noteObserver: Disposable?
@@ -41,14 +41,13 @@ class MaschineInterface {
         return kit.documentData
     }
     
-    init(documentData: DocumentData, midi: MIDI) throws {
+    init(documentData: DocumentData, midi: MIDI, undoManager: UndoManager) throws {
         guard documentData.sampleCellsData.count == 16
             else { throw NSError(domain: "not 16 cells", code: 23, userInfo: nil)}
         let samplerOutputSelection = MidiOutput(
             midi: midi,
             selectedDeviceIndex: nil
         )
-        let undoManager = UndoManager()
         var batteryCells = [Cell]()
         for n in 0...15 {
             let batteryCell = Cell(
@@ -66,8 +65,8 @@ class MaschineInterface {
         self.midi = midi
         self.kit = Kit(cells: batteryCells)
         self.undoManager = undoManager
-        
-        self.undoManager.groupsByEvent = false
+
+        undoManager.groupsByEvent = false
         
         
         self.noteObserver = controllerInput.midiNoteObserver.observe(Signal<MIDINote, Never>.Observer(
@@ -97,6 +96,7 @@ class MaschineInterface {
 extension MaschineInterface {
     func dispose(){
         print("DISPOSING!!")
+        undoManager?.removeAllActions(withTarget: self)
         noteObserver?.dispose()
         ccObserver?.dispose()
         keyboardNoteObserver?.dispose()
@@ -257,7 +257,7 @@ extension MaschineInterface {
     }
 
     private func registerUndo(previous: [Cell.Parameter], cellIndex: Int){
-        undoManager.registerUndo(withTarget: self){ maschineInterface in
+        undoManager?.registerUndo(withTarget: self){ maschineInterface in
             maschineInterface.apply(previous, cellIndex: cellIndex, undoGroup: nil)
         }
     }
@@ -273,17 +273,17 @@ extension MaschineInterface {
             } else {
                 //print("CLOSE AND MAKE NEW")
                 closeUndoGroup()
-                undoManager.beginUndoGrouping()
+                undoManager?.beginUndoGrouping()
             }
         } else {
             print("MAKE NEW!")
-            undoManager.beginUndoGrouping()
+            undoManager?.beginUndoGrouping()
         }
         self.undoGroup = newUndoGroup
     }
     private func closeUndoGroup(){
         self.undoGroup = nil
-        guard undoManager.groupingLevel > 0
+        guard let undoManager, undoManager.groupingLevel > 0
             else {
                 print("WARNING: Attempting to close undo group when none is open.")
                 return
@@ -309,13 +309,13 @@ extension MaschineInterface {
     
     private func undo(){
         closeUndoGroup()
-        undoManager.undo()
+        undoManager?.undo()
         updateController()
     }
     // Symmetric with undo() - leaving a group open here nests the next one.
     private func redo(){
         closeUndoGroup()
-        undoManager.redo()
+        undoManager?.redo()
         updateController()
     }
     
