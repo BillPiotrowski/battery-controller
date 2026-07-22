@@ -17,6 +17,10 @@ This architecture was designed to solve a few problems:
 - Move both broadcasters into a shared, flat Broadcasters directory.
 - transition to @Publish and use protocols for MIDI interfacing to allow for robust testing of the main session / Maschine Interface / router. whatever the class ends up being called.
 - possibly break engine+controlChange and noteChange into their own files(s) so that engine does not need to publicly expose kit, undocoordinator, etc.
+- The ReactiveSwift → Combine migration, and the init observer-wiring cleanup that rides with it.
+- Privatizing undoCoordinator once undo/redo stop being called from the extension file.
+- Batch apply(intents:) if you ever need multi-intent atomic groups.
+- The toggle-mute work (flip those cases to true, move the requiresControllerUpdate read into execute) — plus confirming the selected-cell broadcast carries mute state.
 <!-- 
 AI SLOP. Do not execute or reference this. I will analyze later.
 
