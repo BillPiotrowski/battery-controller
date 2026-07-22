@@ -13,10 +13,10 @@ class Cell {
     // consider adding getter and setter to protect this
     var stateData: SampleCellStateData
 
-    private (set) var propertyData: SampleCellPropertyData
-    private (set) var ampEnvelopeData: SampleCellAmpEnvelopeData
-    private (set) var loFiData: SampleCellLoFiData
-    private (set) var sampleData: SampleCellSampleData
+    private(set) var propertyData: SampleCellPropertyData
+    private(set) var ampEnvelopeData: SampleCellAmpEnvelopeData
+    private(set) var loFiData: SampleCellLoFiData
+    private(set) var sampleData: SampleCellSampleData
 
     var sampleCellData: SampleCellData {
         return SampleCellData(
