@@ -16,6 +16,7 @@ This architecture was designed to solve a few problems:
 - should MidiNote, Pitch and Speed move in to MIDI?
 - Move both broadcasters into a shared, flat Broadcasters directory.
 - transition to @Publish and use protocols for MIDI interfacing to allow for robust testing of the main session / Maschine Interface / router. whatever the class ends up being called.
+- possibly break engine+controlChange and noteChange into their own files(s) so that engine does not need to publicly expose kit, undocoordinator, etc.
 <!-- 
 AI SLOP. Do not execute or reference this. I will analyze later.
 

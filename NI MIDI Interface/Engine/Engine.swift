@@ -13,9 +13,9 @@ import ReactiveSwift
 
 
 class Engine {
-    private let kit: Kit
+    let kit: Kit
 
-    private let samplerBroadcaster: SamplerBroadcaster
+    let samplerBroadcaster: SamplerBroadcaster
 
     var samplerOutputSelection: MidiOutput {
         return samplerBroadcaster.output
@@ -29,7 +29,7 @@ class Engine {
 
     var controllerInput: MidiInput
     var keyboardInput: MidiInput
-    private var undoCoordinator: UndoCoordinator!
+    var undoCoordinator: UndoCoordinator!
 
     /* private */ let midi: MIDI
     var noteObserver: Disposable?
@@ -115,7 +115,7 @@ extension Engine {
         )
     }
 
-    private func updateController(){
+    func updateController(){
         controllerBroadcaster.broadcastAll(
             data: kit.selectedCellData,
             selectedCellIndex: kit.editingCellIndex,
@@ -124,97 +124,11 @@ extension Engine {
     }
 }
 
-// MARK: MIDI NOTE CHANGE
-extension Engine {
-    private func midiKeyboardNoteHandler(midiNote: MIDINote){
-        samplerBroadcaster.play(
-            midiNote: midiNote,
-            cellIndex: kit.editingCellIndex
-        )
-    }
-    private func midiNoteHandler(midiNote: MIDINote){
-        let isNoteOn = midiNote.velocity > 0 && midiNote.isNoteOn
-        guard let cellIndex = midiNote.cellIndex
-            else {
-                print("No cell index.")
-                return
-        }
-        if isNoteOn {
-            if kit.setEditingCellIndex(cellIndex) {
-                updateController()
-            }
-        }
-        guard kit.isPlayable(cellIndex: cellIndex)
-            else {
-                print("CAN NOT PLAY")
-                return
-        }
-        let pitch = kit.sampleCellData(cellIndex: cellIndex).sampleData.pitch
-        let newMidiNote = MIDINote(
-            noteNumber: pitch.noteNumber,
-            velocity: midiNote.velocity, isNoteOn: isNoteOn
-        )
-        samplerBroadcaster.play(
-            midiNote: newMidiNote,
-            cellIndex: cellIndex
-        )
-    }
-}
-// MARK: MIDI CC CHANGE
-extension Engine {
-
-
-
-    private func midiCCHandler(midiCC: MidiControllerChange){
-        do {
-            let intent = try MidiInputMapping.intent(
-                from: midiCC,
-                cellIndex: kit.editingCellIndex
-            )
-            execute(intent)
-        }
-        catch { print(error) }
-    }
-
-    private func execute(_ intent: Intent){
-        switch intent {
-        case .unsoloAll: kit.unsoloAll()
-        case .unlockAll: kit.setAllLocked(false)
-        case .lockAll: kit.setAllLocked(true)
-        case .undo: undoCoordinator.undo()
-        case .redo: undoCoordinator.redo()
-        case .resetAll: resetAll()
-
-        case .select(_, let isLocked):
-            kit.isSelectionLocked = isLocked
-
-        case .copy(let fromCellIndex): kit.copy(cellIndex: fromCellIndex)
-        case .paste: paste()
-
-        case .mute(let cellIndex, let isMuted):
-            kit.setMute(isMuted, cellIndex: cellIndex)
-        case .solo(let cellIndex, let isSoloed):
-            kit.setSolo(isSoloed, cellIndex: cellIndex)
-        case .lock(let cellIndex, let isLocked):
-            kit.setLock(isLocked, cellIndex: cellIndex)
-
-        case .reset(let cellIndex):
-            undoCoordinator.beginGroup(for: intent)
-            apply(Cell.defaultParameters, cellIndex: cellIndex)
-            updateController()
-
-        case .updateCellParameter(let cellIndex, let parameter):
-            undoCoordinator.beginGroup(for: intent)
-            apply([parameter], cellIndex: cellIndex)
-        }
-    }
-}
-
 // MARK: APPLY
 extension Engine {
 
     @discardableResult
-    private func apply(
+    func apply(
         _ parameters: [Cell.Parameter],
         cellIndex: Int
     ) -> [Cell.Parameter] {
@@ -232,7 +146,7 @@ extension Engine {
 
 // MARK: MASTER
 extension Engine {
-    private func resetAll(){
+    func resetAll(){
         undoCoordinator.beginGroup(for: .resetAll)
         for cellIndex in 0..<kit.cellCount {
             apply(Cell.defaultParameters, cellIndex: cellIndex)
@@ -241,7 +155,7 @@ extension Engine {
         updateController()
     }
     
-    private func paste(){
+    func paste(){
         guard let copiedParameters = kit.copiedParameters
             else {
                 print("No copied data.")
