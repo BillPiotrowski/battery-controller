@@ -107,13 +107,13 @@ extension MaschineInterface {
 extension MaschineInterface {
     private func sendAll(){
         samplerBroadcaster.broadcastAll(
-            cells: kit.cells.map { $0.sampleCellData }
+            cells: kit.allSampleCellData
         )
     }
 
     private func updateController(){
         controllerBroadcaster.broadcastAll(
-            data: kit.selectedCell.sampleCellData,
+            data: kit.selectedCellData,
             selectedCellIndex: kit.editingCellIndex,
             cellCount: kit.cellCount
         )
@@ -145,7 +145,7 @@ extension MaschineInterface {
                 print("CAN NOT PLAY")
                 return
         }
-        let pitch = kit.cells[cellIndex].sampleCellData.sampleData.pitch
+        let pitch = kit.sampleCellData(cellIndex: cellIndex).sampleData.pitch
         let newMidiNote = MIDINote(
             noteNumber: pitch.noteNumber,
             velocity: midiNote.velocity, isNoteOn: isNoteOn
@@ -244,14 +244,13 @@ extension MaschineInterface {
         cellIndex: Int,
         undoGroup: UndoGroup?
     ) -> [Cell.Parameter] {
-        let batteryCell = kit.cells[cellIndex]
-        let previous = batteryCell.apply(parameters)
+        let previous = kit.apply(parameters, cellIndex: cellIndex)
         guard !previous.isEmpty else { return [] }
         if let undoGroup { set(newUndoGroup: undoGroup) }
         registerUndo(previous: previous, cellIndex: cellIndex)
         samplerBroadcaster.broadcast(
             previous,
-            data: batteryCell.sampleCellData,
+            data: kit.sampleCellData(cellIndex: cellIndex),
             cellIndex: cellIndex
         )
         return previous
@@ -297,7 +296,7 @@ extension MaschineInterface {
 extension MaschineInterface {
     private func resetAll(){
         set(newUndoGroup: UndoGroup(task: "resetAll", sampleCellIndex: nil))
-        for cellIndex in kit.cells.indices {
+        for cellIndex in 0..<kit.cellCount {
             apply(
                 Cell.defaultParameters,
                 cellIndex: cellIndex,

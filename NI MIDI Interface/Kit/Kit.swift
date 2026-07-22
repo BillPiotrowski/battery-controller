@@ -1,8 +1,7 @@
 import Foundation
 
 class Kit {
-    // TODO this should be private.
-    let cells: [Cell]
+    private let cells: [Cell]
     private(set) var editingCellIndex: Int
     var isSelectionLocked: Bool
     // Is there an OS level clipboard that can / should be used?
@@ -22,8 +21,16 @@ extension Kit {
         return cells.count
     }
 
-    var selectedCell: Cell {
-        return cells[editingCellIndex]
+    var selectedCellData: SampleCellData {
+        return cells[editingCellIndex].sampleCellData
+    }
+
+    func sampleCellData(cellIndex: Int) -> SampleCellData {
+        return cells[cellIndex].sampleCellData
+    }
+
+    var allSampleCellData: [SampleCellData] {
+        return cells.map { $0.sampleCellData }
     }
 
     var isAnySoloed: Bool {
@@ -43,7 +50,7 @@ extension Kit {
     }
 
     var documentData: DocumentData {
-        return DocumentData(sampleCellsData: cells.map { $0.sampleCellData })
+        return DocumentData(sampleCellsData: allSampleCellData)
     }
 }
 
@@ -86,5 +93,12 @@ extension Kit {
 extension Kit {
     func copy(cellIndex: Int) {
         copiedParameters = cells[cellIndex].allParameters
+    }
+}
+
+// MARK: MUTATE
+extension Kit {
+    func apply(_ parameters: [Cell.Parameter], cellIndex: Int) -> [Cell.Parameter] {
+        return cells[cellIndex].apply(parameters)
     }
 }
