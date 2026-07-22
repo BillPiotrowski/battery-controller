@@ -163,18 +163,7 @@ extension Engine {
 // MARK: MIDI CC CHANGE
 extension Engine {
 
-    enum KitIntent {
-        case unsoloAll, unlockAll, lockAll, undo, redo, resetAll
 
-        case select(cellIndex: Int, Bool)
-
-        case copy(fromCellIndex: Int), paste(toCellIndex: Int)
-
-        case mute(cellIndex: Int, isMuted: Bool), solo(cellIndex: Int, isSoloed: Bool), lock(cellIndex: Int, isLocked: Bool)
-
-        case reset(cellIndex: Int)
-        case updateCellParameter(cellIndex: Int, parameter: Cell.Parameter)
-    }
 
     private func midiCCHandler(midiCC: MidiControllerChange){
         do {
@@ -187,7 +176,7 @@ extension Engine {
         catch { print(error) }
     }
 
-    private func execute(_ intent: KitIntent){
+    private func execute(_ intent: Intent){
         switch intent {
         case .unsoloAll: kit.unsoloAll()
         case .unlockAll: kit.setAllLocked(false)

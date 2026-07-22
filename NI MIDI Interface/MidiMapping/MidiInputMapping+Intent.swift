@@ -6,7 +6,7 @@ extension MidiInputMapping {
     static func intent(
         from midiCC: MidiControllerChange,
         cellIndex: Int
-    ) throws -> Engine.KitIntent {
+    ) throws -> Intent {
         guard let mapping = MidiInputMapping(rawValue: midiCC.ccNumber) else {
             throw DecodeError.unmappedCC(midiCC.ccNumber)
         }

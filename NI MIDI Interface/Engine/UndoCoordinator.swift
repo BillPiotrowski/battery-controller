@@ -32,7 +32,7 @@ private extension UndoCoordinator {
         // TODO: add a timer or something to expire this after a few moments.
     }
 
-    static func group(for intent: Engine.KitIntent) -> UndoGroup? {
+    static func group(for intent: Intent) -> UndoGroup? {
         switch intent {
         case .updateCellParameter(let cellIndex, let parameter):
             return UndoGroup(task: .parameter(undoName(parameter)), cellIndex: cellIndex)
@@ -54,7 +54,7 @@ private extension UndoCoordinator {
 
 // MARK: GROUPING
 extension UndoCoordinator {
-    func beginGroup(for intent: Engine.KitIntent) {
+    func beginGroup(for intent: Intent) {
         guard let newGroup = UndoCoordinator.group(for: intent) else { return }
         set(newGroup)
     }
