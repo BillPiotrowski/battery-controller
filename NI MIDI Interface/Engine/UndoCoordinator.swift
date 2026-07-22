@@ -169,3 +169,18 @@ extension UndoCoordinator {
         undoManager?.removeAllActions(withTarget: self)
     }
 }
+
+extension Intent {
+    
+    /// Indicates that this Intent should be batched in an undo group
+    /// so that a knob sweep only yields a single undo step and not hundreds.
+    var isContinuous: Bool {
+        switch self {
+        case .updateCellParameter:
+            return true
+        case .reset, .unsoloAll, .unlockAll, .lockAll, .undo, .redo, .resetAll,
+             .select, .copy, .paste, .mute, .solo, .lock:
+            return false
+        }
+    }
+}

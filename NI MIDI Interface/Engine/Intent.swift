@@ -1,11 +1,3 @@
-//
-//  Intent.swift
-//  NI MIDI Interface
-//
-//  Created by Bill Piotrowski on 7/22/26.
-//  Copyright © 2026 William Piotrowski. All rights reserved.
-//
-
 enum Intent {
     case unsoloAll, unlockAll, lockAll, undo, redo, resetAll
 

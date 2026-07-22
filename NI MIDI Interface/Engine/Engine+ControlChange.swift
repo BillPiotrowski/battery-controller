@@ -1,11 +1,3 @@
-//
-//  Engine+ControlChange.swift
-//  NI MIDI Interface
-//
-//  Created by Bill Piotrowski on 7/22/26.
-//  Copyright © 2026 William Piotrowski. All rights reserved.
-//
-
 import Foundation
 
 // MARK: MIDI CC CHANGE
@@ -28,13 +20,13 @@ extension Engine {
         case .lockAll: kit.setAllLocked(true)
         case .undo: undoCoordinator.undo()
         case .redo: undoCoordinator.redo()
-        case .resetAll: resetAll()
+        case .resetAll: apply(intent)
 
         case .select(_, let isLocked):
             kit.isSelectionLocked = isLocked
 
         case .copy(let fromCellIndex): kit.copy(cellIndex: fromCellIndex)
-        case .paste: paste()
+        case .paste: apply(intent)
 
         case .mute(let cellIndex, let isMuted):
             kit.setMute(isMuted, cellIndex: cellIndex)
@@ -43,14 +35,8 @@ extension Engine {
         case .lock(let cellIndex, let isLocked):
             kit.setLock(isLocked, cellIndex: cellIndex)
 
-        case .reset(let cellIndex):
-            undoCoordinator.beginGroup(for: intent)
-            apply(Cell.defaultParameters, cellIndex: cellIndex)
-            updateController()
-
-        case .updateCellParameter(let cellIndex, let parameter):
-            undoCoordinator.beginGroup(for: intent)
-            apply([parameter], cellIndex: cellIndex)
+        case .reset: apply(intent)
+        case .updateCellParameter: apply(intent)
         }
     }
 }

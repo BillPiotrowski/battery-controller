@@ -1,16 +1,5 @@
-//
-//  MaschineInterface.swift
-//  NI MIDI Interface
-//
-//  Created by William Piotrowski on 4/29/20.
-//  Copyright © 2020 William Piotrowski. All rights reserved.
-//
-
 import Foundation
 import ReactiveSwift
-
-
-
 
 class Engine {
     let kit: Kit
@@ -127,8 +116,38 @@ extension Engine {
 // MARK: APPLY
 extension Engine {
 
+    func apply(_ intent: Intent) {
+        let applications: [(parameters: [Cell.Parameter], cellIndex: Int)]
+
+        switch intent {
+        case .updateCellParameter(let cellIndex, let parameter):
+            applications = [(parameters: [parameter], cellIndex: cellIndex)]
+        case .reset(let cellIndex):
+            applications = [(parameters: Cell.defaultParameters, cellIndex: cellIndex)]
+        case .paste:
+            guard let copiedParameters = kit.copiedParameters else {
+                print("No copied data.")
+                return
+            }
+            applications = [(parameters: copiedParameters, cellIndex: kit.editingCellIndex)]
+        case .resetAll:
+            applications = (0..<kit.cellCount).map {
+                (parameters: Cell.defaultParameters, cellIndex: $0)
+            }
+        default:
+            return
+        }
+
+        undoCoordinator.beginGroup(for: intent)
+        for application in applications {
+            apply(application.parameters, cellIndex: application.cellIndex)
+        }
+        if !intent.isContinuous { undoCoordinator.close() }
+        if intent.requiresControllerUpdate { updateController() }
+    }
+
     @discardableResult
-    func apply(
+    private func apply(
         _ parameters: [Cell.Parameter],
         cellIndex: Int
     ) -> [Cell.Parameter] {
@@ -141,29 +160,5 @@ extension Engine {
             cellIndex: cellIndex
         )
         return previous
-    }
-}
-
-// MARK: MASTER
-extension Engine {
-    func resetAll(){
-        undoCoordinator.beginGroup(for: .resetAll)
-        for cellIndex in 0..<kit.cellCount {
-            apply(Cell.defaultParameters, cellIndex: cellIndex)
-        }
-        undoCoordinator.close()
-        updateController()
-    }
-    
-    func paste(){
-        guard let copiedParameters = kit.copiedParameters
-            else {
-                print("No copied data.")
-                return
-        }
-        undoCoordinator.beginGroup(for: .paste(toCellIndex: kit.editingCellIndex))
-        apply(copiedParameters, cellIndex: kit.editingCellIndex)
-        undoCoordinator.close()
-        updateController()
     }
 }

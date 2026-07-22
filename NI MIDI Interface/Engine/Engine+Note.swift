@@ -1,11 +1,3 @@
-//
-//  Engine+Note.swift
-//  NI MIDI Interface
-//
-//  Created by Bill Piotrowski on 7/22/26.
-//  Copyright © 2026 William Piotrowski. All rights reserved.
-//
-
 import Foundation
 
 // MARK: MIDI NOTE CHANGE
