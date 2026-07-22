@@ -29,7 +29,7 @@ class ViewController: NSViewController, NSComboBoxDataSource {
     @IBOutlet var outputDeviceController: NSArrayController!
     @IBOutlet var samplerOutputDeviceArray: NSArrayController!
     
-    var maschineInterface: MaschineInterface?
+    var maschineInterface: Engine?
     
     override func viewDidAppear() {
         super.viewDidAppear()

@@ -16,7 +16,7 @@ struct DocumentData: ReadableData {
     }
     init(){
         var sampleCellsData = [SampleCellData]()
-        for n in 0...15 {
+        for _ in 0...15 {
             sampleCellsData.append(SampleCellData.default)
         }
         self.init(sampleCellsData: sampleCellsData)

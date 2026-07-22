@@ -13,6 +13,17 @@ This architecture was designed to solve a few problems:
 - split out data types in to their own files
 - move pure functions out of MIDI (and other classes possibly) and into testable isolated files.
 - Migrate to newer model for defining and naming CC connections.
+- should MidiNote, Pitch and Speed move in to MIDI?
+- Move both broadcasters into a shared, flat Broadcasters directory.
+- transition to @Publish and use protocols for MIDI interfacing to allow for robust testing of the main session / Maschine Interface / router. whatever the class ends up being called.
+- possibly break engine+controlChange and noteChange into their own files(s) so that engine does not need to publicly expose kit, undocoordinator, etc.
+- The ReactiveSwift → Combine migration, and the init observer-wiring cleanup that rides with it.
+- Privatizing undoCoordinator once undo/redo stop being called from the extension file.
+- Batch apply(intents:) if you ever need multi-intent atomic groups.
+- The toggle-mute work (flip those cases to true, move the requiresControllerUpdate read into execute) — plus confirming the selected-cell broadcast carries mute state.
+<!-- 
+AI SLOP. Do not execute or reference this. I will analyze later.
+
 - Align MidiOutput.selectedUIDs: [Int32] to Set<MIDIUniqueID>, matching the fix we made to MidiInput — same duplicate-entry risk exists there, we just deliberately left it out of scope.
 - Delete the dead half of the Data/ folder: DataProtocol.swift's _Data/WPData/EmbeddableData/DataError and Error.swift's GoogleErrorCode/FirebaseFunctionError/NSError extension. Confirmed via grep — zero call sites outside their own file, leftover from two other apps (Scorepio, RPG Music). Typeguard/ReadableData/WriteableData are genuinely load-bearing (53 call sites) and should stay. 
 - A dead/commented-out-code sweep — BatteryCell.swift and MaschineInterface.swift still have sizable commented blocks (MIDI.swift's got cleaned as a side effect of the rewrite, those two didn't). 
@@ -21,12 +32,13 @@ This architecture was designed to solve a few problems:
 - convert all input buttons from toggle to trigger: ot trigger-safe (mute, solo, lock, select): these take the raw incoming value and assign it directly as the new persistent state:
 - add two new pitch inputs: octave and note? for more granular input control.
 - look at how undo / redo affects locked cells.
-- `midiCCHandler` routes through several switches that end in `default: break`, so a new `MidiInputMapping` case falls through silently rather than failing to build. Replace with one exhaustive switch returning a route (master action / state / parameter) so the compiler enforces it. Same guarantee `apply` and `samplerCCs` already have.
+- `midiCCHandler` routes through several switches that end in `default: break`, so a new `MidiInputMapping` case falls through silently rather than failing to build. Replace with one exhaustive switch returning a route (master action / state / parameter) so the compiler enforces it. Same guarantee `apply` already has.
 - `isEditable` has no call sites, so cell lock does nothing — no path checks `stateData.lock` before applying a change. 
 - Broadcast state to the controller. mute/solo/lock are not `BatteryCell.Parameter` cases, so they are written directly and `stateData` had to be loosened from `private(set)` to `var`. Plan: make them `Parameter` cases so state is enumerable like everything else, and let the router decide they are not undoable — it already does, `getChange` returns nil for them. That restores `private(set)` and deletes `set(property:)` and `unsolo()`, the last two writers outside `apply`.
 - `MaschineInterface` creates its own `UndoManager` rather than using `Document.undoManager`, which NSDocument already provides. So edits never call `updateChangeCount` (no dirty flag, no save prompt on close) and ⌘Z from the Edit menu does not reach them — only the hardware undo button works. Decide who owns undo before building the intermediary router.
 - `sendAll()` is wired to `midiDeviceSelection.signal`, which `MidiOutput` fires on *any* change to the system MIDI device list, not just our own selection. So any app opening or closing a port triggers a full resync of all 16 cells (~512 CCs) even though nothing changed. Note that this over-eagerness is currently load-bearing: it is also what syncs state if Battery's virtual port appears after launch. Do not throttle it without covering that case.
 - Naming pass: `MaschineInterface.apply` collides conceptually with `BatteryCell.apply` but does more (mutate + register undo + broadcast) — `commit` and `edit` were both rejected, needs a fresh look. Its `undoGroup:` label reads as "no undo group" when `nil` actually means "the caller already opened one". `getChange` returns a `Parameter` now, so the name is stale. `MidiCCInterface.swift` holds only `MidiInputMapping` and `MidiOutputMapping`, so the filename no longer describes it.
+-->
 
 
 ## Battery Modulator Limitation

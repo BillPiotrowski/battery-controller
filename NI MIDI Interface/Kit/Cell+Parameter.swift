@@ -2,7 +2,7 @@
 
 
 // MARK: SET
-extension BatteryCell {
+extension Cell {
 
     enum Parameter {
         // MARK: Property
@@ -51,11 +51,11 @@ extension BatteryCell {
 }
 
 // MARK: ENUMERATE
-extension BatteryCell {
+extension Cell {
 
     /// Every parameter of `data`, as a batch `apply` can write.
     ///
-    /// This is the one parameter list the compiler can not check. `apply`, `getChange` and `samplerCCs` are exhaustive switches – omit a case and they will not build. This is an array literal, so an omission compiles and silently drops that parameter from full sync, reset and copy, permanently. `BatteryCellParameterTests` guards it.
+    /// This is an array literal, so an omission compiles and silently drops that parameter from full sync, reset and copy, permanently.
     ///
     /// `tune` and `stateData` are deliberately absent: coarse tune is never used – only `fineTune` – and mute / solo / lock are performance state rather than parameters.
     static func parameters(of data: SampleCellData) -> [Parameter] {
@@ -111,7 +111,7 @@ extension BatteryCell {
 
     /// The cell's current state as a batch. Full sync and copy.
     var allParameters: [Parameter] {
-        return BatteryCell.parameters(of: sampleCellData)
+        return Cell.parameters(of: sampleCellData)
     }
 
     /// A batch that returns any cell to its default state. Reset.

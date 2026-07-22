@@ -20,7 +20,14 @@ class Document: NSDocument {
     }
 
     var documentData: DocumentData?
-    
+
+    // TODO: Temporary standalone undo manager. We should use the document's
+    // (self.undoManager) so edits mark the document dirty (save prompt) and undo
+    // grouping behaves. That currently crashes: MIDI callbacks fire off the main
+    // thread and the document's manager touches window UI when marking dirty.
+    // Re-point to self.undoManager once MIDI handling is marshaled to the main thread.
+    let engineUndoManager = UndoManager()
+
     override class var autosavesInPlace: Bool {
         return true
     }
@@ -35,14 +42,14 @@ class Document: NSDocument {
         let documentData = self.documentData ?? DocumentData()
         // FIX FORCED
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let maschineInterface = try! MaschineInterface(documentData: documentData, midi: appDelegate.midi!)
+        let maschineInterface = try! Engine(documentData: documentData, midi: appDelegate.midi!, undoManager: engineUndoManager)
         self.maschineInterface = maschineInterface
         
         self.addWindowController(windowController)
     }
 
     override func data(ofType typeName: String) throws -> Data {
-        guard let viewController = viewController
+        guard let _ = viewController
             else { throw NSError(domain: "No view controller", code: 34, userInfo: nil)}
         guard let documentData = maschineInterface?.documentData
             else { throw NSError(domain: "no document", code: 234, userInfo: nil)}
@@ -56,7 +63,7 @@ class Document: NSDocument {
 
         // Insert code here to write your document to data of the specified type, throwing an error in case of failure.
         // Alternatively, you could remove this method and override fileWrapper(ofType:), write(to:ofType:), or write(to:ofType:for:originalContentsURL:) instead.
-        throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
+//        throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
     }
 
     override func read(from data: Data, ofType typeName: String) throws {
@@ -86,7 +93,7 @@ class Document: NSDocument {
         //throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
     }
     
-    var maschineInterface: MaschineInterface?
+    var maschineInterface: Engine?
     //var documentData: DocumentData?
 
     override func shouldCloseWindowController(_ windowController: NSWindowController, delegate: Any?, shouldClose shouldCloseSelector: Selector?, contextInfo: UnsafeMutableRawPointer?){

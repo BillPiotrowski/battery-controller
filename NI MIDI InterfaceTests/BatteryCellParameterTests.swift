@@ -12,10 +12,9 @@ import XCTest
 /// not check for completeness.
 class BatteryCellParameterTests: XCTestCase {
 
-    private func makeCell(data: SampleCellData) -> BatteryCell {
-        return BatteryCell(
-            sampleCellData: data,
-            channelIndex: 0
+    private func makeCell(data: SampleCellData) -> Cell {
+        return Cell(
+            sampleCellData: data
         )
     }
 
@@ -24,7 +23,7 @@ class BatteryCellParameterTests: XCTestCase {
     func testDefaultParametersResetEveryParameter() {
         let cell = makeCell(data: .everyParameterChanged)
 
-        _ = cell.apply(BatteryCell.defaultParameters)
+        _ = cell.apply(Cell.defaultParameters)
 
         XCTAssertEqual(cell.sampleCellData, .default)
     }
@@ -49,8 +48,8 @@ class BatteryCellParameterTests: XCTestCase {
 
         // Both arrays come from the same function, so they are in the same order.
         for (changed, unchanged) in zip(
-            BatteryCell.parameters(of: changed),
-            BatteryCell.parameters(of: `default`)
+            Cell.parameters(of: changed),
+            Cell.parameters(of: `default`)
         ) {
             XCTAssertNotEqual(
                 String(describing: changed),

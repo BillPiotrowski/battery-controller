@@ -24,8 +24,8 @@ class MidiOutput {
         let selectedUIDs = [Int32]()
         
         let midiDeviceSelectionSignal = Signal<[MidiOutputInfo], Never>.pipe()
-        let options = MidiOutput.options(midiDevices: midiDevices)
-        let optionIndex = MidiOutput.optionIndex(selectedDeviceIndex: selectedDeviceIndex)
+//        let options = MidiOutput.options(midiDevices: midiDevices)
+//        let optionIndex = MidiOutput.optionIndex(selectedDeviceIndex: selectedDeviceIndex)
         let midiDeviceSelection = MidiOutput.getMidiInputInfoArray(availableDestinations: midiDevices, selectedUIDs: selectedUIDs)
         
         self.midiDeviceSelectionInput = midiDeviceSelectionSignal.input
