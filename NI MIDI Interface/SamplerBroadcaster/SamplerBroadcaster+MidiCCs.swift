@@ -21,7 +21,7 @@ extension SamplerBroadcaster {
     ///   - channel: the cell's channel. Battery gives each cell its own.
     /// - Returns: CCs ready to send, deduped by CC number.
     static func midiCCs(
-        for parameters: [BatteryCell.Parameter],
+        for parameters: [Cell.Parameter],
         data: SampleCellData,
         channel: MidiChannel
     ) -> [MidiControllerChange] {
@@ -47,7 +47,7 @@ extension SamplerBroadcaster {
     }
 
     private static func midiCCs(
-        for parameter: BatteryCell.Parameter,
+        for parameter: Cell.Parameter,
         data: SampleCellData,
         channel: MidiChannel
     ) -> [MidiControllerChange] {

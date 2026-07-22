@@ -28,7 +28,7 @@ extension SamplerBroadcaster {
 extension SamplerBroadcaster {
 
     func broadcast(
-        _ parameters: [BatteryCell.Parameter],
+        _ parameters: [Cell.Parameter],
         data: SampleCellData,
         cellIndex: Int
     ){
@@ -44,7 +44,7 @@ extension SamplerBroadcaster {
     func broadcastAll(cells: [SampleCellData]){
         let midiCCs = cells.enumerated().flatMap { cellIndex, data in
             SamplerBroadcaster.midiCCs(
-                for: BatteryCell.parameters(of: data),
+                for: Cell.parameters(of: data),
                 data: data,
                 channel: SamplerBroadcaster.channel(cellIndex: cellIndex)
             )

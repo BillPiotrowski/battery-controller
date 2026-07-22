@@ -36,10 +36,10 @@ class MaschineInterface {
     private var isSelectionLocked: Bool
     
     // Is there a way to store this to a clipboard?
-    private var copiedParameters: [BatteryCell.Parameter]?
+    private var copiedParameters: [Cell.Parameter]?
     
     /* private */ let midi: MIDI
-    private let batteryCells: [BatteryCell]
+    private let batteryCells: [Cell]
     var noteObserver: Disposable?
     var keyboardNoteObserver: Disposable?
     var ccObserver: Disposable?
@@ -59,9 +59,9 @@ class MaschineInterface {
             selectedDeviceIndex: nil
         )
         let undoManager = UndoManager()
-        var batteryCells = [BatteryCell]()
+        var batteryCells = [Cell]()
         for n in 0...15 {
-            let batteryCell = BatteryCell(
+            let batteryCell = Cell(
                 sampleCellData: documentData.sampleCellsData[n]
             )
             batteryCells.append(batteryCell)
@@ -192,7 +192,7 @@ extension MaschineInterface {
         }
         return false
     }
-    private func isPlayable(batteryCell: BatteryCell) -> Bool {
+    private func isPlayable(batteryCell: Cell) -> Bool {
         if batteryCell.isMuted { return false }
         if isAnySoloed { return batteryCell.isSoloed }
         return true
@@ -211,7 +211,7 @@ extension MaschineInterface {
         case mute(cellIndex: Int, isMuted: Bool), solo(cellIndex: Int, isSoloed: Bool), lock(cellIndex: Int, isLocked: Bool)
 
         case reset(cellIndex: Int)
-        case updateCellParameter(cellIndex: Int, parameter: BatteryCell.Parameter)
+        case updateCellParameter(cellIndex: Int, parameter: Cell.Parameter)
     }
 
     private func midiCCHandler(midiCC: MidiControllerChange){
@@ -249,7 +249,7 @@ extension MaschineInterface {
 
         case .reset(let cellIndex):
             apply(
-                BatteryCell.defaultParameters,
+                Cell.defaultParameters,
                 cellIndex: cellIndex,
                 undoGroup: UndoGroup(
                     task: "reset",
@@ -271,7 +271,7 @@ extension MaschineInterface {
     }
 
     // TODO: temporary undo-grouping key. Replace in the undo refactor.
-    private func undoTask(for parameter: BatteryCell.Parameter) -> String {
+    private func undoTask(for parameter: Cell.Parameter) -> String {
         return Mirror(reflecting: parameter).children.first?.label ?? "\(parameter)"
     }
 }
@@ -282,10 +282,10 @@ extension MaschineInterface {
     /// Pass `undoGroup` to open one, or `nil` when the caller owns the group –
     @discardableResult
     private func apply(
-        _ parameters: [BatteryCell.Parameter],
+        _ parameters: [Cell.Parameter],
         cellIndex: Int,
         undoGroup: UndoGroup?
-    ) -> [BatteryCell.Parameter] {
+    ) -> [Cell.Parameter] {
         let batteryCell = batteryCells[cellIndex]
         let previous = batteryCell.apply(parameters)
         guard !previous.isEmpty else { return [] }
@@ -299,7 +299,7 @@ extension MaschineInterface {
         return previous
     }
 
-    private func registerUndo(previous: [BatteryCell.Parameter], cellIndex: Int){
+    private func registerUndo(previous: [Cell.Parameter], cellIndex: Int){
         undoManager.registerUndo(withTarget: self){ maschineInterface in
             maschineInterface.apply(previous, cellIndex: cellIndex, undoGroup: nil)
         }
@@ -341,7 +341,7 @@ extension MaschineInterface {
         set(newUndoGroup: UndoGroup(task: "resetAll", sampleCellIndex: nil))
         for cellIndex in batteryCells.indices {
             apply(
-                BatteryCell.defaultParameters,
+                Cell.defaultParameters,
                 cellIndex: cellIndex,
                 undoGroup: nil
             )
@@ -397,7 +397,7 @@ extension MaschineInterface {
 
 // MARK: HELPER
 extension MaschineInterface {
-    private var selectedCell: BatteryCell {
+    private var selectedCell: Cell {
         return batteryCells[editingCellIndex]
     }
 }

@@ -2,7 +2,7 @@
 
 
 // MARK: SET
-extension BatteryCell {
+extension Cell {
 
     enum Parameter {
         // MARK: Property
@@ -51,7 +51,7 @@ extension BatteryCell {
 }
 
 // MARK: ENUMERATE
-extension BatteryCell {
+extension Cell {
 
     /// Every parameter of `data`, as a batch `apply` can write.
     ///
@@ -111,7 +111,7 @@ extension BatteryCell {
 
     /// The cell's current state as a batch. Full sync and copy.
     var allParameters: [Parameter] {
-        return BatteryCell.parameters(of: sampleCellData)
+        return Cell.parameters(of: sampleCellData)
     }
 
     /// A batch that returns any cell to its default state. Reset.

@@ -61,7 +61,7 @@ extension MidiInputMapping {
 // MARK: PARAMETER
 extension MidiInputMapping {
 
-    static func parameter(mapping: MidiInputMapping, midiCC: MidiControllerChange) -> BatteryCell.Parameter? {
+    static func parameter(mapping: MidiInputMapping, midiCC: MidiControllerChange) -> Cell.Parameter? {
         switch mapping {
 
         // MARK: Property

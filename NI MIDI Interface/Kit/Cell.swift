@@ -8,7 +8,7 @@
 
 import Foundation
 
-class BatteryCell {
+class Cell {
 
     // consider adding getter and setter to protect this
     var stateData: SampleCellStateData
@@ -51,7 +51,7 @@ class BatteryCell {
 
 
 // MARK: SET
-extension BatteryCell {
+extension Cell {
     func set(property: Property){
         switch property {
         case .lock(let value): stateData.lock = value
@@ -60,7 +60,7 @@ extension BatteryCell {
 }
 
 // MARK: UPDATE
-extension BatteryCell {
+extension Cell {
 
     /// Writes `new` into `current` if it differs.
     ///
@@ -133,14 +133,14 @@ extension BatteryCell {
 }
 
 
-extension BatteryCell {
+extension Cell {
     func unsolo(){
         self.stateData.solo = false
     }
 }
 
 
-extension BatteryCell {
+extension Cell {
     
     
     var isMuted: Bool {
@@ -156,7 +156,7 @@ extension BatteryCell {
 }
 
 // MARK: PROPERTIES
-extension BatteryCell {
+extension Cell {
     enum Property {
         case lock(value: Bool)
     }
