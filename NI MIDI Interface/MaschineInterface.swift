@@ -13,7 +13,7 @@ import ReactiveSwift
 
 
 class MaschineInterface {
-    private var editingCellIndex: Int
+    private let kit: Kit
 
     private let samplerBroadcaster: SamplerBroadcaster
 
@@ -33,22 +33,12 @@ class MaschineInterface {
     
     private let undoManager: UndoManager
     
-    private var isSelectionLocked: Bool
-    
-    // Is there a way to store this to a clipboard?
-    private var copiedParameters: [Cell.Parameter]?
-    
     /* private */ let midi: MIDI
-    private let batteryCells: [Cell]
     var noteObserver: Disposable?
     var keyboardNoteObserver: Disposable?
     var ccObserver: Disposable?
     var documentData: DocumentData {
-        var sampleCellsData = [SampleCellData]()
-        for sampleCell in batteryCells {
-            sampleCellsData.append(sampleCell.sampleCellData)
-        }
-        return DocumentData(sampleCellsData: sampleCellsData)
+        return kit.documentData
     }
     
     init(documentData: DocumentData, midi: MIDI) throws {
@@ -73,10 +63,8 @@ class MaschineInterface {
         )
         self.controllerInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
         self.keyboardInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
-        self.editingCellIndex = 0
         self.midi = midi
-        self.batteryCells = batteryCells
-        self.isSelectionLocked = false
+        self.kit = Kit(cells: batteryCells)
         self.undoManager = undoManager
         
         self.undoManager.groupsByEvent = false
@@ -119,34 +107,16 @@ extension MaschineInterface {
 extension MaschineInterface {
     private func sendAll(){
         samplerBroadcaster.broadcastAll(
-            cells: batteryCells.map { $0.sampleCellData }
+            cells: kit.cells.map { $0.sampleCellData }
         )
     }
 
     private func updateController(){
         controllerBroadcaster.broadcastAll(
-            data: selectedCell.sampleCellData,
-            selectedCellIndex: editingCellIndex,
-            cellCount: batteryCells.count
+            data: kit.selectedCell.sampleCellData,
+            selectedCellIndex: kit.editingCellIndex,
+            cellCount: kit.cellCount
         )
-    }
-}
-
-// MARK: CELL INDEX
-extension MaschineInterface {
-    private func setEditingCellIndex(cellIndex: Int){
-        guard !isSelectionLocked
-            else {
-                //print("WARNING: Can not check selection because it is locked.")
-                return
-        }
-        guard editingCellIndex != cellIndex
-            else {
-                //print("SAME INDEX")
-                return
-        }
-        self.editingCellIndex = cellIndex
-        updateController()
     }
 }
 
@@ -155,7 +125,7 @@ extension MaschineInterface {
     private func midiKeyboardNoteHandler(midiNote: MIDINote){
         samplerBroadcaster.play(
             midiNote: midiNote,
-            cellIndex: editingCellIndex
+            cellIndex: kit.editingCellIndex
         )
     }
     private func midiNoteHandler(midiNote: MIDINote){
@@ -166,14 +136,16 @@ extension MaschineInterface {
                 return
         }
         if isNoteOn {
-            setEditingCellIndex(cellIndex: cellIndex)
+            if kit.setEditingCellIndex(cellIndex) {
+                updateController()
+            }
         }
-        guard isPlayable(batteryCell: batteryCells[cellIndex])
+        guard kit.isPlayable(cellIndex: cellIndex)
             else {
                 print("CAN NOT PLAY")
                 return
         }
-        let pitch = batteryCells[cellIndex].sampleCellData.sampleData.pitch
+        let pitch = kit.cells[cellIndex].sampleCellData.sampleData.pitch
         let newMidiNote = MIDINote(
             noteNumber: pitch.noteNumber,
             velocity: midiNote.velocity, isNoteOn: isNoteOn
@@ -182,20 +154,6 @@ extension MaschineInterface {
             midiNote: newMidiNote,
             cellIndex: cellIndex
         )
-    }
-    // MORE EFFICIENT WAY OF DOING THIS??
-    private var isAnySoloed: Bool {
-        for cell in batteryCells {
-            if cell.isSoloed {
-                return true
-            }
-        }
-        return false
-    }
-    private func isPlayable(batteryCell: Cell) -> Bool {
-        if batteryCell.isMuted { return false }
-        if isAnySoloed { return batteryCell.isSoloed }
-        return true
     }
 }
 // MARK: MIDI CC CHANGE
@@ -218,7 +176,7 @@ extension MaschineInterface {
         do {
             let intent = try MidiInputMapping.intent(
                 from: midiCC,
-                cellIndex: editingCellIndex
+                cellIndex: kit.editingCellIndex
             )
             execute(intent)
         }
@@ -227,25 +185,25 @@ extension MaschineInterface {
 
     private func execute(_ intent: KitIntent){
         switch intent {
-        case .unsoloAll: unsoloAll()
-        case .unlockAll: unlockAll()
-        case .lockAll: lockAll()
+        case .unsoloAll: kit.unsoloAll()
+        case .unlockAll: kit.setAllLocked(false)
+        case .lockAll: kit.setAllLocked(true)
         case .undo: undo()
         case .redo: redo()
         case .resetAll: resetAll()
 
         case .select(_, let isLocked):
-            self.isSelectionLocked = isLocked
+            kit.isSelectionLocked = isLocked
 
-        case .copy: copy()
+        case .copy(let fromCellIndex): kit.copy(cellIndex: fromCellIndex)
         case .paste: paste()
 
         case .mute(let cellIndex, let isMuted):
-            batteryCells[cellIndex].stateData.mute = isMuted
+            kit.setMute(isMuted, cellIndex: cellIndex)
         case .solo(let cellIndex, let isSoloed):
-            batteryCells[cellIndex].stateData.solo = isSoloed
+            kit.setSolo(isSoloed, cellIndex: cellIndex)
         case .lock(let cellIndex, let isLocked):
-            batteryCells[cellIndex].stateData.lock = isLocked
+            kit.setLock(isLocked, cellIndex: cellIndex)
 
         case .reset(let cellIndex):
             apply(
@@ -286,7 +244,7 @@ extension MaschineInterface {
         cellIndex: Int,
         undoGroup: UndoGroup?
     ) -> [Cell.Parameter] {
-        let batteryCell = batteryCells[cellIndex]
+        let batteryCell = kit.cells[cellIndex]
         let previous = batteryCell.apply(parameters)
         guard !previous.isEmpty else { return [] }
         if let undoGroup { set(newUndoGroup: undoGroup) }
@@ -339,7 +297,7 @@ extension MaschineInterface {
 extension MaschineInterface {
     private func resetAll(){
         set(newUndoGroup: UndoGroup(task: "resetAll", sampleCellIndex: nil))
-        for cellIndex in batteryCells.indices {
+        for cellIndex in kit.cells.indices {
             apply(
                 Cell.defaultParameters,
                 cellIndex: cellIndex,
@@ -362,43 +320,16 @@ extension MaschineInterface {
         updateController()
     }
     
-    private func copy(){
-        self.copiedParameters = batteryCells[editingCellIndex].allParameters
-    }
     private func paste(){
-        guard let copiedParameters = self.copiedParameters
+        guard let copiedParameters = kit.copiedParameters
             else {
                 print("No copied data.")
                 return
         }
         set(newUndoGroup: UndoGroup(task: "paste", sampleCellIndex: nil))
-        apply(copiedParameters, cellIndex: editingCellIndex, undoGroup: nil)
+        apply(copiedParameters, cellIndex: kit.editingCellIndex, undoGroup: nil)
         closeUndoGroup()
         updateController()
-    }
-    
-    private func lockAll(){
-        setAllLockTo(isLocked: true)
-    }
-    private func unlockAll(){
-        setAllLockTo(isLocked: false)
-    }
-    private func setAllLockTo(isLocked: Bool){
-        for batteryCell in batteryCells {
-            batteryCell.set(property: .lock(value: isLocked))
-        }
-    }
-    private func unsoloAll(){
-        for batteryCell in batteryCells {
-            batteryCell.unsolo()
-        }
-    }
-}
-
-// MARK: HELPER
-extension MaschineInterface {
-    private var selectedCell: Cell {
-        return batteryCells[editingCellIndex]
     }
 }
 
