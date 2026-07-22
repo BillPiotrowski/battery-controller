@@ -47,6 +47,7 @@ private extension UndoCoordinator {
         }
     }
 
+    // TODO - eventually want this to be an internal enum like Task. Reflection should not be used here.
     static func undoName(_ parameter: Cell.Parameter) -> String {
         return Mirror(reflecting: parameter).children.first?.label ?? "\(parameter)"
     }
