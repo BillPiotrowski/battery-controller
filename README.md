@@ -15,6 +15,7 @@ This architecture was designed to solve a few problems:
 - Migrate to newer model for defining and naming CC connections.
 - should MidiNote, Pitch and Speed move in to MIDI?
 - Move both broadcasters into a shared, flat Broadcasters directory.
+- transition to @Publish and use protocols for MIDI interfacing to allow for robust testing of the main session / Maschine Interface / router. whatever the class ends up being called.
 <!-- 
 AI SLOP. Do not execute or reference this. I will analyze later.
 
