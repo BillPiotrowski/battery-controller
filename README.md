@@ -13,6 +13,8 @@ This architecture was designed to solve a few problems:
 - split out data types in to their own files
 - move pure functions out of MIDI (and other classes possibly) and into testable isolated files.
 - Migrate to newer model for defining and naming CC connections.
+- should MidiNote, Pitch and Speed move in to MIDI?
+- Move both broadcasters into a shared, flat Broadcasters directory.
 <!-- 
 AI SLOP. Do not execute or reference this. I will analyze later.
 
