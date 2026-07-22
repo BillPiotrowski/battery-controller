@@ -35,7 +35,7 @@ class Document: NSDocument {
         let documentData = self.documentData ?? DocumentData()
         // FIX FORCED
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let maschineInterface = try! MaschineInterface(documentData: documentData, midi: appDelegate.midi!, undoManager: self.undoManager!)
+        let maschineInterface = try! Engine(documentData: documentData, midi: appDelegate.midi!, undoManager: self.undoManager!)
         self.maschineInterface = maschineInterface
         
         self.addWindowController(windowController)
@@ -86,7 +86,7 @@ class Document: NSDocument {
         //throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
     }
     
-    var maschineInterface: MaschineInterface?
+    var maschineInterface: Engine?
     //var documentData: DocumentData?
 
     override func shouldCloseWindowController(_ windowController: NSWindowController, delegate: Any?, shouldClose shouldCloseSelector: Selector?, contextInfo: UnsafeMutableRawPointer?){

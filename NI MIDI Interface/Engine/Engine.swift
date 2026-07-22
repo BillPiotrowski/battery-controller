@@ -12,7 +12,7 @@ import ReactiveSwift
 
 
 
-class MaschineInterface {
+class Engine {
     private let kit: Kit
 
     private let samplerBroadcaster: SamplerBroadcaster
@@ -93,7 +93,7 @@ class MaschineInterface {
 }
 
 // MARK: DISPOSE
-extension MaschineInterface {
+extension Engine {
     func dispose(){
         print("DISPOSING!!")
         undoManager?.removeAllActions(withTarget: self)
@@ -104,7 +104,7 @@ extension MaschineInterface {
 }
 
 // MARK: SEND CC TO:
-extension MaschineInterface {
+extension Engine {
     private func sendAll(){
         samplerBroadcaster.broadcastAll(
             cells: kit.allSampleCellData
@@ -121,7 +121,7 @@ extension MaschineInterface {
 }
 
 // MARK: MIDI NOTE CHANGE
-extension MaschineInterface {
+extension Engine {
     private func midiKeyboardNoteHandler(midiNote: MIDINote){
         samplerBroadcaster.play(
             midiNote: midiNote,
@@ -157,7 +157,7 @@ extension MaschineInterface {
     }
 }
 // MARK: MIDI CC CHANGE
-extension MaschineInterface {
+extension Engine {
 
     enum KitIntent {
         case unsoloAll, unlockAll, lockAll, undo, redo, resetAll
@@ -235,7 +235,7 @@ extension MaschineInterface {
 }
 
 // MARK: APPLY
-extension MaschineInterface {
+extension Engine {
 
     /// Pass `undoGroup` to open one, or `nil` when the caller owns the group –
     @discardableResult
@@ -264,7 +264,7 @@ extension MaschineInterface {
 }
 
 // MARK: UNDO GROUP
-extension MaschineInterface {
+extension Engine {
     private func set(newUndoGroup: UndoGroup){
         if let undoGroup = undoGroup {
             if undoGroup == newUndoGroup {
@@ -293,7 +293,7 @@ extension MaschineInterface {
 }
 
 // MARK: MASTER
-extension MaschineInterface {
+extension Engine {
     private func resetAll(){
         set(newUndoGroup: UndoGroup(task: "resetAll", sampleCellIndex: nil))
         for cellIndex in 0..<kit.cellCount {
