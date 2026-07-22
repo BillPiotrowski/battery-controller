@@ -20,7 +20,14 @@ class Document: NSDocument {
     }
 
     var documentData: DocumentData?
-    
+
+    // TODO: Temporary standalone undo manager. We should use the document's
+    // (self.undoManager) so edits mark the document dirty (save prompt) and undo
+    // grouping behaves. That currently crashes: MIDI callbacks fire off the main
+    // thread and the document's manager touches window UI when marking dirty.
+    // Re-point to self.undoManager once MIDI handling is marshaled to the main thread.
+    let engineUndoManager = UndoManager()
+
     override class var autosavesInPlace: Bool {
         return true
     }
@@ -35,7 +42,7 @@ class Document: NSDocument {
         let documentData = self.documentData ?? DocumentData()
         // FIX FORCED
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let maschineInterface = try! Engine(documentData: documentData, midi: appDelegate.midi!, undoManager: self.undoManager!)
+        let maschineInterface = try! Engine(documentData: documentData, midi: appDelegate.midi!, undoManager: engineUndoManager)
         self.maschineInterface = maschineInterface
         
         self.addWindowController(windowController)

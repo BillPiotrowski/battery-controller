@@ -29,10 +29,8 @@ class Engine {
 
     var controllerInput: MidiInput
     var keyboardInput: MidiInput
-    private var undoGroup: UndoGroup?
-    
-    private weak var undoManager: UndoManager?
-    
+    private var undoCoordinator: UndoCoordinator!
+
     /* private */ let midi: MIDI
     var noteObserver: Disposable?
     var keyboardNoteObserver: Disposable?
@@ -64,11 +62,17 @@ class Engine {
         self.keyboardInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
         self.midi = midi
         self.kit = Kit(cells: batteryCells)
-        self.undoManager = undoManager
 
-        undoManager.groupsByEvent = false
-        
-        
+        self.undoCoordinator = UndoCoordinator(
+            undoManager: undoManager,
+            reapply: { [weak self] previous, cellIndex in
+                self?.apply(previous, cellIndex: cellIndex)
+            },
+            rerender: { [weak self] in
+                self?.updateController()
+            }
+        )
+
         self.noteObserver = controllerInput.midiNoteObserver.observe(Signal<MIDINote, Never>.Observer(
             value: self.midiNoteHandler(midiNote:),
             failed: {error in},
@@ -96,7 +100,7 @@ class Engine {
 extension Engine {
     func dispose(){
         print("DISPOSING!!")
-        undoManager?.removeAllActions(withTarget: self)
+        undoCoordinator.removeAllActions()
         noteObserver?.dispose()
         ccObserver?.dispose()
         keyboardNoteObserver?.dispose()
@@ -188,8 +192,8 @@ extension Engine {
         case .unsoloAll: kit.unsoloAll()
         case .unlockAll: kit.setAllLocked(false)
         case .lockAll: kit.setAllLocked(true)
-        case .undo: undo()
-        case .redo: redo()
+        case .undo: undoCoordinator.undo()
+        case .redo: undoCoordinator.redo()
         case .resetAll: resetAll()
 
         case .select(_, let isLocked):
@@ -206,48 +210,28 @@ extension Engine {
             kit.setLock(isLocked, cellIndex: cellIndex)
 
         case .reset(let cellIndex):
-            apply(
-                Cell.defaultParameters,
-                cellIndex: cellIndex,
-                undoGroup: UndoGroup(
-                    task: "reset",
-                    sampleCellIndex: cellIndex
-                )
-            )
+            undoCoordinator.beginGroup(for: intent)
+            apply(Cell.defaultParameters, cellIndex: cellIndex)
             updateController()
 
         case .updateCellParameter(let cellIndex, let parameter):
-            apply(
-                [parameter],
-                cellIndex: cellIndex,
-                undoGroup: UndoGroup(
-                    task: undoTask(for: parameter),
-                    sampleCellIndex: cellIndex
-                )
-            )
+            undoCoordinator.beginGroup(for: intent)
+            apply([parameter], cellIndex: cellIndex)
         }
-    }
-
-    // TODO: temporary undo-grouping key. Replace in the undo refactor.
-    private func undoTask(for parameter: Cell.Parameter) -> String {
-        return Mirror(reflecting: parameter).children.first?.label ?? "\(parameter)"
     }
 }
 
 // MARK: APPLY
 extension Engine {
 
-    /// Pass `undoGroup` to open one, or `nil` when the caller owns the group –
     @discardableResult
     private func apply(
         _ parameters: [Cell.Parameter],
-        cellIndex: Int,
-        undoGroup: UndoGroup?
+        cellIndex: Int
     ) -> [Cell.Parameter] {
         let previous = kit.apply(parameters, cellIndex: cellIndex)
         guard !previous.isEmpty else { return [] }
-        if let undoGroup { set(newUndoGroup: undoGroup) }
-        registerUndo(previous: previous, cellIndex: cellIndex)
+        undoCoordinator.registerUndo(previous: previous, cellIndex: cellIndex)
         samplerBroadcaster.broadcast(
             previous,
             data: kit.sampleCellData(cellIndex: cellIndex),
@@ -255,67 +239,16 @@ extension Engine {
         )
         return previous
     }
-
-    private func registerUndo(previous: [Cell.Parameter], cellIndex: Int){
-        undoManager?.registerUndo(withTarget: self){ maschineInterface in
-            maschineInterface.apply(previous, cellIndex: cellIndex, undoGroup: nil)
-        }
-    }
-}
-
-// MARK: UNDO GROUP
-extension Engine {
-    private func set(newUndoGroup: UndoGroup){
-        if let undoGroup = undoGroup {
-            if undoGroup == newUndoGroup {
-                //print("SAME!")
-                return
-            } else {
-                //print("CLOSE AND MAKE NEW")
-                closeUndoGroup()
-                undoManager?.beginUndoGrouping()
-            }
-        } else {
-            print("MAKE NEW!")
-            undoManager?.beginUndoGrouping()
-        }
-        self.undoGroup = newUndoGroup
-    }
-    private func closeUndoGroup(){
-        self.undoGroup = nil
-        guard let undoManager, undoManager.groupingLevel > 0
-            else {
-                print("WARNING: Attempting to close undo group when none is open.")
-                return
-        }
-        undoManager.endUndoGrouping()
-    }
 }
 
 // MARK: MASTER
 extension Engine {
     private func resetAll(){
-        set(newUndoGroup: UndoGroup(task: "resetAll", sampleCellIndex: nil))
+        undoCoordinator.beginGroup(for: .resetAll)
         for cellIndex in 0..<kit.cellCount {
-            apply(
-                Cell.defaultParameters,
-                cellIndex: cellIndex,
-                undoGroup: nil
-            )
+            apply(Cell.defaultParameters, cellIndex: cellIndex)
         }
-        closeUndoGroup()
-        updateController()
-    }
-    
-    private func undo(){
-        closeUndoGroup()
-        undoManager?.undo()
-        updateController()
-    }
-    // Symmetric with undo() - leaving a group open here nests the next one.
-    private func redo(){
-        closeUndoGroup()
-        undoManager?.redo()
+        undoCoordinator.close()
         updateController()
     }
     
@@ -325,16 +258,9 @@ extension Engine {
                 print("No copied data.")
                 return
         }
-        set(newUndoGroup: UndoGroup(task: "paste", sampleCellIndex: nil))
-        apply(copiedParameters, cellIndex: kit.editingCellIndex, undoGroup: nil)
-        closeUndoGroup()
+        undoCoordinator.beginGroup(for: .paste(toCellIndex: kit.editingCellIndex))
+        apply(copiedParameters, cellIndex: kit.editingCellIndex)
+        undoCoordinator.close()
         updateController()
     }
-}
-
-
-
-struct UndoGroup: Equatable {
-    let task: String
-    let sampleCellIndex: Int?
 }
