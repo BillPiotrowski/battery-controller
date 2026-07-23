@@ -30,6 +30,7 @@ extension ControllerBroadcaster {
 // Scoped single-CC pushes for the app-owned toggles. Sending a CC to the
 // controller does not loop back, so these light the LED without a full resync.
 extension ControllerBroadcaster {
+    func sendPinSelection(_ isPinned: Bool){ send(.toggleSelect, isPinned) }
     func sendMute(_ isMuted: Bool){ send(.toggleMute, isMuted) }
     func sendSolo(_ isSoloed: Bool){ send(.toggleSolo, isSoloed) }
     func sendLock(_ isLocked: Bool){ send(.toggleLock, isLocked) }

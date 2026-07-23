@@ -23,7 +23,7 @@ extension Engine {
         case .resetAll: applyUndoable(intent)
 
         case .pinSelection:
-            kit.toggleSelectionLock()
+            controllerBroadcaster.sendPinSelection(kit.toggleSelectionLock())
 
         case .copy(let fromCellIndex): kit.copy(cellIndex: fromCellIndex)
         case .paste: applyUndoable(intent)
