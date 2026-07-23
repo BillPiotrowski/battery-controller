@@ -45,8 +45,6 @@ struct Pitch {
         return Pitch.ratio(fromNoteNumber: noteNumber)
     }
     var controllerMidiValue: Int {
-        print("NOTE NUMBER: \(noteNumber)")
-        print("ratio: \(controllerValue)")
         return Int(controllerValue * 127)
     }
 }

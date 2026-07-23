@@ -15,7 +15,6 @@ class MidiDeviceSelectionViewController: NSViewController {
             midiInput?.options.signal.observe(
                 Signal<[MidiInputInfo], Never>.Observer(
                     value: {value in
-                        print("new inputs!")
                        self.tableView.reloadData()
                    }
                 )

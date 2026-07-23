@@ -187,8 +187,13 @@ extension MIDI {
 
         switch type {
         case 0x80 where bytes.count >= 3:
+            // Dead branch for Maschine / Controller Editor: it never sends a true
+            // Note Off (0x80). Every release arrives as a 0x90 note-on with
+            // velocity 0 (handled below).
             return .note(MIDINote(noteNumber: Int(bytes[1]), velocity: Int(bytes[2]), isNoteOn: false))
         case 0x90 where bytes.count >= 3:
+            // Velocity 0 collapses to a note-off, so pads MUST be mapped to
+            // velocity 1-127. A pad hit with low velovity may read as a note-off
             let velocity = Int(bytes[2])
             return .note(MIDINote(noteNumber: Int(bytes[1]), velocity: velocity, isNoteOn: velocity > 0))
         case 0xB0 where bytes.count >= 3:

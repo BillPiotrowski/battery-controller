@@ -52,22 +52,18 @@ extension SamplerBroadcaster {
         send(midiCCs: midiCCs)
     }
 
-    func play(midiNote: MIDINote, cellIndex: Int){
-        do {
-            try output.send(
-                midiNote: midiNote,
-                channel: SamplerBroadcaster.channel(cellIndex: cellIndex)
-            )
-        } catch {
-            print("ERROR SENDING TO SAMPLER: \(error).")
-        }
+    func play(midiNote: MIDINote, cellIndex: Int) throws {
+        try output.send(
+            midiNote: midiNote,
+            channel: SamplerBroadcaster.channel(cellIndex: cellIndex)
+        )
     }
 
     private func send(midiCCs: [MidiControllerChange]){
         do {
             try output.send(midiCCs: midiCCs)
         } catch {
-            print("ERROR SENDING TO SAMPLER: \(error).")
+            // print("ERROR SENDING TO SAMPLER: \(error).")
         }
     }
 }

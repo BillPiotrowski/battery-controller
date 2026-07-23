@@ -97,7 +97,6 @@ class Engine {
 // MARK: DISPOSE
 extension Engine {
     func dispose(){
-        print("DISPOSING!!")
         undoCoordinator.removeAllActions()
         noteObserver?.dispose()
         ccObserver?.dispose()
