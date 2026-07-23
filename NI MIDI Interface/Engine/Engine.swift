@@ -10,7 +10,7 @@ class Engine {
         return samplerBroadcaster.output
     }
 
-    private let controllerBroadcaster: ControllerBroadcaster
+    let controllerBroadcaster: ControllerBroadcaster
 
     var controllerOutputDevice: MidiOutput {
         return controllerBroadcaster.output

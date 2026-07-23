@@ -30,29 +30,29 @@ extension Engine {
 
         // Performance state: flip, then push the new state to light the LED.
         case .mute(let cellIndex):
-            kit.toggleMute(cellIndex: cellIndex)
-            updateController()
+            let isMuted = kit.toggleMute(cellIndex: cellIndex)
+            controllerBroadcaster.sendMute(isMuted)
         case .solo(let cellIndex):
-            kit.toggleSolo(cellIndex: cellIndex)
-            updateController()
+            let isSoloed = kit.toggleSolo(cellIndex: cellIndex)
+            controllerBroadcaster.sendSolo(isSoloed)
         case .lock(let cellIndex):
-            kit.toggleLock(cellIndex: cellIndex)
-            updateController()
+            let isLocked = kit.toggleLock(cellIndex: cellIndex)
+            controllerBroadcaster.sendLock(isLocked)
 
         // Enable toggles: read current state, apply the inverse as an undoable
         // parameter edit, then push it back to the controller.
         case .toggleTransientMaster(let cellIndex):
             let isEnabled = kit.sampleCellData(cellIndex: cellIndex).propertyData.enableTransientMaster
             applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableTransientMaster(!isEnabled)))
-            updateController()
+            controllerBroadcaster.sendTransientMaster(!isEnabled)
         case .toggleLofi(let cellIndex):
             let isEnabled = kit.sampleCellData(cellIndex: cellIndex).loFiData.enable
             applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableLofi(!isEnabled)))
-            updateController()
+            controllerBroadcaster.sendLofi(!isEnabled)
         case .toggleAmpEnvelope(let cellIndex):
             let isEnabled = kit.sampleCellData(cellIndex: cellIndex).ampEnvelopeData.enableAmpEnv
             applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableAmpEnvelope(!isEnabled)))
-            updateController()
+            controllerBroadcaster.sendAmpEnvelope(!isEnabled)
 
         case .reset: applyUndoable(intent)
         case .updateCellParameter: applyUndoable(intent)

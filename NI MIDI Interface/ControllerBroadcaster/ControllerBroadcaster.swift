@@ -26,6 +26,31 @@ extension ControllerBroadcaster {
     }
 }
 
+// MARK: SEND STATE
+// Scoped single-CC pushes for the app-owned toggles. Sending a CC to the
+// controller does not loop back, so these light the LED without a full resync.
+extension ControllerBroadcaster {
+    func sendMute(_ isMuted: Bool){ send(.toggleMute, isMuted) }
+    func sendSolo(_ isSoloed: Bool){ send(.toggleSolo, isSoloed) }
+    func sendLock(_ isLocked: Bool){ send(.toggleLock, isLocked) }
+    func sendTransientMaster(_ isEnabled: Bool){ send(.toggleTransientMaster, isEnabled) }
+    func sendLofi(_ isEnabled: Bool){ send(.toggleLofi, isEnabled) }
+    func sendAmpEnvelope(_ isEnabled: Bool){ send(.toggleAmpEnvelope, isEnabled) }
+
+    private func send(_ mapping: MidiInputMapping, _ isOn: Bool){
+        let midiCC = MidiControllerChange(
+            ccNumber: mapping.rawValue,
+            value: isOn.MidiCCValue,
+            channel: ControllerBroadcaster.channel
+        )
+        do {
+            try output.send(midiCCs: [midiCC])
+        } catch {
+            print("ERROR SENDING TO CONTROLLER: \(error).")
+        }
+    }
+}
+
 // MARK: SEND
 extension ControllerBroadcaster {
 
