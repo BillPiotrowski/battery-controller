@@ -33,7 +33,8 @@ class Engine {
             else { throw NSError(domain: "not 16 cells", code: 23, userInfo: nil)}
         let samplerOutputSelection = MidiOutput(
             midi: midi,
-            selectedDeviceIndex: nil
+            selectedDeviceIndex: nil,
+            store: MidiSelectionStore(role: .samplerOutput)
         )
         var batteryCells = [Cell]()
         for n in 0...15 {
@@ -45,9 +46,17 @@ class Engine {
 
         self.samplerBroadcaster = SamplerBroadcaster(output: samplerOutputSelection)
         self.controllerBroadcaster = ControllerBroadcaster(
-            output: MidiOutput(midi: midi, selectedDeviceIndex: nil)
+            output: MidiOutput(
+                midi: midi,
+                selectedDeviceIndex: nil,
+                store: MidiSelectionStore(role: .controllerOutput)
+            )
         )
-        self.controllerInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
+        self.controllerInput = MidiInput(
+            midi: midi,
+            selectedDeviceIndex: nil,
+            store: MidiSelectionStore(role: .controllerInput)
+        )
         self.keyboardInput = MidiInput(midi: midi, selectedDeviceIndex: nil)
         self.midi = midi
         self.kit = Kit(cells: batteryCells)

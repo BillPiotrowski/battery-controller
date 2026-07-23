@@ -15,11 +15,12 @@ class MidiOutput {
     //private var selectedDeviceIndex: Int?
     private var selectedUIDs: [Int32]
     private let midi: MIDI
-    
+    private let store: MidiSelectionStore?
+
     private let midiDeviceSelectionInput: Signal<[MidiOutputInfo], Never>.Observer
     let midiDeviceSelection: Property<[MidiOutputInfo]>
-    
-    init(midi: MIDI, selectedDeviceIndex: Int?){
+
+    init(midi: MIDI, selectedDeviceIndex: Int?, store: MidiSelectionStore? = nil){
         let midiDevices = midi.midiOutputDevices.value
         let selectedUIDs = [Int32]()
         
@@ -34,7 +35,8 @@ class MidiOutput {
         //self.selectedDeviceIndex = selectedDeviceIndex
         self.selectedUIDs = selectedUIDs
         self.midi = midi
-        
+        self.store = store
+
         midi.midiOutputDevices.signal.observe(
             Signal<[MidiDevice], Never>.Observer(
                 value: { value in
@@ -51,7 +53,29 @@ class MidiOutput {
                     self.midiDeviceSelectionInput.send(value: deviceInfo)
             
         }, failed: {error in}, completed: {}, interrupted: {}))
-        
+
+        restorePersistedSelection()
+    }
+}
+
+// MARK: PERSISTENCE
+extension MidiOutput {
+    /// Re-selects any persisted destination that is currently available. Missing
+    /// destinations are left unselected (their UID stays in the store untouched,
+    /// so re-launching with the device present restores it).
+    private func restorePersistedSelection(){
+        guard let persisted = store?.uids, !persisted.isEmpty else { return }
+        let available = Set(availableDestinations.map { $0.uniqueID })
+        let restored = persisted.filter { available.contains($0) }
+        guard !restored.isEmpty else { return }
+        self.selectedUIDs = restored
+        self.midiDeviceSelectionInput.send(
+            value: getMidiInputInfoArray()
+        )
+    }
+
+    private func persistSelection(){
+        store?.uids = selectedUIDs
     }
 }
 extension MidiOutput {
@@ -67,7 +91,8 @@ extension MidiOutput {
         // Index 0 of string options is "None". This offsets it to match the actual devices options.
         let destination = availableDestinations[index]
         self.selectedUIDs.append(destination.uniqueID)
-        
+        persistSelection()
+
         //selectedDeviceIndex = offsetIndex
         //print("SET DEVICE: \(selectedMidiDevice?.name)")
 
@@ -79,6 +104,7 @@ extension MidiOutput {
     }
     func disconnect(midiOutputInfo: MidiOutputInfo){
         self.selectedUIDs.removeAll(where: { $0 == midiOutputInfo.midiDestination.uniqueID })
+        persistSelection()
         let deviceInfo = MidiOutput.getMidiInputInfoArray(
             availableDestinations: self.availableDestinations,
             selectedUIDs: self.selectedUIDs

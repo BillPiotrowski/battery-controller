@@ -12,6 +12,7 @@ import ReactiveSwift
 class MidiInput {
     private var availableSources: [MidiSource]
     private let midi: MIDI
+    private let store: MidiSelectionStore?
     private var selectedSourceIDs: Set<MIDIUniqueID>
 
     let midiNoteObserver: Signal<MIDINote, Never>
@@ -23,7 +24,7 @@ class MidiInput {
     private let optionsInput: Signal<[MidiInputInfo], Never>.Observer
     let options: Property<[MidiInputInfo]>
 
-    init(midi: MIDI, selectedDeviceIndex: Int?){
+    init(midi: MIDI, selectedDeviceIndex: Int?, store: MidiSelectionStore? = nil){
         let midiSources = midi.midiSources.value
         let selectedSourceIDs = Set<MIDIUniqueID>()
 
@@ -41,6 +42,7 @@ class MidiInput {
         self.options = Property(initial: midiSourceSelection, then: midiSourceSelectionSignal.output)
         self.availableSources = midiSources
         self.midi = midi
+        self.store = store
         self.selectedSourceIDs = selectedSourceIDs
 
         midi.midiSources.signal.observe(
@@ -48,6 +50,27 @@ class MidiInput {
                 value: self.midiSourcesObserver(midiSources:)
             )
         )
+
+        restorePersistedSelection()
+    }
+}
+
+// MARK: PERSISTENCE
+extension MidiInput {
+    /// Re-connects any persisted source that is currently available. Missing
+    /// sources are left unselected (their UID stays in the store untouched, so
+    /// re-launching with the device present restores it).
+    private func restorePersistedSelection(){
+        guard let persisted = store?.uids, !persisted.isEmpty else { return }
+        let persistedSet = Set(persisted)
+        for info in getMidiInputInfoArray() where persistedSet.contains(info.uid) {
+            try? connect(input: info)
+        }
+        optionsInput.send(value: getMidiInputInfoArray())
+    }
+
+    private func persistSelection(){
+        store?.uids = Array(selectedSourceIDs)
     }
 }
 
@@ -86,10 +109,12 @@ extension MidiInput {
             eventHandler: self.midiEventHandler(events:)
         )
         selectedSourceIDs.insert(input.midiSource.uniqueID)
+        persistSelection()
     }
     func disconnect(input: MidiInputInfo){
         midi.disconnect(midiSource: input.midiSource)
         selectedSourceIDs.remove(input.midiSource.uniqueID)
+        persistSelection()
     }
 }
 
