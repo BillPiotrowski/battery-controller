@@ -5,6 +5,7 @@
 ### Added
 
 ### Fixed
+- Limited Maschine Controller pad velocities to 1-127 instead of 0-127 to avoid silent note ons.
 
 ### Changed
 
