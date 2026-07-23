@@ -23,6 +23,73 @@ extension ControllerBroadcaster {
         }
     }
 
+    /// Current values for a set of parameters, in the controller's CC vocabulary.
+    ///
+    /// payloads are ignored - the value is always read
+    /// from `data`. Used to re-assert a cell's truth after a rejected edit.
+    static func midiCCs(
+        for parameters: [Cell.Parameter],
+        data: SampleCellData
+    ) -> [MidiControllerChange] {
+        var midiCCs = [MidiControllerChange]()
+        var claimedCCNumbers = Set<MidiControlChangeNumber>()
+
+        for parameter in parameters {
+            let mapping = ControllerBroadcaster.mapping(for: parameter)
+            guard let value = ControllerBroadcaster.value(for: mapping, data: data)
+                else { continue }
+            guard claimedCCNumbers.insert(mapping.rawValue).inserted
+                else { continue }
+            midiCCs.append(
+                MidiControllerChange(
+                    ccNumber: mapping.rawValue,
+                    value: value,
+                    channel: channel
+                )
+            )
+        }
+        return midiCCs
+    }
+
+    private static func mapping(for parameter: Cell.Parameter) -> MidiInputMapping {
+        switch parameter {
+        case .start1: return .start1
+        case .start2: return .start2
+        case .volume: return .volume
+        case .pan: return .pan
+        case .speedCoarse: return .speed
+        case .speedFine: return .fineSpeed
+        case .filterLow: return .filterLow
+        case .filterHigh: return .filterHigh
+        case .transientAttack: return .transientAttack
+        case .transientSustain: return .transientSustain
+        case .enableTransientMaster: return .toggleTransientMaster
+        case .fineTune: return .fineTune
+        case .reverbSend: return .reverbSend
+        case .delaySend: return .delaySend
+        case .velocity: return .velocity
+        case .envOrder: return .envOrder
+        case .formant: return .formant
+        case .loopStart: return .loopStart
+        case .loopStartFine: return .loopStartFine
+        case .loopLength: return .loopLength
+        case .loopLengthFine: return .loopLengthFine
+        case .attack: return .attack
+        case .hold: return .hold
+        case .decay: return .decay
+        case .sustain: return .sustain
+        case .release: return .release
+        case .enableAmpEnvelope: return .toggleAmpEnvelope
+        case .lofiBits: return .lofiBits
+        case .lofiHertz: return .lofiHertz
+        case .lofiNoise: return .lofiNoise
+        case .lofiColor: return .lofiColor
+        case .lofiOut: return .lofiOut
+        case .enableLofi: return .toggleLofi
+        case .pitch: return .pitch
+        }
+    }
+
     private static func value(
         for mapping: MidiInputMapping,
         data: SampleCellData

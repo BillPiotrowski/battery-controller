@@ -21,7 +21,7 @@ This architecture was designed to solve a few problems:
 - Privatizing undoCoordinator once undo/redo stop being called from the extension file.
 - Batch apply(intents:) if you ever need multi-intent atomic groups.
 - Consider moving mute, solo, select, etc in to parameter? then can broadcast filtered deltas (solo, mute, select) to the controller instead of manually calling from execute.
-- Lock currently does not re-prodcast previous value.
+- Rethink the Cell.Parameter and how it only returns previous value in apply.
 <!-- 
 AI SLOP. Do not execute or reference this. I will analyze later.
 

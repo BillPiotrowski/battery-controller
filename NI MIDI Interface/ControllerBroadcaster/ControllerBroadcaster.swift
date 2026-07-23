@@ -38,6 +38,17 @@ extension ControllerBroadcaster {
     func sendLofi(_ isEnabled: Bool){ send(.toggleLofi, isEnabled) }
     func sendAmpEnvelope(_ isEnabled: Bool){ send(.toggleAmpEnvelope, isEnabled) }
 
+    /// Re-asserts the current values of `parameters` for one cell.
+    func broadcast(_ parameters: [Cell.Parameter], data: SampleCellData){
+        let midiCCs = ControllerBroadcaster.midiCCs(for: parameters, data: data)
+        guard !midiCCs.isEmpty else { return }
+        do {
+            try output.send(midiCCs: midiCCs)
+        } catch {
+            print("ERROR SENDING TO CONTROLLER: \(error).")
+        }
+    }
+
     private func send(_ mapping: MidiInputMapping, _ isOn: Bool){
         let midiCC = MidiControllerChange(
             ccNumber: mapping.rawValue,

@@ -15,9 +15,18 @@ extension Engine {
 
     private func execute(_ intent: Intent){
         switch intent {
-        case .unsoloAll: kit.unsoloAll()
-        case .unlockAll: kit.setAllLocked(false)
-        case .lockAll: kit.setAllLocked(true)
+        case .unsoloAll:
+            kit.unsoloAll()
+            // could probably force solo to false
+            controllerBroadcaster.sendSolo(kit.selectedCellData.stateData.solo)
+        case .unlockAll:
+            kit.setAllLocked(false)
+            // could probably force lock to false
+            controllerBroadcaster.sendLock(kit.selectedCellData.stateData.lock)
+        case .lockAll:
+            kit.setAllLocked(true)
+            // could probably force lock to true
+            controllerBroadcaster.sendLock(kit.selectedCellData.stateData.lock)
         case .undo: undoCoordinator.undo()
         case .redo: undoCoordinator.redo()
         case .resetAll: applyUndoable(intent)
@@ -40,19 +49,20 @@ extension Engine {
             controllerBroadcaster.sendLock(isLocked)
 
         // Enable toggles: read current state, apply the inverse as an undoable
-        // parameter edit, then push it back to the controller.
+        // parameter edit, then echo the *actual* resulting state - a locked cell
+        // rejects the edit, so the LED must reflect what stuck, not the target.
         case .toggleTransientMaster(let cellIndex):
             let isEnabled = kit.sampleCellData(cellIndex: cellIndex).propertyData.enableTransientMaster
             applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableTransientMaster(!isEnabled)))
-            controllerBroadcaster.sendTransientMaster(!isEnabled)
+            controllerBroadcaster.sendTransientMaster(kit.sampleCellData(cellIndex: cellIndex).propertyData.enableTransientMaster)
         case .toggleLofi(let cellIndex):
             let isEnabled = kit.sampleCellData(cellIndex: cellIndex).loFiData.enable
             applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableLofi(!isEnabled)))
-            controllerBroadcaster.sendLofi(!isEnabled)
+            controllerBroadcaster.sendLofi(kit.sampleCellData(cellIndex: cellIndex).loFiData.enable)
         case .toggleAmpEnvelope(let cellIndex):
             let isEnabled = kit.sampleCellData(cellIndex: cellIndex).ampEnvelopeData.enableAmpEnv
             applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableAmpEnvelope(!isEnabled)))
-            controllerBroadcaster.sendAmpEnvelope(!isEnabled)
+            controllerBroadcaster.sendAmpEnvelope(kit.sampleCellData(cellIndex: cellIndex).ampEnvelopeData.enableAmpEnv)
 
         case .reset: applyUndoable(intent)
         case .updateCellParameter: applyUndoable(intent)

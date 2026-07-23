@@ -143,8 +143,17 @@ extension Engine {
         // straight to the private apply), so history can still restore a cell
         // that was edited and then locked.
         /// This is currently handled by the placement, but we may want to add a property `respectsLock` on the Intent
-        for application in applications where kit.isEditable(cellIndex: application.cellIndex) {
-            apply(application.parameters, cellIndex: application.cellIndex)
+        for application in applications {
+            if kit.isEditable(cellIndex: application.cellIndex) {
+                apply(application.parameters, cellIndex: application.cellIndex)
+            } else if application.cellIndex == kit.editingCellIndex {
+                // Rejected on the visible cell: its display already followed the
+                // input, so re-assert the cell's true values to snap it back.
+                controllerBroadcaster.broadcast(
+                    application.parameters,
+                    data: kit.sampleCellData(cellIndex: application.cellIndex)
+                )
+            }
         }
         if !intent.isContinuous { undoCoordinator.close() }
         if intent.requiresCompleteControllerRefresh { updateController() }
