@@ -17,11 +17,11 @@ enum MidiInputMapping: Int, CaseIterable {
     case release = 24
 
     // not working??
-    case enableAttackEnvelope = 52
+    case toggleAmpEnvelope = 52
 
     case transientAttack = 27
     case transientSustain = 28
-    case enableTransientMaster = 53
+    case toggleTransientMaster = 53
 
     // Not working??
     case tune = 26
@@ -32,7 +32,7 @@ enum MidiInputMapping: Int, CaseIterable {
     case lofiNoise = 33
     case lofiColor = 34
     case lofiOut = 35
-    case enableLofi = 51
+    case toggleLofi = 51
     case reverbSend = 36
     case delaySend = 37
     case velocity = 38
@@ -41,16 +41,16 @@ enum MidiInputMapping: Int, CaseIterable {
     case envOrder = 41
 
     case formant = 42
-    case mute = 62
-    case solo = 63
+    case toggleMute = 62
+    case toggleSolo = 63
     case unsoloAll = 67
 
     // Not confident locks are working as intended.
-    case lock = 64
+    case toggleLock = 64
     case lockAll = 65
     case unlockAll = 66
 
-    case select = 68
+    case toggleSelect = 68
     case copy = 43
     case paste = 44
     case reset = 61

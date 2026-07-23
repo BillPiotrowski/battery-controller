@@ -179,7 +179,8 @@ extension Intent {
         case .updateCellParameter:
             return true
         case .reset, .unsoloAll, .unlockAll, .lockAll, .undo, .redo, .resetAll,
-             .select, .copy, .paste, .mute, .solo, .lock:
+             .pinSelection, .copy, .paste, .mute, .solo, .lock,
+             .toggleTransientMaster, .toggleLofi, .toggleAmpEnvelope:
             return false
         }
     }

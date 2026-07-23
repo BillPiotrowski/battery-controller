@@ -10,7 +10,7 @@ class Engine {
         return samplerBroadcaster.output
     }
 
-    private let controllerBroadcaster: ControllerBroadcaster
+    let controllerBroadcaster: ControllerBroadcaster
 
     var controllerOutputDevice: MidiOutput {
         return controllerBroadcaster.output
@@ -116,7 +116,7 @@ extension Engine {
 // MARK: APPLY
 extension Engine {
 
-    func apply(_ intent: Intent) {
+    func applyUndoable(_ intent: Intent) {
         let applications: [(parameters: [Cell.Parameter], cellIndex: Int)]
 
         switch intent {
@@ -139,11 +139,24 @@ extension Engine {
         }
 
         undoCoordinator.beginGroup(for: intent)
+        // A locked cell rejects edits here. Undo/redo bypass this path (they go
+        // straight to the private apply), so history can still restore a cell
+        // that was edited and then locked.
+        /// This is currently handled by the placement, but we may want to add a property `respectsLock` on the Intent
         for application in applications {
-            apply(application.parameters, cellIndex: application.cellIndex)
+            if kit.isEditable(cellIndex: application.cellIndex) {
+                apply(application.parameters, cellIndex: application.cellIndex)
+            } else if application.cellIndex == kit.editingCellIndex {
+                // Rejected on the visible cell: its display already followed the
+                // input, so re-assert the cell's true values to snap it back.
+                controllerBroadcaster.broadcast(
+                    application.parameters,
+                    data: kit.sampleCellData(cellIndex: application.cellIndex)
+                )
+            }
         }
         if !intent.isContinuous { undoCoordinator.close() }
-        if intent.requiresControllerUpdate { updateController() }
+        if intent.requiresCompleteControllerRefresh { updateController() }
     }
 
     @discardableResult
@@ -159,6 +172,7 @@ extension Engine {
             data: kit.sampleCellData(cellIndex: cellIndex),
             cellIndex: cellIndex
         )
+        // possibly broadcast filtered back to sampler? if we make mute / solo / etc parameters.
         return previous
     }
 }

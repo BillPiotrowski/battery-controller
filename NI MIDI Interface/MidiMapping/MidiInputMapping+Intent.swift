@@ -12,48 +12,40 @@ extension MidiInputMapping {
         }
 
         switch mapping {
+        case .unsoloAll: return .unsoloAll
+        case .unlockAll: return .unlockAll
+        case .lockAll: return .lockAll
+        case .undo: return .undo
+        case .redo: return .redo
+        case .resetAll: return .resetAll
+        case .copy: return .copy(fromCellIndex: cellIndex)
+        case .paste: return .paste(toCellIndex: cellIndex)
+        case .reset: return .reset(cellIndex: cellIndex)
 
-        // MARK: Kit-wide
-        case .unsoloAll: try requireOn(mapping, midiCC); return .unsoloAll
-        case .unlockAll: try requireOn(mapping, midiCC); return .unlockAll
-        case .lockAll:   try requireOn(mapping, midiCC); return .lockAll
-        case .undo:      try requireOn(mapping, midiCC); return .undo
-        case .redo:      try requireOn(mapping, midiCC); return .redo
-        case .resetAll:  try requireOn(mapping, midiCC); return .resetAll
-        case .copy:      try requireOn(mapping, midiCC); return .copy(fromCellIndex: cellIndex)
-        case .paste:     try requireOn(mapping, midiCC); return .paste(toCellIndex: cellIndex)
-        case .reset:     try requireOn(mapping, midiCC); return .reset(cellIndex: cellIndex)
+        // consider adding cell index?
+        case .toggleSelect: return .pinSelection
+        case .toggleMute: return .mute(cellIndex: cellIndex)
+        case .toggleSolo: return .solo(cellIndex: cellIndex)
+        case .toggleLock: return .lock(cellIndex: cellIndex)
 
-        // MARK: Selection / performance state
-        case .select: return .select(cellIndex: cellIndex, midiCC.bool)
-        case .mute:   return .mute(cellIndex: cellIndex, isMuted: midiCC.bool)
-        case .solo:   return .solo(cellIndex: cellIndex, isSoloed: midiCC.bool)
-        case .lock:   return .lock(cellIndex: cellIndex, isLocked: midiCC.bool)
+        case .toggleTransientMaster: return .toggleTransientMaster(cellIndex: cellIndex)
+        case .toggleLofi:  return .toggleLofi(cellIndex: cellIndex)
+        case .toggleAmpEnvelope: return .toggleAmpEnvelope(cellIndex: cellIndex)
 
-        // MARK: Ignored
+        // Ignored
         case .tune: throw DecodeError.ignored(mapping)
 
-        // MARK: Cell parameters
         case .pitch, .volume, .pan, .speed, .fineSpeed, .start1, .start2,
              .filterLow, .filterHigh, .attack, .hold, .decay, .sustain,
-             .release, .enableAttackEnvelope, .transientAttack, .transientSustain,
-             .enableTransientMaster, .fineTune, .lofiBits, .lofiHertz, .lofiNoise,
-             .lofiColor, .lofiOut, .enableLofi, .reverbSend, .delaySend, .velocity,
+             .release, .transientAttack, .transientSustain,
+             .fineTune, .lofiBits, .lofiHertz, .lofiNoise,
+             .lofiColor, .lofiOut, .reverbSend, .delaySend, .velocity,
              .envOrder, .formant, .loopStart, .loopStartFine, .loopLength,
              .loopLengthFine:
             guard let parameter = MidiInputMapping.parameter(mapping: mapping, midiCC: midiCC) else {
                 throw DecodeError.ignored(mapping)
             }
             return .updateCellParameter(cellIndex: cellIndex, parameter: parameter)
-        }
-    }
-
-    private static func requireOn(
-        _ mapping: MidiInputMapping,
-        _ midiCC: MidiControllerChange
-    ) throws {
-        guard midiCC.bool else {
-            throw DecodeError.unexpectedMomentaryValue(mapping, midiCC.value)
         }
     }
 }
@@ -64,7 +56,6 @@ extension MidiInputMapping {
     static func parameter(mapping: MidiInputMapping, midiCC: MidiControllerChange) -> Cell.Parameter? {
         switch mapping {
 
-        // MARK: Property
         case .start1: return .start1(midiCC.ratio)
         case .start2: return .start2(midiCC.ratio)
         case .volume: return .volume(midiCC.ratio)
@@ -75,7 +66,6 @@ extension MidiInputMapping {
         case .filterHigh: return .filterHigh(midiCC.ratio)
         case .transientAttack: return .transientAttack(midiCC.ratio)
         case .transientSustain: return .transientSustain(midiCC.ratio)
-        case .enableTransientMaster: return .enableTransientMaster(midiCC.bool)
         case .fineTune: return .fineTune(midiCC.ratio)
         case .reverbSend: return .reverbSend(midiCC.ratio)
         case .delaySend: return .delaySend(midiCC.ratio)
@@ -87,38 +77,34 @@ extension MidiInputMapping {
         case .loopLength: return .loopLength(midiCC.ratio)
         case .loopLengthFine: return .loopLengthFine(midiCC.ratio)
 
-        // MARK: Amp Envelope
         case .attack: return .attack(midiCC.ratio)
         case .hold: return .hold(midiCC.ratio)
         case .decay: return .decay(midiCC.ratio)
         case .sustain: return .sustain(midiCC.ratio)
         case .release: return .release(midiCC.ratio)
-        case .enableAttackEnvelope: return .enableAmpEnvelope(midiCC.bool)
 
-        // MARK: Lo-Fi
         case .lofiBits: return .lofiBits(midiCC.ratio)
         case .lofiHertz: return .lofiHertz(midiCC.ratio)
         case .lofiNoise: return .lofiNoise(midiCC.ratio)
         case .lofiColor: return .lofiColor(midiCC.ratio)
         case .lofiOut: return .lofiOut(midiCC.ratio)
-        case .enableLofi: return .enableLofi(midiCC.bool)
 
-        // MARK: Sample
         case .pitch: return .pitch(Pitch(value: midiCC.ratio))
-
-        // MARK: Not a cell parameter
 
         // Coarse tune is intentionally ignored - only fine tune is allowed.
         case .tune: return nil
 
         // Performance state. Not undoable, not copied, applied directly.
-        case .mute, .solo, .lock: return nil
+        case .toggleMute, .toggleSolo, .toggleLock: return nil
+
+        // Toggle state is owned internally and not by the controller.
+        case .toggleTransientMaster, .toggleLofi, .toggleAmpEnvelope: return nil
 
         // Master / kit-level actions, handled by the caller.
         case .unsoloAll,
              .lockAll,
              .unlockAll,
-             .select,
+             .toggleSelect,
              .copy,
              .paste,
              .reset,
@@ -135,7 +121,6 @@ extension MidiInputMapping {
     enum DecodeError: ScorepioError {
         case unmappedCC(MidiControlChangeNumber)
         case ignored(MidiInputMapping)
-        case unexpectedMomentaryValue(MidiInputMapping, MidiControlChangeValue)
 
         var message: String {
             switch self {
@@ -143,8 +128,6 @@ extension MidiInputMapping {
                 return "No input mapping for CC \(ccNumber)."
             case .ignored(let mapping):
                 return "Input \(mapping) is intentionally ignored."
-            case .unexpectedMomentaryValue(let mapping, let value):
-                return "Momentary input \(mapping) expected 127, received \(value)."
             }
         }
     }

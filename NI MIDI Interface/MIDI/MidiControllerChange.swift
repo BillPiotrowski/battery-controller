@@ -29,9 +29,4 @@ extension MidiControllerChange {
         return Double(value) / Double(MidiControllerChange.totalUnits)
     }
     static let totalUnits: Int = 127
-    var bool: Bool {
-        guard value == MidiControllerChange.totalUnits
-            else { return false }
-        return true
-    }
 }
