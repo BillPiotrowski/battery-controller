@@ -49,6 +49,10 @@ extension Kit {
         return true
     }
 
+    func isEditable(cellIndex: Int) -> Bool {
+        return cells[cellIndex].isEditable
+    }
+
     var documentData: DocumentData {
         return DocumentData(sampleCellsData: allSampleCellData)
     }

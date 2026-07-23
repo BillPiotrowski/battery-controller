@@ -139,7 +139,11 @@ extension Engine {
         }
 
         undoCoordinator.beginGroup(for: intent)
-        for application in applications {
+        // A locked cell rejects edits here. Undo/redo bypass this path (they go
+        // straight to the private apply), so history can still restore a cell
+        // that was edited and then locked.
+        /// This is currently handled by the placement, but we may want to add a property `respectsLock` on the Intent
+        for application in applications where kit.isEditable(cellIndex: application.cellIndex) {
             apply(application.parameters, cellIndex: application.cellIndex)
         }
         if !intent.isContinuous { undoCoordinator.close() }
