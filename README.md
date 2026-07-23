@@ -20,7 +20,7 @@ This architecture was designed to solve a few problems:
 - The ReactiveSwift → Combine migration, and the init observer-wiring cleanup that rides with it.
 - Privatizing undoCoordinator once undo/redo stop being called from the extension file.
 - Batch apply(intents:) if you ever need multi-intent atomic groups.
-- The toggle-mute work (flip those cases to true, move the requiresControllerUpdate read into execute) — plus confirming the selected-cell broadcast carries mute state.
+- Consider moving mute, solo, select, etc in to parameter? then can broadcast filtered deltas (solo, mute, select) to the controller instead of manually calling from execute.
 <!-- 
 AI SLOP. Do not execute or reference this. I will analyze later.
 
@@ -55,6 +55,26 @@ reflect the last CC received. The app must push full parameter state for all
 16 cells at session start (and on demand). A kit opened without the app will
 have wrong start/end points; this is expected.
 
+
+## Momentary Toggle Contract
+
+The app owns the state for these controls; the hardware is only a momentary
+trigger. In Controller Editor they must be configured to send **127 on press
+and nothing on release** — no hardware toggle, no 0.
+
+On each press the app flips its own state and broadcasts the resulting value
+(0 or 127) back on the same CC so the button's LED reflects the true state:
+
+- **Performance state** (not undoable): mute, solo, lock, select.
+- **Enable toggles** (undoable cell parameters): transient shaper, LoFi, amp
+  envelope.
+
+Because there is no value to inspect, decode never guards on the incoming value
+— a message is a trigger. `select` is the one exception to the broadcast-back:
+it is kit-owned state and does not yet have an LED (see ToDo).
+
+The pure triggers — lock all, unlock all, unsolo all, copy, paste, undo, redo,
+reset, reset all — are the same momentary contract but carry no state to light.
 
 ## Input Mapping
 
@@ -147,3 +167,9 @@ have wrong start/end points; this is expected.
 6. 
 7. 
 8. 
+
+
+## Regarding Toggles
+*A note on the behavior of toggles on the Maschine Controller*
+
+Sending values to indicate display lights on a button will only work when the button is set to toggle. Trigger will not hold a value, so we must set the device to controller to toggle. That said, we want to ignore the input value and treat it internally as a toggle, then broadcast the state to the controller, which will sync the display regardless.

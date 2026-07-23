@@ -63,19 +63,31 @@ extension Kit {
         editingCellIndex = cellIndex
         return true
     }
+
+    func toggleSelectionLock() -> Bool {
+        isSelectionLocked.toggle()
+        return isSelectionLocked
+    }
 }
 
 // MARK: PERFORMANCE STATE
-// TODO IMPORTANT: These need to be migrated to toggles.
 extension Kit {
-    func setMute(_ isMuted: Bool, cellIndex: Int) {
+    func toggleMute(cellIndex: Int) -> Bool {
+        let isMuted = !cells[cellIndex].stateData.mute
         cells[cellIndex].stateData.mute = isMuted
+        return isMuted
     }
-    func setSolo(_ isSoloed: Bool, cellIndex: Int) {
+    
+    func toggleSolo(cellIndex: Int) -> Bool {
+        let isSoloed = !cells[cellIndex].stateData.solo
         cells[cellIndex].stateData.solo = isSoloed
+        return isSoloed
     }
-    func setLock(_ isLocked: Bool, cellIndex: Int) {
+    
+    func toggleLock(cellIndex: Int) -> Bool {
+        let isLocked = !cells[cellIndex].stateData.lock
         cells[cellIndex].stateData.lock = isLocked
+        return isLocked
     }
     func unsoloAll() {
         for cell in cells {

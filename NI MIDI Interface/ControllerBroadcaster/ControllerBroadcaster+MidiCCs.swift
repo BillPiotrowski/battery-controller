@@ -46,7 +46,7 @@ extension ControllerBroadcaster {
         case .filterHigh: return propertyData.filterHigh.MidiCCValue
         case .transientAttack: return propertyData.transientAttack.MidiCCValue
         case .transientSustain: return propertyData.transientSustain.MidiCCValue
-        case .enableTransientMaster: return propertyData.enableTransientMaster.MidiCCValue
+        case .toggleTransientMaster: return propertyData.enableTransientMaster.MidiCCValue
         case .fineTune: return propertyData.fineTune.MidiCCValue
         case .reverbSend: return propertyData.reverbSend.MidiCCValue
         case .delaySend: return propertyData.delaySend.MidiCCValue
@@ -64,7 +64,7 @@ extension ControllerBroadcaster {
         case .decay: return ampEnvelopeData.decay.MidiCCValue
         case .sustain: return ampEnvelopeData.sustain.MidiCCValue
         case .release: return ampEnvelopeData.release.MidiCCValue
-        case .enableAttackEnvelope: return ampEnvelopeData.enableAmpEnv.MidiCCValue
+        case .toggleAmpEnvelope: return ampEnvelopeData.enableAmpEnv.MidiCCValue
 
         // MARK: Lo-Fi
         case .lofiBits: return loFiData.bits.MidiCCValue
@@ -72,15 +72,15 @@ extension ControllerBroadcaster {
         case .lofiNoise: return loFiData.noise.MidiCCValue
         case .lofiColor: return loFiData.color.MidiCCValue
         case .lofiOut: return loFiData.out.MidiCCValue
-        case .enableLofi: return loFiData.enable.MidiCCValue
+        case .toggleLofi: return loFiData.enable.MidiCCValue
 
         // MARK: Sample
         case .pitch: return sampleData.pitch.controllerMidiValue
 
         // MARK: State
-        case .mute: return stateData.mute.MidiCCValue
-        case .solo: return stateData.solo.MidiCCValue
-        case .lock: return stateData.lock.MidiCCValue
+        case .toggleMute: return stateData.mute.MidiCCValue
+        case .toggleSolo: return stateData.solo.MidiCCValue
+        case .toggleLock: return stateData.lock.MidiCCValue
 
         // MARK: No readable value
 
@@ -91,7 +91,7 @@ extension ControllerBroadcaster {
         case .unsoloAll,
              .lockAll,
              .unlockAll,
-             .select,
+             .toggleSelect,
              .copy,
              .paste,
              .reset,

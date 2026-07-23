@@ -116,7 +116,7 @@ extension Engine {
 // MARK: APPLY
 extension Engine {
 
-    func apply(_ intent: Intent) {
+    func applyUndoable(_ intent: Intent) {
         let applications: [(parameters: [Cell.Parameter], cellIndex: Int)]
 
         switch intent {
@@ -143,7 +143,7 @@ extension Engine {
             apply(application.parameters, cellIndex: application.cellIndex)
         }
         if !intent.isContinuous { undoCoordinator.close() }
-        if intent.requiresControllerUpdate { updateController() }
+        if intent.requiresCompleteControllerRefresh { updateController() }
     }
 
     @discardableResult
@@ -159,6 +159,7 @@ extension Engine {
             data: kit.sampleCellData(cellIndex: cellIndex),
             cellIndex: cellIndex
         )
+        // possibly broadcast filtered back to sampler? if we make mute / solo / etc parameters.
         return previous
     }
 }

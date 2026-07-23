@@ -20,23 +20,42 @@ extension Engine {
         case .lockAll: kit.setAllLocked(true)
         case .undo: undoCoordinator.undo()
         case .redo: undoCoordinator.redo()
-        case .resetAll: apply(intent)
+        case .resetAll: applyUndoable(intent)
 
-        case .select(_, let isLocked):
-            kit.isSelectionLocked = isLocked
+        case .pinSelection:
+            kit.toggleSelectionLock()
 
         case .copy(let fromCellIndex): kit.copy(cellIndex: fromCellIndex)
-        case .paste: apply(intent)
+        case .paste: applyUndoable(intent)
 
-        case .mute(let cellIndex, let isMuted):
-            kit.setMute(isMuted, cellIndex: cellIndex)
-        case .solo(let cellIndex, let isSoloed):
-            kit.setSolo(isSoloed, cellIndex: cellIndex)
-        case .lock(let cellIndex, let isLocked):
-            kit.setLock(isLocked, cellIndex: cellIndex)
+        // Performance state: flip, then push the new state to light the LED.
+        case .mute(let cellIndex):
+            kit.toggleMute(cellIndex: cellIndex)
+            updateController()
+        case .solo(let cellIndex):
+            kit.toggleSolo(cellIndex: cellIndex)
+            updateController()
+        case .lock(let cellIndex):
+            kit.toggleLock(cellIndex: cellIndex)
+            updateController()
 
-        case .reset: apply(intent)
-        case .updateCellParameter: apply(intent)
+        // Enable toggles: read current state, apply the inverse as an undoable
+        // parameter edit, then push it back to the controller.
+        case .toggleTransientMaster(let cellIndex):
+            let isEnabled = kit.sampleCellData(cellIndex: cellIndex).propertyData.enableTransientMaster
+            applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableTransientMaster(!isEnabled)))
+            updateController()
+        case .toggleLofi(let cellIndex):
+            let isEnabled = kit.sampleCellData(cellIndex: cellIndex).loFiData.enable
+            applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableLofi(!isEnabled)))
+            updateController()
+        case .toggleAmpEnvelope(let cellIndex):
+            let isEnabled = kit.sampleCellData(cellIndex: cellIndex).ampEnvelopeData.enableAmpEnv
+            applyUndoable(.updateCellParameter(cellIndex: cellIndex, parameter: .enableAmpEnvelope(!isEnabled)))
+            updateController()
+
+        case .reset: applyUndoable(intent)
+        case .updateCellParameter: applyUndoable(intent)
         }
     }
 }

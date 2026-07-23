@@ -64,13 +64,14 @@ extension ControllerBroadcaster {
 
 extension Intent {
     /// Indicates that the intent requires a refresh of the controller UI.
-    var requiresControllerUpdate: Bool {
+    var requiresCompleteControllerRefresh: Bool {
         switch self {
         case .reset, .paste, .resetAll:
             return true
         case .updateCellParameter,
              .unsoloAll, .unlockAll, .lockAll, .undo, .redo,
-             .select, .copy, .mute, .solo, .lock:
+             .pinSelection, .copy, .mute, .solo, .lock,
+             .toggleTransientMaster, .toggleLofi, .toggleAmpEnvelope:
             return false
         }
     }
